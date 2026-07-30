@@ -1,0 +1,8 @@
+{
+  "name": "aaronbux-onboarding-v3-1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/verify-copy.mjs && node tests/smoke-test.mjs"
+  }
+}

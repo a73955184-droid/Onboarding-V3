@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+const baseline=JSON.parse(fs.readFileSync(new URL('./v2_4-copy-baseline.json',import.meta.url),'utf8'));
+const qtxt=fs.readFileSync(new URL('../src/content/questions.js',import.meta.url),'utf8').replace(/^export const QUESTIONS = /,'').replace(/;\s*$/,'');
+const wtxt=fs.readFileSync(new URL('../src/content/welcome-copy.js',import.meta.url),'utf8').replace(/^export const WELCOME_COPY = /,'').replace(/;\s*$/,'');
+const rtxt=fs.readFileSync(new URL('../src/content/recommendation-copy.js',import.meta.url),'utf8');
+const reco=JSON.parse(rtxt.match(/export const RECOMMENDATION_COPY = ([\s\S]*?);\n\nexport/)[1]);
+const evidence=JSON.parse(rtxt.match(/export const EVIDENCE_LABELS = ([\s\S]*);\s*$/)[1]);
+if(JSON.stringify(JSON.parse(qtxt))!==JSON.stringify(baseline.questions))throw new Error('Question copy mismatch');
+if(JSON.stringify(JSON.parse(wtxt))!==JSON.stringify(baseline.welcome))throw new Error('Welcome copy mismatch');
+if(JSON.stringify(reco)!==JSON.stringify(baseline.recommendations))throw new Error('Recommendation copy mismatch');
+if(JSON.stringify(evidence)!==JSON.stringify(baseline.evidenceLabels))throw new Error('Evidence label mismatch');
+console.log('Copy verification passed: V2.4 visible content preserved.');
