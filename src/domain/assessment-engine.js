@@ -1,541 +1,943 @@
-import './assessment-config.js';
-
+import { QUESTIONS } from "../content/questions.js";
+import * as assessmentConfig from "./assessment-config.js";
 import {
-  QUESTIONS
-} from '../content/questions.js';
-
-
-const SCORE_KEYS = [
-  'BFO',
-  'GD',
-  'FT',
-  'GA',
-  'TO',
-  'IP',
-  'ES'
-];
-
-const STAGE_KEYS =
-  Object.keys(globalThis.STAGES);
-
-const STYLE_KEYS =
-  Object.keys(globalThis.STYLES);
-
-const MODIFIER_KEYS =
-  Object.keys(globalThis.MODIFIERS);
-
+  composePortfolioSystem,
+} from "./portfolio-system/portfolio-composer.js";
 
 /**
- * Creates a score object where every supplied key starts at zero.
+ * Assessment Engine
  *
- * Example:
+ * Responsibilities:
+ * - validate and normalize saved quiz answers;
+ * - recompute all scores from the current answer set;
+ * - resolve portfolio archetype, investor stage, operating style,
+ *   and behavioral modifier;
+ * - preserve supporting evidence;
+ * - produce the constituent portfolio system.
  *
- * zeroMap(['BFO', 'GD'])
+ * This file must not:
+ * - read or modify the DOM;
+ * - read from localStorage;
+ * - contain UI copy;
+ * - mutate answers incrementally.
+ */
+
+const DEFAULT_ARCHETYPE_ID = "BFO";
+const DEFAULT_STAGE_ID = "portfolio_organizer";
+const DEFAULT_STYLE_ID = "steady_steward";
+const DEFAULT_MODIFIER_ID = "evidence_seeker";
+
+const IMPLEMENTED_PORTFOLIO_ARCHETYPES = new Set([
+  "ES",
+  "GD",
+  "FT",
+  "BFO",
+  "GA",
+  "TO",
+  "IP",
+]);
+
+/**
+ * Supports either of these configuration exports:
  *
- * returns:
+ * OPTION_LOGIC
+ * OPTION_PROFILE_LOGIC
+ * PROFILE_LOGIC
+ *
+ * This makes the engine more tolerant while the repository is evolving.
+ */
+const OPTION_LOGIC =
+  assessmentConfig.OPTION_LOGIC ??
+  assessmentConfig.OPTION_PROFILE_LOGIC ??
+  assessmentConfig.PROFILE_LOGIC ??
+  {};
+
+const ARCHETYPE_COMPATIBILITY =
+  assessmentConfig.ARCHETYPE_COMPATIBILITY ??
+  assessmentConfig.STYLE_ARCHETYPE_COMPATIBILITY ??
+  {};
+
+const TIME_HORIZON_OPTION_IDS =
+  assessmentConfig.TIME_HORIZON_OPTION_IDS ??
+  assessmentConfig.TIME_HORIZON_MAP ??
+  {};
+
+/**
+ * Creates a plain score object from a list of stable IDs.
+ */
+function createScoreMap(ids = []) {
+  return ids.reduce((scores, id) => {
+    scores[id] = 0;
+    return scores;
+  }, {});
+}
+
+/**
+ * Adds numeric score contributions without mutating the source map.
+ */
+function addScores(target, additions) {
+  if (!additions || typeof additions !== "object") {
+    return target;
+  }
+
+  Object.entries(additions).forEach(([id, rawValue]) => {
+    const value = Number(rawValue);
+
+    if (!Number.isFinite(value)) {
+      return;
+    }
+
+    if (!Object.hasOwn(target, id)) {
+      target[id] = 0;
+    }
+
+    target[id] += value;
+  });
+
+  return target;
+}
+
+/**
+ * Converts a quiz answer into a normalized array of selected option IDs.
+ *
+ * Supported answer shapes:
+ *
+ * "option-id"
+ *
+ * ["option-a", "option-b"]
  *
  * {
- *   BFO: 0,
- *   GD: 0
+ *   optionId: "option-id"
+ * }
+ *
+ * {
+ *   selectedOptionIds: ["option-a", "option-b"]
  * }
  */
-function zeroMap(keys) {
-  return Object.fromEntries(
-    keys.map((key) => [key, 0])
-  );
-}
-
-
-/**
- * Creates a new blank assessment state.
- */
-export function emptyState() {
-  return {
-    version:
-      globalThis.ASSESSMENT_VERSION,
-
-    archetypeScores:
-      zeroMap(SCORE_KEYS),
-
-    stageScores:
-      zeroMap(STAGE_KEYS),
-
-    styleScores:
-      zeroMap(STYLE_KEYS),
-
-    modifierScores:
-      zeroMap(MODIFIER_KEYS),
-
-    answers: {},
-
-    metadata: {},
-
-    signals: [],
-
-    result: null
-  };
-}
-
-
-/**
- * Adds a score mapping to a target score object.
- *
- * The weight allows the first selected answer to count fully and the
- * second selected answer to count at 75%.
- */
-export function addScores(
-  target,
-  mapping,
-  weight = 1
-) {
-  for (
-    const [key, value]
-    of Object.entries(mapping || {})
-  ) {
-    target[key] =
-      (target[key] || 0) +
-      Number(value) * weight;
-  }
-}
-
-
-/**
- * Converts a score map into a descending ranked list.
- *
- * Ties retain the original order of the score-map keys.
- */
-function rankScores(scores) {
-  return Object.entries(scores)
-    .map(([id, score], index) => ({
-      id,
-      score: Number(score) || 0,
-      index
-    }))
-    .sort((a, b) => {
-      if (b.score !== a.score) {
-        return b.score - a.score;
-      }
-
-      return a.index - b.index;
-    });
-}
-
-
-/**
- * Returns the question configuration for a saved screen key.
- */
-function getQuestion(screenKey) {
-  return QUESTIONS.find(
-    (question) =>
-      question.screenKey === screenKey
-  );
-}
-
-
-/**
- * Normalizes a saved answer.
- *
- * Older state versions may contain either:
- *
- * - an answer object with an id
- * - a raw option ID string
- */
-function getAnswerId(answer) {
-  if (typeof answer === 'string') {
-    return answer;
+function normalizeSelectedOptionIds(answer) {
+  if (answer == null) {
+    return [];
   }
 
-  return answer?.id || null;
-}
+  if (typeof answer === "string") {
+    return answer.trim() ? [answer] : [];
+  }
 
-
-/**
- * Applies one question's selected options to all four scoring systems.
- *
- * Archetype scoring comes from:
- *
- * question.options[n].scores
- *
- * Stage, style, modifier, behavioral signals, and metadata come from:
- *
- * globalThis.OPTION_LOGIC[screenKey][optionId]
- */
-function scoreQuestion(
-  state,
-  question,
-  selectedAnswerIds
-) {
-  const selectedOptions =
-    selectedAnswerIds
-      .map((optionId) =>
-        question.options.find(
-          (option) =>
-            option.id === optionId
-        )
-      )
+  if (Array.isArray(answer)) {
+    return answer
+      .filter((value) => typeof value === "string")
+      .map((value) => value.trim())
       .filter(Boolean);
+  }
 
-  selectedOptions.forEach(
-    (option, selectionIndex) => {
-      const weight =
-        selectionIndex === 0
-          ? 1
-          : 0.75;
+  if (typeof answer !== "object") {
+    return [];
+  }
 
-      const logic =
-        globalThis
-          .OPTION_LOGIC?.[
-            question.screenKey
-          ]?.[
-            option.id
-          ] || {};
+  if (typeof answer.optionId === "string") {
+    return [answer.optionId];
+  }
 
-      /*
-       * Archetype scoring already exists in questions.js.
-       *
-       * This is the critical fix. The previous engine looked only for
-       * logic.archetype, even though the current quiz stores those
-       * scores in option.scores.
-       */
-      addScores(
-        state.archetypeScores,
-        option.scores,
-        weight
-      );
+  if (typeof answer.selectedOptionId === "string") {
+    return [answer.selectedOptionId];
+  }
 
-      addScores(
-        state.stageScores,
-        logic.stage,
-        weight
-      );
+  if (Array.isArray(answer.optionIds)) {
+    return normalizeSelectedOptionIds(answer.optionIds);
+  }
 
-      addScores(
-        state.styleScores,
-        logic.style,
-        weight
-      );
+  if (Array.isArray(answer.selectedOptionIds)) {
+    return normalizeSelectedOptionIds(
+      answer.selectedOptionIds,
+    );
+  }
 
-      addScores(
-        state.modifierScores,
-        logic.modifier,
-        weight
-      );
+  if (Array.isArray(answer.value)) {
+    return normalizeSelectedOptionIds(answer.value);
+  }
 
-      /*
-       * Signals are qualitative guardrails rather than numeric scores.
-       *
-       * They are intentionally stored once per selected answer. The
-       * second-answer weight affects score values but not whether a
-       * behavioral signal exists.
-       */
-      if (Array.isArray(logic.signals)) {
-        state.signals.push(
-          ...logic.signals
-        );
-      }
+  if (typeof answer.value === "string") {
+    return normalizeSelectedOptionIds(answer.value);
+  }
 
-      if (logic.metadata) {
-        Object.assign(
-          state.metadata,
-          logic.metadata
-        );
-      }
-    }
+  return [];
+}
+
+/**
+ * Supports questions exported either as:
+ *
+ * QUESTIONS = [...]
+ *
+ * or:
+ *
+ * QUESTIONS = {
+ *   questionId: {...}
+ * }
+ */
+function getQuestionList() {
+  if (Array.isArray(QUESTIONS)) {
+    return QUESTIONS;
+  }
+
+  if (QUESTIONS && typeof QUESTIONS === "object") {
+    return Object.values(QUESTIONS);
+  }
+
+  return [];
+}
+
+function getQuestionId(question, index) {
+  return (
+    question?.id ??
+    question?.questionId ??
+    question?.key ??
+    String(index + 1)
   );
 }
 
+function getQuestionOptions(question) {
+  if (Array.isArray(question?.options)) {
+    return question.options;
+  }
+
+  if (Array.isArray(question?.cards)) {
+    return question.cards;
+  }
+
+  return [];
+}
+
+function getOptionId(option) {
+  return (
+    option?.id ??
+    option?.optionId ??
+    option?.value ??
+    null
+  );
+}
+
+function buildQuestionIndex() {
+  return getQuestionList().reduce(
+    (questionIndex, question, index) => {
+      const questionId = getQuestionId(question, index);
+
+      const optionIndex = getQuestionOptions(
+        question,
+      ).reduce((options, option) => {
+        const optionId = getOptionId(option);
+
+        if (optionId) {
+          options[optionId] = option;
+        }
+
+        return options;
+      }, {});
+
+      questionIndex[questionId] = {
+        question,
+        options: optionIndex,
+      };
+
+      return questionIndex;
+    },
+    {},
+  );
+}
+
+const QUESTION_INDEX = buildQuestionIndex();
 
 /**
- * Rebuilds all assessment scores from the saved answers.
- *
- * This prevents double counting when someone:
- *
- * - goes back to an earlier question
- * - changes an answer
- * - revisits a screen
- * - completes the assessment more than once in the same session
- *
- * The previous implementation added new scores on top of old scores.
+ * Saved answers may use either current question IDs or numeric screen IDs.
+ * This method resolves both where possible.
  */
-function rebuildScores(state) {
-  const rebuilt = emptyState();
+function getQuestionEntry(questionId) {
+  if (QUESTION_INDEX[questionId]) {
+    return QUESTION_INDEX[questionId];
+  }
 
-  rebuilt.answers = {
-    ...(state.answers || {})
+  const normalizedQuestionId = String(questionId);
+
+  const directMatch = Object.entries(
+    QUESTION_INDEX,
+  ).find(([id]) => String(id) === normalizedQuestionId);
+
+  return directMatch?.[1] ?? null;
+}
+
+function findOptionGlobally(optionId) {
+  for (const entry of Object.values(QUESTION_INDEX)) {
+    if (entry.options[optionId]) {
+      return entry.options[optionId];
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Gets profile logic stored separately in assessment-config.js.
+ *
+ * Supported structures:
+ *
+ * OPTION_LOGIC[optionId]
+ *
+ * OPTION_LOGIC[questionId][optionId]
+ */
+function getConfiguredOptionLogic(
+  questionId,
+  optionId,
+) {
+  const directLogic = OPTION_LOGIC[optionId];
+
+  if (directLogic) {
+    return directLogic;
+  }
+
+  const questionLogic = OPTION_LOGIC[questionId];
+
+  if (
+    questionLogic &&
+    typeof questionLogic === "object"
+  ) {
+    return questionLogic[optionId] ?? {};
+  }
+
+  return {};
+}
+
+/**
+ * Reads score maps using multiple supported field names.
+ */
+function getDimensionScores(source, dimension) {
+  if (!source || typeof source !== "object") {
+    return {};
+  }
+
+  const aliases = {
+    archetype: [
+      "archetype",
+      "archetypes",
+      "archetypeScores",
+      "scores",
+    ],
+
+    stage: [
+      "stage",
+      "stages",
+      "stageScores",
+    ],
+
+    style: [
+      "style",
+      "styles",
+      "styleScores",
+    ],
+
+    modifier: [
+      "modifier",
+      "modifiers",
+      "modifierScores",
+    ],
   };
 
-  for (const question of QUESTIONS) {
-    const savedAnswers =
-      rebuilt.answers[
-        question.screenKey
-      ];
+  for (const key of aliases[dimension] ?? []) {
+    const candidate = source[key];
 
     if (
-      !Array.isArray(savedAnswers) ||
-      savedAnswers.length === 0
+      candidate &&
+      typeof candidate === "object" &&
+      !Array.isArray(candidate)
     ) {
-      continue;
+      return candidate;
     }
-
-    const selectedAnswerIds =
-      savedAnswers
-        .map(getAnswerId)
-        .filter(Boolean);
-
-    scoreQuestion(
-      rebuilt,
-      question,
-      selectedAnswerIds
-    );
   }
 
-  rebuilt.metadata.lastStep =
-    state.metadata?.lastStep || null;
-
-  return rebuilt;
+  return {};
 }
 
+function getOptionSignals(option, logic) {
+  const combinedSignals = [
+    ...(Array.isArray(option?.signals)
+      ? option.signals
+      : []),
 
-/**
- * Selects the final result from the four score maps.
- */
-export function resolveAssessment(state) {
-  const archetypes =
-    rankScores(
-      state.archetypeScores ||
-      zeroMap(SCORE_KEYS)
-    );
+    ...(Array.isArray(logic?.signals)
+      ? logic.signals
+      : []),
+  ];
 
-  const stages =
-    rankScores(
-      state.stageScores ||
-      zeroMap(STAGE_KEYS)
-    );
-
-  const styles =
-    rankScores(
-      state.styleScores ||
-      zeroMap(STYLE_KEYS)
-    );
-
-  const modifiers =
-    rankScores(
-      state.modifierScores ||
-      zeroMap(MODIFIER_KEYS)
-    );
-
-  const primaryArchetype =
-    archetypes[0]?.score > 0
-      ? archetypes[0].id
-      : 'GD';
-
-  const secondaryArchetype =
-    archetypes[1]?.score > 0
-      ? archetypes[1].id
-      : null;
-
-  const primaryStage =
-    stages[0]?.score > 0
-      ? stages[0].id
-      : 'portfolio_organizer';
-
-  let primaryStyle =
-    styles[0]?.score > 0
-      ? styles[0].id
-      : 'steady_steward';
-
-  const primaryModifier =
-    modifiers[0]?.score > 0
-      ? modifiers[0].id
-      : 'confidence_builder';
-
-  const secondaryModifier =
-    modifiers[1]?.score > 0
-      ? modifiers[1].id
-      : null;
-
-  /*
-   * Active Navigator guardrail
-   *
-   * Someone should receive Active Navigator only when at least two
-   * active-investing behavioral signals are present.
-   *
-   * This prevents one opportunity-oriented response from creating an
-   * overly active recommendation.
-   */
-  if (
-    primaryStyle ===
-    'active_navigator'
-  ) {
-    const qualifyingSignals =
-      new Set([
-        'opportunity seeking',
-        'active exploration',
-        'control preference',
-        'opportunity pressure'
-      ]);
-
-    const matchedSignals =
-      new Set(
-        (state.signals || [])
-          .filter((signal) =>
-            qualifyingSignals.has(signal)
-          )
-      );
-
-    if (matchedSignals.size < 2) {
-      primaryStyle =
-        'bounded_explorer';
-    }
+  if (typeof option?.signal === "string") {
+    combinedSignals.push(option.signal);
   }
 
-  /*
-   * Retain the current heuristic confidence value for compatibility.
-   *
-   * It is not yet displayed as a statistical probability. We can
-   * revisit this later without changing the current recommendation
-   * behavior.
-   */
-  const positiveArchetypeTotal =
-    archetypes.reduce(
-      (total, archetype) =>
-        total +
-        Math.max(
-          0,
-          archetype.score
-        ),
-      0
-    );
+  if (typeof logic?.signal === "string") {
+    combinedSignals.push(logic.signal);
+  }
 
-  const topArchetypeScore =
-    Math.max(
-      0,
-      archetypes[0]?.score || 0
-    );
+  return [...new Set(combinedSignals.filter(Boolean))];
+}
 
-  const confidence =
-    positiveArchetypeTotal > 0
-      ? Math.round(
-          Math.max(
-            35,
-            Math.min(
-              95,
-              (
-                topArchetypeScore /
-                positiveArchetypeTotal
-              ) *
-                100 +
-                35
-            )
-          )
-        )
-      : 35;
-
+function getOptionEvidence(
+  questionId,
+  optionId,
+  option,
+) {
   return {
-    archetypeId:
-      primaryArchetype,
+    questionId,
+    optionId,
 
-    secondaryArchetypeId:
-      secondaryArchetype,
+    label:
+      option?.label ??
+      option?.title ??
+      option?.text ??
+      optionId,
 
-    stageId:
-      primaryStage,
-
-    styleId:
-      primaryStyle,
-
-    modifierId:
-      primaryModifier,
-
-    secondaryModifierId:
-      secondaryModifier,
-
-    confidence
+    explanation:
+      option?.signalDescription ??
+      option?.explanation ??
+      option?.description ??
+      null,
   };
 }
 
+function sortScoreEntries(scores) {
+  return Object.entries(scores).sort(
+    ([firstId, firstScore], [secondId, secondScore]) => {
+      if (secondScore !== firstScore) {
+        return secondScore - firstScore;
+      }
+
+      return firstId.localeCompare(secondId);
+    },
+  );
+}
+
+function resolveHighestScore(
+  scores,
+  fallbackId,
+) {
+  const ranked = sortScoreEntries(scores);
+
+  if (ranked.length === 0) {
+    return {
+      id: fallbackId,
+      score: 0,
+      runnerUpId: null,
+      runnerUpScore: 0,
+      margin: 0,
+    };
+  }
+
+  const [primary, secondary] = ranked;
+
+  return {
+    id: primary?.[0] ?? fallbackId,
+    score: primary?.[1] ?? 0,
+    runnerUpId: secondary?.[0] ?? null,
+    runnerUpScore: secondary?.[1] ?? 0,
+
+    margin:
+      (primary?.[1] ?? 0) -
+      (secondary?.[1] ?? 0),
+  };
+}
+
+function getCompatibilityValue(styleId, archetypeId) {
+  const styleRules =
+    ARCHETYPE_COMPATIBILITY[styleId];
+
+  if (!styleRules) {
+    return 0;
+  }
+
+  const value = styleRules[archetypeId];
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  switch (value) {
+    case "preferred":
+      return 2;
+
+    case "restricted":
+      return -2;
+
+    case "prohibited":
+      return Number.NEGATIVE_INFINITY;
+
+    case "allowed":
+    default:
+      return 0;
+  }
+}
+
+function resolveArchetypeWithCompatibility(
+  archetypeScores,
+  styleId,
+) {
+  const compatibleScores = {};
+
+  Object.entries(archetypeScores).forEach(
+    ([archetypeId, rawScore]) => {
+      /*
+       * ES is currently treated as a portfolio archetype in the
+       * prototype. If it later becomes only an evolution-stage
+       * classification, remove it from the constituent catalogue
+       * and resolve it before this step.
+       */
+      const compatibility = getCompatibilityValue(
+        styleId,
+        archetypeId,
+      );
+
+      if (
+        compatibility ===
+        Number.NEGATIVE_INFINITY
+      ) {
+        return;
+      }
+
+      compatibleScores[archetypeId] =
+        rawScore + compatibility;
+    },
+  );
+
+  return resolveHighestScore(
+    compatibleScores,
+    DEFAULT_ARCHETYPE_ID,
+  );
+}
+
+function resolveTimeHorizon(
+  answers,
+  selectedOptions,
+) {
+  /*
+   * First check whether the saved state contains an explicit
+   * normalized horizon.
+   */
+  const explicitHorizon =
+    answers.timeHorizon ??
+    answers.time_horizon ??
+    answers.investingTimeHorizon;
+
+  if (typeof explicitHorizon === "string") {
+    return explicitHorizon;
+  }
+
+  /*
+   * Then check mappings declared in assessment-config.js.
+   */
+  for (const selected of selectedOptions) {
+    const mappedHorizon =
+      TIME_HORIZON_OPTION_IDS[selected.optionId];
+
+    if (mappedHorizon) {
+      return mappedHorizon;
+    }
+
+    const optionHorizon =
+      selected.option?.timeHorizon ??
+      selected.option?.time_horizon ??
+      selected.logic?.timeHorizon ??
+      selected.logic?.time_horizon;
+
+    if (optionHorizon) {
+      return optionHorizon;
+    }
+  }
+
+  return null;
+}
+
+function calculateConfidence({
+  archetypeResolution,
+  stageResolution,
+  styleResolution,
+  modifierResolution,
+  selectedOptionCount,
+}) {
+  let confidence = 50;
+
+  if (archetypeResolution.margin >= 4) {
+    confidence += 20;
+  } else if (archetypeResolution.margin >= 2) {
+    confidence += 10;
+  }
+
+  if (stageResolution.margin >= 2) {
+    confidence += 5;
+  }
+
+  if (styleResolution.margin >= 2) {
+    confidence += 5;
+  }
+
+  if (modifierResolution.margin >= 2) {
+    confidence += 5;
+  }
+
+  if (selectedOptionCount >= 8) {
+    confidence += 10;
+  } else if (selectedOptionCount >= 5) {
+    confidence += 5;
+  }
+
+  confidence = Math.max(
+    0,
+    Math.min(100, confidence),
+  );
+
+  const level =
+    confidence >= 80
+      ? "high"
+      : confidence >= 60
+        ? "medium"
+        : "low";
+
+  return {
+    score: confidence,
+    level,
+  };
+}
 
 /**
- * Saves an answer and recalculates the complete assessment.
- *
- * This function is called after each quiz screen.
+ * Normalizes answers without mutating the supplied value.
  */
-export function applyAnswer(
-  state,
-  config,
-  selectedIds
+export function normalizeAssessmentAnswers(
+  answers = {},
 ) {
-  const safeState =
-    state &&
-    typeof state === 'object'
-      ? state
-      : emptyState();
+  if (
+    !answers ||
+    typeof answers !== "object" ||
+    Array.isArray(answers)
+  ) {
+    return {};
+  }
 
-  const validSelectedIds =
-    Array.isArray(selectedIds)
-      ? selectedIds
-      : [];
+  return Object.fromEntries(
+    Object.entries(answers).map(
+      ([questionId, answer]) => [
+        questionId,
+        normalizeSelectedOptionIds(answer),
+      ],
+    ),
+  );
+}
 
-  const chosenOptions =
-    validSelectedIds
-      .map((optionId) =>
-        config.options.find(
-          (option) =>
-            option.id === optionId
-        )
-      )
-      .filter(Boolean);
+/**
+ * Returns true when every configured question has at least one answer.
+ *
+ * Optional questions can declare:
+ *
+ * required: false
+ */
+export function isAssessmentComplete(
+  answers = {},
+) {
+  const normalized =
+    normalizeAssessmentAnswers(answers);
 
-  /*
-   * Preserve the selected option ID, visible label, screen title, and
-   * selection order. Recommendation screens use these saved labels as
-   * evidence beneath the result copy.
-   */
-  safeState.answers =
-    safeState.answers || {};
+  return getQuestionList().every(
+    (question, index) => {
+      if (question?.required === false) {
+        return true;
+      }
 
-  safeState.answers[
-    config.screenKey
-  ] =
-    chosenOptions.map(
-      (option, index) => ({
-        id:
-          option.id,
+      const questionId = getQuestionId(
+        question,
+        index,
+      );
 
-        label:
-          option.label,
+      return (
+        Array.isArray(normalized[questionId]) &&
+        normalized[questionId].length > 0
+      );
+    },
+  );
+}
 
-        screen:
-          config.title,
+/**
+ * Returns the first unanswered required question ID.
+ */
+export function getFirstUnansweredQuestionId(
+  answers = {},
+) {
+  const normalized =
+    normalizeAssessmentAnswers(answers);
 
-        selectionOrder:
-          index + 1
-      })
+  const unanswered = getQuestionList().find(
+    (question, index) => {
+      if (question?.required === false) {
+        return false;
+      }
+
+      const questionId = getQuestionId(
+        question,
+        index,
+      );
+
+      return (
+        !Array.isArray(normalized[questionId]) ||
+        normalized[questionId].length === 0
+      );
+    },
+  );
+
+  if (!unanswered) {
+    return null;
+  }
+
+  const unansweredIndex =
+    getQuestionList().indexOf(unanswered);
+
+  return getQuestionId(
+    unanswered,
+    unansweredIndex,
+  );
+}
+
+/**
+ * Main assessment entrypoint.
+ */
+export function assessAnswers(
+  answers = {},
+) {
+  const normalizedAnswers =
+    normalizeAssessmentAnswers(answers);
+
+  const archetypeScores = {};
+  const stageScores = {};
+  const styleScores = {};
+  const modifierScores = {};
+
+  const selectedOptions = [];
+  const signals = [];
+  const evidence = [];
+
+  Object.entries(normalizedAnswers).forEach(
+    ([questionId, optionIds]) => {
+      const questionEntry =
+        getQuestionEntry(questionId);
+
+      optionIds.forEach((optionId) => {
+        const option =
+          questionEntry?.options?.[optionId] ??
+          findOptionGlobally(optionId);
+
+        if (!option) {
+          console.warn(
+            `Assessment option not found: ${questionId}/${optionId}`,
+          );
+
+          return;
+        }
+
+        const logic = getConfiguredOptionLogic(
+          questionId,
+          optionId,
+        );
+
+        /*
+         * Archetype scoring primarily comes from option.scores.
+         * This repairs the earlier problem where obsolete
+         * OPTION_LOGIC IDs prevented archetype scoring.
+         */
+        addScores(
+          archetypeScores,
+          getDimensionScores(option, "archetype"),
+        );
+
+        /*
+         * Preserve support for archetype contributions that
+         * still live in assessment-config.js.
+         */
+        addScores(
+          archetypeScores,
+          getDimensionScores(logic, "archetype"),
+        );
+
+        addScores(
+          stageScores,
+          getDimensionScores(option, "stage"),
+        );
+
+        addScores(
+          stageScores,
+          getDimensionScores(logic, "stage"),
+        );
+
+        addScores(
+          styleScores,
+          getDimensionScores(option, "style"),
+        );
+
+        addScores(
+          styleScores,
+          getDimensionScores(logic, "style"),
+        );
+
+        addScores(
+          modifierScores,
+          getDimensionScores(option, "modifier"),
+        );
+
+        addScores(
+          modifierScores,
+          getDimensionScores(logic, "modifier"),
+        );
+
+        const optionSignals = getOptionSignals(
+          option,
+          logic,
+        );
+
+        signals.push(...optionSignals);
+
+        evidence.push(
+          getOptionEvidence(
+            questionId,
+            optionId,
+            option,
+          ),
+        );
+
+        selectedOptions.push({
+          questionId,
+          optionId,
+          option,
+          logic,
+        });
+      });
+    },
+  );
+
+  const stageResolution = resolveHighestScore(
+    stageScores,
+    DEFAULT_STAGE_ID,
+  );
+
+  const styleResolution = resolveHighestScore(
+    styleScores,
+    DEFAULT_STYLE_ID,
+  );
+
+  const modifierResolution = resolveHighestScore(
+    modifierScores,
+    DEFAULT_MODIFIER_ID,
+  );
+
+  const archetypeResolution =
+    resolveArchetypeWithCompatibility(
+      archetypeScores,
+      styleResolution.id,
     );
 
-  safeState.metadata =
-    safeState.metadata || {};
+  const timeHorizon = resolveTimeHorizon(
+    answers,
+    selectedOptions,
+  );
 
-  safeState.metadata.lastStep =
-    config.screenKey;
+  const uniqueSignals = [...new Set(signals)];
+
+  const confidence = calculateConfidence({
+    archetypeResolution,
+    stageResolution,
+    styleResolution,
+    modifierResolution,
+    selectedOptionCount: selectedOptions.length,
+  });
+
+  const assessmentResult = {
+    archetypeId: archetypeResolution.id,
+
+    secondaryArchetypeId:
+      archetypeResolution.runnerUpId,
+
+    stageId: stageResolution.id,
+    styleId: styleResolution.id,
+    modifierId: modifierResolution.id,
+
+    timeHorizon,
+
+    signals: uniqueSignals,
+    evidence,
+
+    confidence,
+
+    scores: {
+      archetype: archetypeScores,
+      stage: stageScores,
+      style: styleScores,
+      modifier: modifierScores,
+    },
+
+    normalizedAnswers,
+
+    /*
+     * Keep the original answer shape so the UI and state layer
+     * can preserve the user's selections exactly.
+     */
+    answers: structuredClone(answers),
+  };
 
   /*
-   * Recalculate from every saved answer rather than adding the latest
-   * answer to scores that may already contain a previous selection.
+   * Compose the portfolio only for archetypes whose constituent
+   * portfolios are currently implemented.
+   *
+   * This lets the assessment continue working while you add the
+   * 21 combinations incrementally.
    */
-  const rebuilt =
-    rebuildScores(safeState);
+  if (
+    IMPLEMENTED_PORTFOLIO_ARCHETYPES.has(
+      assessmentResult.archetypeId,
+    )
+  ) {
+    try {
+      assessmentResult.portfolioSystem =
+        composePortfolioSystem(assessmentResult);
 
-  rebuilt.metadata.lastStep =
-    config.screenKey;
+      assessmentResult.portfolioSystemError =
+        null;
+    } catch (error) {
+      console.error(
+        "Portfolio composition failed:",
+        error,
+      );
 
-  /*
-   * Keep the result current after every step. This makes profile and
-   * system rendering reliable even when the user returns to a prior
-   * question and changes an answer.
-   */
-  rebuilt.result =
-    resolveAssessment(rebuilt);
+      assessmentResult.portfolioSystem = null;
 
-  return rebuilt;
+      assessmentResult.portfolioSystemError = {
+        name: error?.name ?? "Error",
+        message:
+          error?.message ??
+          "Portfolio composition failed.",
+      };
+    }
+  } else {
+    assessmentResult.portfolioSystem = null;
+
+    assessmentResult.portfolioSystemError = {
+      name: "UnsupportedArchetypeError",
+      message:
+        `Constituent portfolio composition has not yet been implemented for ${assessmentResult.archetypeId}.`,
+    };
+  }
+
+  return assessmentResult;
 }
+
+/**
+ * Alias retained for screens or tests that use the older function name.
+ */
+export const calculateAssessment =
+  assessAnswers;
+
+/**
+ * Alias retained for code that refers to the recommendation result.
+ */
+export const generateAssessmentResult =
+  assessAnswers;
+
+export default assessAnswers;
