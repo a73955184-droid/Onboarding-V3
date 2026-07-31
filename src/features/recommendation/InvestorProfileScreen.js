@@ -1,181 +1,326 @@
-import { loadState, resetState } from '../../application/state.js';
-import { navigate } from '../../application/router.js';
-import { resolveAssessment } from '../../domain/assessment-engine.js';
 import {
-  STAGE_VIEW,
-  STYLE_VIEW,
-  MODIFIER_VIEW,
-  PROFILE_EVIDENCE_MAP,
-  PROFILE_QUESTION_LABELS
-} from '../../content/investor-profile-copy.js';
+  loadState,
+  resetState
+} from '../../application/state.js';
 
-function evidence(state, keys) {
-  return keys
-    .filter((key) => state.answers?.[key]?.length)
+import {
+  navigate
+} from '../../application/router.js';
+
+import {
+  resolveAssessment
+} from '../../domain/assessment-engine.js';
+
+import {
+  RECOMMENDATION_COPY,
+  EVIDENCE_LABELS
+} from '../../content/recommendation-copy.js';
+
+
+function getRecommendation(state) {
+  const result = state.result || resolveAssessment(state);
+
+  const archetypeId =
+    result?.archetypeId ||
+    result?.primaryArchetype ||
+    result?.archetype ||
+    'GD';
+
+  return {
+    archetypeId,
+    recommendation:
+      RECOMMENDATION_COPY[archetypeId] ||
+      RECOMMENDATION_COPY.GD
+  };
+}
+
+
+function formatAnswer(answer) {
+  if (typeof answer === 'string') {
+    return answer;
+  }
+
+  return answer?.label || answer?.id || '';
+}
+
+
+function renderEvidence(state) {
+  if (!state.answers) {
+    return '';
+  }
+
+  const evidenceItems = Object.entries(EVIDENCE_LABELS)
+    .filter(([questionId]) => {
+      const answers = state.answers[questionId];
+
+      return Array.isArray(answers)
+        ? answers.length > 0
+        : Boolean(answers);
+    })
+    .map(([questionId, label]) => {
+      const answers = Array.isArray(state.answers[questionId])
+        ? state.answers[questionId]
+        : [state.answers[questionId]];
+
+      const answerText = answers
+        .map(formatAnswer)
+        .filter(Boolean)
+        .join(' · ');
+
+      return `
+        <div class="evidence-item">
+          <strong>${label}</strong>
+          <span>${answerText}</span>
+        </div>
+      `;
+    })
+    .join('');
+
+  if (!evidenceItems) {
+    return '';
+  }
+
+  return `
+    <section class="card panel recommendation-section">
+      <span class="pill">Based on your answers</span>
+
+      <div class="evidence-list">
+        ${evidenceItems}
+      </div>
+    </section>
+  `;
+}
+
+
+function renderList(items = []) {
+  return items
     .map(
-      (key) =>
-        `<strong>${PROFILE_QUESTION_LABELS[key]}:</strong> ${
-          state.answers[key]
-            .map((answer) => answer.label)
-            .join(' · ')
-        }`
+      (item) => `
+        <li>${item}</li>
+      `
     )
-    .join('<br>');
+    .join('');
 }
 
-function bindHeader() {
-  document.getElementById('backBtn').onclick = () => {
-    navigate('assessment/8');
-  };
 
-  document.getElementById('restartBtn').onclick = () => {
-    resetState();
-    navigate('');
-  };
+function bindHeaderActions() {
+  const backButton = document.getElementById('backBtn');
+  const restartButton = document.getElementById('restartBtn');
+
+  if (backButton) {
+    backButton.onclick = () => {
+      navigate('assessment/8');
+    };
+  }
+
+  if (restartButton) {
+    restartButton.onclick = () => {
+      resetState();
+      navigate('');
+    };
+  }
 }
+
 
 export function renderInvestorProfile(root) {
   document.title = 'AaronBux - Your Investor Profile';
 
   const state = loadState();
 
-  if (!state.answers || !Object.keys(state.answers).length) {
+  if (
+    !state.answers ||
+    Object.keys(state.answers).length === 0
+  ) {
     root.innerHTML = `
-      <div class="app-shell recommendation-page">
+      <div class="app-shell recommendation-page profile-page">
         <header class="topbar">
           <div class="topbar-inner">
-            <button class="btn btn-secondary" id="backBtn">
+            <button
+              class="btn btn-secondary"
+              id="backBtn"
+              type="button"
+            >
               Back
             </button>
 
             <div style="text-align: center">
               <div class="brand">AaronBux</div>
-              <div class="step-label">Your investor profile</div>
+              <div class="step-label">
+                Your investor profile
+              </div>
             </div>
 
-            <button class="btn btn-secondary" id="restartBtn">
+            <button
+              class="btn btn-secondary"
+              id="restartBtn"
+              type="button"
+            >
               Restart
             </button>
           </div>
 
           <div class="progress-track">
-            <div class="progress-fill" style="width: 92%"></div>
+            <div
+              class="progress-fill"
+              style="width: 92%"
+            ></div>
           </div>
         </header>
 
         <main class="main">
-          <div class="card panel">
-            <h2>We could not find your answers.</h2>
-          </div>
+          <section class="card panel">
+            <h2>We could not find your assessment answers.</h2>
+
+            <p class="question-note">
+              Return to the assessment to create your investor profile.
+            </p>
+
+            <button
+              class="btn btn-primary"
+              id="startAssessmentBtn"
+              type="button"
+            >
+              Start assessment
+            </button>
+          </section>
         </main>
       </div>
     `;
 
-    bindHeader();
+    bindHeaderActions();
+
+    document
+      .getElementById('startAssessmentBtn')
+      .onclick = () => {
+        navigate('assessment/1');
+      };
+
     return;
   }
 
-  const result = state.result || resolveAssessment(state);
-
-  const stage =
-    STAGE_VIEW[result.stageId] ||
-    STAGE_VIEW.portfolio_organizer;
-
-  const style =
-    STYLE_VIEW[result.styleId] ||
-    STYLE_VIEW.steady_steward;
-
-  const modifier =
-    MODIFIER_VIEW[result.modifierId] ||
-    MODIFIER_VIEW.confidence_builder;
+  const {
+    archetypeId,
+    recommendation
+  } = getRecommendation(state);
 
   root.innerHTML = `
     <div class="app-shell recommendation-page profile-page">
       <header class="topbar">
         <div class="topbar-inner">
-          <button class="btn btn-secondary" id="backBtn">
+          <button
+            class="btn btn-secondary"
+            id="backBtn"
+            type="button"
+          >
             Back
           </button>
 
           <div style="text-align: center">
             <div class="brand">AaronBux</div>
-            <div class="step-label">Your investor profile</div>
+            <div class="step-label">
+              Your investor profile
+            </div>
           </div>
 
-          <button class="btn btn-secondary" id="restartBtn">
+          <button
+            class="btn btn-secondary"
+            id="restartBtn"
+            type="button"
+          >
             Restart
           </button>
         </div>
 
         <div class="progress-track">
-          <div class="progress-fill" style="width: 92%"></div>
+          <div
+            class="progress-fill"
+            style="width: 92%"
+          ></div>
         </div>
       </header>
 
       <main class="main">
-        <section>
-          <div class="card panel result-hero">
-            <span class="pill">Your investor profile</span>
+        <section class="card panel result-hero">
+          <span class="pill">
+            Your investor profile
+          </span>
 
-            <h1>${stage.headline}</h1>
+          <h1>${recommendation.diagnosis}</h1>
 
-            <p class="lead">
-              Your answers describe both where investing becomes difficult
-              and the way you are most likely to stay confident and consistent.
-            </p>
-          </div>
-
-          <div class="profile-result-grid">
-            <article class="recommendation-card">
-              <span class="pill">Where you are now</span>
-
-              <h2>${stage.name}</h2>
-
-              <p>${stage.summary}</p>
-
-              <div class="evidence">
-                ${evidence(state, PROFILE_EVIDENCE_MAP.stage)}
-              </div>
-            </article>
-
-            <article class="recommendation-card">
-              <span class="pill">How you prefer to invest</span>
-
-              <h2>${style.name}</h2>
-
-              <p>${style.copy}</p>
-
-              <div class="evidence">
-                ${evidence(state, PROFILE_EVIDENCE_MAP.style)}
-              </div>
-            </article>
-
-            <article class="recommendation-card">
-              <span class="pill">What affects confidence</span>
-
-              <h2>${modifier.name}</h2>
-
-              <p>${modifier.copy}</p>
-
-              <div class="evidence">
-                ${evidence(state, PROFILE_EVIDENCE_MAP.modifier)}
-              </div>
-            </article>
-          </div>
-
-          <div class="recommendation-actions">
-            <button id="systemBtn" class="btn btn-primary">
-              See your investing system
-            </button>
-          </div>
+          <p class="lead">
+            ${recommendation.need}
+          </p>
         </section>
+
+        <section class="profile-result-grid">
+          <article class="recommendation-card">
+            <span class="pill">
+              Where you are now
+            </span>
+
+            <h2>${recommendation.gap}</h2>
+
+            <p>
+              ${recommendation.diagnosis}
+            </p>
+          </article>
+
+          <article class="recommendation-card">
+            <span class="pill">
+              What your system needs
+            </span>
+
+            <h2>
+              A clearer way to make and review decisions
+            </h2>
+
+            <p>
+              ${recommendation.need}
+            </p>
+          </article>
+
+          <article class="recommendation-card">
+            <span class="pill">
+              What to make clearer
+            </span>
+
+            <h2>
+              Three priorities for your investing process
+            </h2>
+
+            <ul class="recommendation-list">
+              ${renderList(recommendation.gaps)}
+            </ul>
+          </article>
+        </section>
+
+        ${renderEvidence(state)}
+
+        <div class="recommendation-actions">
+          <button
+            class="btn btn-primary"
+            id="systemBtn"
+            type="button"
+          >
+            See your investing system
+          </button>
+        </div>
+
+        <div
+          class="step-label"
+          style="text-align: center; margin-top: 1rem"
+        >
+          Profile code: ${archetypeId}
+        </div>
       </main>
     </div>
   `;
 
-  bindHeader();
+  bindHeaderActions();
 
-  document.getElementById('systemBtn').onclick = () => {
-    navigate('recommendation/system');
-  };
+  document
+    .getElementById('systemBtn')
+    .onclick = () => {
+      navigate('recommendation/system');
+    };
 }
