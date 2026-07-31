@@ -1,326 +1,423 @@
-import {
-  loadState,
-  resetState
-} from '../../application/state.js';
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-import {
-  navigate
-} from '../../application/router.js';
+  <title>AaronBux - Your Investor Profile</title>
 
-import {
-  resolveAssessment
-} from '../../domain/assessment-engine.js';
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-import {
-  RECOMMENDATION_COPY,
-  EVIDENCE_LABELS
-} from '../../content/recommendation-copy.js';
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
 
+  <link rel="stylesheet" href="styles.css" />
 
-function getRecommendation(state) {
-  const result = state.result || resolveAssessment(state);
+  <style>
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
 
-  const archetypeId =
-    result?.archetypeId ||
-    result?.primaryArchetype ||
-    result?.archetype ||
-    'GD';
+    .profile-card {
+      padding: 22px;
+      border: 1px solid var(--border, #dfe7ec);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+    }
 
-  return {
-    archetypeId,
-    recommendation:
-      RECOMMENDATION_COPY[archetypeId] ||
-      RECOMMENDATION_COPY.GD
-  };
-}
+    .profile-card h2 {
+      margin: 8px 0;
+      font-size: 1.15rem;
+    }
 
+    .profile-card p {
+      margin: 0;
+      line-height: 1.55;
+      color: var(--muted, #52636e);
+    }
 
-function formatAnswer(answer) {
-  if (typeof answer === 'string') {
-    return answer;
-  }
+    .evidence {
+      margin-top: 13px;
+      padding-top: 13px;
+      border-top: 1px solid var(--border, #dfe7ec);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--muted, #52636e);
+    }
 
-  return answer?.label || answer?.id || '';
-}
+    .next-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
 
+    @media (max-width: 820px) {
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
 
-function renderEvidence(state) {
-  if (!state.answers) {
-    return '';
-  }
+      .next-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
 
-  const evidenceItems = Object.entries(EVIDENCE_LABELS)
-    .filter(([questionId]) => {
-      const answers = state.answers[questionId];
+<body>
+  <div class="app-shell">
 
-      return Array.isArray(answers)
-        ? answers.length > 0
-        : Boolean(answers);
-    })
-    .map(([questionId, label]) => {
-      const answers = Array.isArray(state.answers[questionId])
-        ? state.answers[questionId]
-        : [state.answers[questionId]];
+    <header class="topbar">
+      <div class="topbar-inner">
 
-      const answerText = answers
-        .map(formatAnswer)
-        .filter(Boolean)
-        .join(' · ');
+        <button
+          class="btn btn-secondary"
+          onclick="history.back()"
+        >
+          Back
+        </button>
 
-      return `
-        <div class="evidence-item">
-          <strong>${label}</strong>
-          <span>${answerText}</span>
+        <div style="text-align: center">
+          <div class="brand">AaronBux</div>
+          <div class="step-label">Your investor profile</div>
         </div>
-      `;
-    })
-    .join('');
 
-  if (!evidenceItems) {
-    return '';
-  }
+        <button
+          class="btn btn-secondary"
+          onclick="location.href='index.html'"
+        >
+          Restart
+        </button>
 
-  return `
-    <section class="card panel recommendation-section">
-      <span class="pill">Based on your answers</span>
-
-      <div class="evidence-list">
-        ${evidenceItems}
       </div>
-    </section>
-  `;
-}
 
+      <div class="progress-track">
+        <div
+          class="progress-fill"
+          style="width: 92%"
+        ></div>
+      </div>
+    </header>
 
-function renderList(items = []) {
-  return items
-    .map(
-      (item) => `
-        <li>${item}</li>
-      `
-    )
-    .join('');
-}
+    <main class="main">
 
+      <div
+        id="missingState"
+        class="card panel"
+        style="display: none"
+      >
+        <h2>We could not find your answers.</h2>
+      </div>
 
-function bindHeaderActions() {
-  const backButton = document.getElementById('backBtn');
-  const restartButton = document.getElementById('restartBtn');
+      <section
+        id="result"
+        style="display: none"
+      >
 
-  if (backButton) {
-    backButton.onclick = () => {
-      navigate('assessment/8');
-    };
-  }
+        <div class="card panel result-hero">
+          <span class="pill">Your investor profile</span>
 
-  if (restartButton) {
-    restartButton.onclick = () => {
-      resetState();
-      navigate('');
-    };
-  }
-}
+          <h1 id="profileHeadline"></h1>
 
+          <p
+            class="lead"
+            id="profileSummary"
+          ></p>
+        </div>
 
-export function renderInvestorProfile(root) {
-  document.title = 'AaronBux - Your Investor Profile';
+        <div class="result-grid">
 
-  const state = loadState();
+          <article class="profile-card">
+            <span class="pill">Where you are now</span>
 
-  if (
-    !state.answers ||
-    Object.keys(state.answers).length === 0
-  ) {
-    root.innerHTML = `
-      <div class="app-shell recommendation-page profile-page">
-        <header class="topbar">
-          <div class="topbar-inner">
-            <button
-              class="btn btn-secondary"
-              id="backBtn"
-              type="button"
-            >
-              Back
-            </button>
+            <h2 id="stageName"></h2>
 
-            <div style="text-align: center">
-              <div class="brand">AaronBux</div>
-              <div class="step-label">
-                Your investor profile
-              </div>
-            </div>
+            <p id="stageCopy"></p>
 
-            <button
-              class="btn btn-secondary"
-              id="restartBtn"
-              type="button"
-            >
-              Restart
-            </button>
-          </div>
-
-          <div class="progress-track">
             <div
-              class="progress-fill"
-              style="width: 92%"
+              class="evidence"
+              id="stageEvidence"
             ></div>
-          </div>
-        </header>
+          </article>
 
-        <main class="main">
-          <section class="card panel">
-            <h2>We could not find your assessment answers.</h2>
+          <article class="profile-card">
+            <span class="pill">How you prefer to invest</span>
 
-            <p class="question-note">
-              Return to the assessment to create your investor profile.
-            </p>
+            <h2 id="styleName"></h2>
 
-            <button
-              class="btn btn-primary"
-              id="startAssessmentBtn"
-              type="button"
-            >
-              Start assessment
-            </button>
-          </section>
-        </main>
-      </div>
-    `;
+            <p id="styleCopy"></p>
 
-    bindHeaderActions();
+            <div
+              class="evidence"
+              id="styleEvidence"
+            ></div>
+          </article>
 
-    document
-      .getElementById('startAssessmentBtn')
-      .onclick = () => {
-        navigate('assessment/1');
-      };
+          <article class="profile-card">
+            <span class="pill">What affects confidence</span>
 
-    return;
-  }
+            <h2 id="modifierName"></h2>
 
-  const {
-    archetypeId,
-    recommendation
-  } = getRecommendation(state);
+            <p id="modifierCopy"></p>
 
-  root.innerHTML = `
-    <div class="app-shell recommendation-page profile-page">
-      <header class="topbar">
-        <div class="topbar-inner">
-          <button
-            class="btn btn-secondary"
-            id="backBtn"
-            type="button"
-          >
-            Back
-          </button>
+            <div
+              class="evidence"
+              id="modifierEvidence"
+            ></div>
+          </article>
 
-          <div style="text-align: center">
-            <div class="brand">AaronBux</div>
-            <div class="step-label">
-              Your investor profile
-            </div>
-          </div>
-
-          <button
-            class="btn btn-secondary"
-            id="restartBtn"
-            type="button"
-          >
-            Restart
-          </button>
         </div>
 
-        <div class="progress-track">
-          <div
-            class="progress-fill"
-            style="width: 92%"
-          ></div>
-        </div>
-      </header>
-
-      <main class="main">
-        <section class="card panel result-hero">
-          <span class="pill">
-            Your investor profile
-          </span>
-
-          <h1>${recommendation.diagnosis}</h1>
-
-          <p class="lead">
-            ${recommendation.need}
-          </p>
-        </section>
-
-        <section class="profile-result-grid">
-          <article class="recommendation-card">
-            <span class="pill">
-              Where you are now
-            </span>
-
-            <h2>${recommendation.gap}</h2>
-
-            <p>
-              ${recommendation.diagnosis}
-            </p>
-          </article>
-
-          <article class="recommendation-card">
-            <span class="pill">
-              What your system needs
-            </span>
-
-            <h2>
-              A clearer way to make and review decisions
-            </h2>
-
-            <p>
-              ${recommendation.need}
-            </p>
-          </article>
-
-          <article class="recommendation-card">
-            <span class="pill">
-              What to make clearer
-            </span>
-
-            <h2>
-              Three priorities for your investing process
-            </h2>
-
-            <ul class="recommendation-list">
-              ${renderList(recommendation.gaps)}
-            </ul>
-          </article>
-        </section>
-
-        ${renderEvidence(state)}
-
-        <div class="recommendation-actions">
+        <div class="next-row">
           <button
-            class="btn btn-primary"
             id="systemBtn"
-            type="button"
+            class="btn btn-primary"
           >
             See your investing system
           </button>
         </div>
 
-        <div
-          class="step-label"
-          style="text-align: center; margin-top: 1rem"
-        >
-          Profile code: ${archetypeId}
-        </div>
-      </main>
-    </div>
-  `;
+      </section>
+    </main>
+  </div>
 
-  bindHeaderActions();
+  <script src="assessment-config.js"></script>
+  <script src="app.js"></script>
 
-  document
-    .getElementById('systemBtn')
-    .onclick = () => {
-      navigate('recommendation/system');
+  <script>
+    const STAGE_VIEW = {
+      foundation_builder: {
+        name: "Building your foundation",
+        summary:
+          "You need a clear starting structure and a small number of understandable decisions.",
+        headline:
+          "You are building confidence through a clearer starting point."
+      },
+
+      portfolio_organizer: {
+        name: "Organizing what you already have",
+        summary:
+          "You have begun investing, but the pieces do not yet feel connected by one clear reason.",
+        headline:
+          "You are ready to turn separate choices into one understandable approach."
+      },
+
+      system_builder: {
+        name: "Building a repeatable approach",
+        summary:
+          "You are moving beyond isolated choices and want clearer rules for monitoring and change.",
+        headline:
+          "You are ready for a repeatable way to oversee your investments."
+      },
+
+      intentional_optimizer: {
+        name: "Improving with intention",
+        summary:
+          "You want to compare alternatives and improve outcomes without changing direction unnecessarily.",
+        headline:
+          "You are ready to focus effort where it can make a meaningful difference."
+      },
+
+      adaptive_investor: {
+        name: "Adapting within boundaries",
+        summary:
+          "You are comfortable exploring selected ideas, provided they remain connected to a larger plan.",
+        headline:
+          "You are ready to explore without letting every opportunity redefine your approach."
+      }
     };
-}
+
+    const STYLE_VIEW = {
+      guided_autopilot: {
+        name: "Low-touch and guided",
+        copy:
+          "Routine decisions should stay simple and mostly automatic, with attention requested only when something meaningful changes."
+      },
+
+      steady_steward: {
+        name: "Calm and periodic",
+        copy:
+          "You are most likely to stay consistent with occasional reviews and limited, understandable changes."
+      },
+
+      systematic_improver: {
+        name: "Structured and evidence-led",
+        copy:
+          "You prefer repeatable criteria for comparing choices, deciding what matters, and knowing when research is sufficient."
+      },
+
+      bounded_explorer: {
+        name: "Stable with room to explore",
+        copy:
+          "You want a dependable base while reserving a limited amount of time and money for selected ideas."
+      },
+
+      active_navigator: {
+        name: "Involved within clear limits",
+        copy:
+          "You are willing to monitor selected opportunities more closely, but decisions need explicit triggers and boundaries."
+      }
+    };
+
+    const MODIFIER_VIEW = {
+      validation_seeker: {
+        name: "Evidence before confidence",
+        copy:
+          "You trust decisions more when you can see why they fit your situation and compare them with reasonable alternatives."
+      },
+
+      instruction_seeker: {
+        name: "Clear next steps",
+        copy:
+          "Uncertainty becomes easier when it is translated into a specific action: begin, review, wait, rebalance, or research further."
+      },
+
+      confidence_builder: {
+        name: "Reassurance through structure",
+        copy:
+          "Predetermined review points and limits can help normal market movement feel less like a reason to rethink everything."
+      },
+
+      opportunity_chaser: {
+        name: "Curiosity needs boundaries",
+        copy:
+          "New ideas are motivating, but they are easier to manage when their size, role, and review point are decided first."
+      },
+
+      optimization_mindset: {
+        name: "Improvement needs a stopping rule",
+        copy:
+          "You naturally look for better choices; a consistent standard can prevent improvement from becoming endless comparison."
+      }
+    };
+
+    const EVIDENCE_MAP = {
+      stage: [
+        "setup",
+        "evolution"
+      ],
+
+      style: [
+        "tradeoff",
+        "marketPsychology"
+      ],
+
+      modifier: [
+        "transition",
+        "decisionStyle"
+      ]
+    };
+
+    const QUESTION_LABELS = {
+      setup: "How you invest today",
+      transition: "What sends you searching",
+      decisionStyle: "How you make a choice",
+      marketPsychology: "What gets your attention",
+      evolution: "What feels incomplete",
+      tradeoff: "How involved you want to be"
+    };
+
+    function evidence(state, keys) {
+      return keys
+        .filter((key) => state.answers?.[key]?.length)
+        .map((key) => {
+          const answerLabels = state.answers[key]
+            .map((answer) => answer.label)
+            .join(" · ");
+
+          return `
+            <strong>${QUESTION_LABELS[key]}:</strong>
+            ${answerLabels}
+          `;
+        })
+        .join("<br>");
+    }
+
+    function render() {
+      const hasState = new URLSearchParams(
+        location.search
+      ).has("state");
+
+      if (!hasState) {
+        missingState.style.display = "block";
+        return;
+      }
+
+      const state = getState();
+
+      const assessmentResult =
+        state.result || resolveAssessment(state);
+
+      const stage =
+        STAGE_VIEW[assessmentResult.stageId] ||
+        STAGE_VIEW.portfolio_organizer;
+
+      const style =
+        STYLE_VIEW[assessmentResult.styleId] ||
+        STYLE_VIEW.steady_steward;
+
+      const modifier =
+        MODIFIER_VIEW[assessmentResult.modifierId] ||
+        MODIFIER_VIEW.confidence_builder;
+
+      result.style.display = "block";
+
+      profileHeadline.textContent =
+        stage.headline;
+
+      profileSummary.textContent =
+        "Your answers describe both where investing becomes difficult and the way you are most likely to stay confident and consistent.";
+
+      stageName.textContent =
+        stage.name;
+
+      stageCopy.textContent =
+        stage.summary;
+
+      styleName.textContent =
+        style.name;
+
+      styleCopy.textContent =
+        style.copy;
+
+      modifierName.textContent =
+        modifier.name;
+
+      modifierCopy.textContent =
+        modifier.copy;
+
+      stageEvidence.innerHTML =
+        evidence(
+          state,
+          EVIDENCE_MAP.stage
+        );
+
+      styleEvidence.innerHTML =
+        evidence(
+          state,
+          EVIDENCE_MAP.style
+        );
+
+      modifierEvidence.innerHTML =
+        evidence(
+          state,
+          EVIDENCE_MAP.modifier
+        );
+
+      systemBtn.onclick = () => {
+        goTo(
+          "system.html",
+          state
+        );
+      };
+    }
+
+    render();
+  </script>
+</body>
+</html>
