@@ -1,5 +1,6 @@
 import {
-  loadState,
+  getState,
+  getAssessmentResult,
   resetState
 } from '../../application/state.js';
 
@@ -8,400 +9,400 @@ import {
 } from '../../application/router.js';
 
 import {
-  resolveAssessment
-} from '../../domain/assessment-engine.js';
+  QUESTIONS
+} from '../../content/questions.js';
 
 
 const SYSTEMS = {
   ES: {
     name:
-      "A simple guided starting system",
+      'A simple guided starting system',
 
     summary:
-      "A small number of understandable choices, clear next steps, and very few reasons to intervene.",
+      'A small number of understandable choices, clear next steps, and very few reasons to intervene.',
 
     components: [
       [
-        "Starting foundation",
-        "One diversified way to begin or continue consistently."
+        'Starting foundation',
+        'One diversified way to begin or continue consistently.'
       ],
       [
-        "Ready money",
-        "Money needed soon remains accessible and separate."
+        'Ready money',
+        'Money needed soon remains accessible and separate.'
       ],
       [
-        "Later decisions",
-        "Additional choices wait until their purpose is understood."
+        'Later decisions',
+        'Additional choices wait until their purpose is understood.'
       ]
     ],
 
     effort: [
       [
-        "Routine decisions",
-        "Low effort / primary source of progress"
+        'Routine decisions',
+        'Low effort / primary source of progress'
       ],
       [
-        "New choices",
-        "Occasional effort / only when a real need appears"
+        'New choices',
+        'Occasional effort / only when a real need appears'
       ],
       [
-        "Complex strategies",
-        "Defer / low value until the foundation is clear"
+        'Complex strategies',
+        'Defer / low value until the foundation is clear'
       ]
     ],
 
     monitor: [
-      "Progress toward the goal",
-      "Whether contributions remain consistent",
-      "Whether the timeline or financial situation changed"
+      'Progress toward the goal',
+      'Whether contributions remain consistent',
+      'Whether the timeline or financial situation changed'
     ],
 
     cadence: [
-      "Brief check-ins a few times a year",
-      "Review after a meaningful life change",
-      "Ignore routine market noise between reviews"
+      'Brief check-ins a few times a year',
+      'Review after a meaningful life change',
+      'Ignore routine market noise between reviews'
     ],
 
     rules: [
-      "Reconsider when the goal, timeline, or ability to contribute changes",
-      "Do not add complexity just to feel more advanced",
-      "Prefer a clear reasonable step over an endlessly delayed perfect choice"
+      'Reconsider when the goal, timeline, or ability to contribute changes',
+      'Do not add complexity just to feel more advanced',
+      'Prefer a clear reasonable step over an endlessly delayed perfect choice'
     ]
   },
 
   GD: {
     name:
-      "A broad, low-maintenance system",
+      'A broad, low-maintenance system',
 
     summary:
-      "Broad diversification does most of the work, while monitoring stays focused on goals and major drift.",
+      'Broad diversification does most of the work, while monitoring stays focused on goals and major drift.',
 
     components: [
       [
-        "Long-term growth",
-        "Broad exposure intended to compound over time."
+        'Long-term growth',
+        'Broad exposure intended to compound over time.'
       ],
       [
-        "Stability",
-        "Assets aligned with nearer needs and comfort."
+        'Stability',
+        'Assets aligned with nearer needs and comfort.'
       ],
       [
-        "Optional additions",
-        "Only choices that solve a specific gap."
+        'Optional additions',
+        'Only choices that solve a specific gap.'
       ]
     ],
 
     effort: [
       [
-        "Broad foundation",
-        "Low effort / carries most expected progress"
+        'Broad foundation',
+        'Low effort / carries most expected progress'
       ],
       [
-        "Allocation review",
-        "Low to moderate effort / protects alignment"
+        'Allocation review',
+        'Low to moderate effort / protects alignment'
       ],
       [
-        "Product comparison",
-        "Low return on extra effort once cost and coverage are similar"
+        'Product comparison',
+        'Low return on extra effort once cost and coverage are similar'
       ]
     ],
 
     monitor: [
-      "Savings and contribution progress",
-      "Broad mix and concentration",
-      "Meaningful drift from the intended balance"
+      'Savings and contribution progress',
+      'Broad mix and concentration',
+      'Meaningful drift from the intended balance'
     ],
 
     cadence: [
-      "Automate routine contributions",
-      "Check the overall mix a few times a year",
-      "Rebalance on a schedule or meaningful threshold"
+      'Automate routine contributions',
+      'Check the overall mix a few times a year',
+      'Rebalance on a schedule or meaningful threshold'
     ],
 
     rules: [
-      "Add complexity only when it solves a real need",
-      "Do not change because another option recently performed better",
-      "Leave the system alone while its original purpose still holds"
+      'Add complexity only when it solves a real need',
+      'Do not change because another option recently performed better',
+      'Leave the system alone while its original purpose still holds'
     ]
   },
 
   BFO: {
     name:
-      "A balanced multi-purpose system",
+      'A balanced multi-purpose system',
 
     summary:
-      "Different needs are separated so growth, stability, and selected opportunities do not compete for the same money.",
+      'Different needs are separated so growth, stability, and selected opportunities do not compete for the same money.',
 
     components: [
       [
-        "Growth foundation",
-        "The main source of long-term compounding."
+        'Growth foundation',
+        'The main source of long-term compounding.'
       ],
       [
-        "Stability and access",
-        "Money requiring greater dependability or nearer access."
+        'Stability and access',
+        'Money requiring greater dependability or nearer access.'
       ],
       [
-        "Selected ideas",
-        "A limited area for choices requiring more thought."
+        'Selected ideas',
+        'A limited area for choices requiring more thought.'
       ]
     ],
 
     effort: [
       [
-        "Growth foundation",
-        "Low effort / primary long-term return role"
+        'Growth foundation',
+        'Low effort / primary long-term return role'
       ],
       [
-        "Stability layer",
-        "Periodic effort / reliability role"
+        'Stability layer',
+        'Periodic effort / reliability role'
       ],
       [
-        "Selected ideas",
-        "Higher effort / supplemental return or learning role"
+        'Selected ideas',
+        'Higher effort / supplemental return or learning role'
       ]
     ],
 
     monitor: [
-      "Changes in goals or timelines",
-      "Whether each part still serves its intended job",
-      "Whether selected ideas remain inside their limit"
+      'Changes in goals or timelines',
+      'Whether each part still serves its intended job',
+      'Whether selected ideas remain inside their limit'
     ],
 
     cadence: [
-      "Light review a few times a year",
-      "Full review annually or after a major life change",
-      "Selected ideas reviewed separately when their assumptions change"
+      'Light review a few times a year',
+      'Full review annually or after a major life change',
+      'Selected ideas reviewed separately when their assumptions change'
     ],
 
     rules: [
-      "Every addition needs a stated job",
-      "Do not let selected ideas redefine the whole system",
-      "Reconsider when the purpose, timeline, or original reason changes"
+      'Every addition needs a stated job',
+      'Do not let selected ideas redefine the whole system',
+      'Reconsider when the purpose, timeline, or original reason changes'
     ]
   },
 
   FT: {
     name:
-      "A systematic improvement system",
+      'A systematic improvement system',
 
     summary:
-      "A durable base remains simple while selected improvements must justify their cost, complexity, and effort.",
+      'A durable base remains simple while selected improvements must justify their cost, complexity, and effort.',
 
     components: [
       [
-        "Durable base",
-        "Broad holdings that do not need constant evaluation."
+        'Durable base',
+        'Broad holdings that do not need constant evaluation.'
       ],
       [
-        "Targeted improvements",
-        "Choices intended to solve a specific limitation."
+        'Targeted improvements',
+        'Choices intended to solve a specific limitation.'
       ],
       [
-        "Comparison standard",
-        "The same criteria used to add, retain, or remove an improvement."
+        'Comparison standard',
+        'The same criteria used to add, retain, or remove an improvement.'
       ]
     ],
 
     effort: [
       [
-        "Durable base",
-        "Low effort / carries most expected progress"
+        'Durable base',
+        'Low effort / carries most expected progress'
       ],
       [
-        "Targeted improvements",
-        "Moderate effort / must earn incremental value"
+        'Targeted improvements',
+        'Moderate effort / must earn incremental value'
       ],
       [
-        "Small product differences",
-        "Low expected return on additional research"
+        'Small product differences',
+        'Low expected return on additional research'
       ]
     ],
 
     monitor: [
-      "Cost, concentration, and overlap",
-      "Whether the improvement still solves its stated problem",
-      "Whether evidence still supports keeping it"
+      'Cost, concentration, and overlap',
+      'Whether the improvement still solves its stated problem',
+      'Whether evidence still supports keeping it'
     ],
 
     cadence: [
-      "Collect observations without acting immediately",
-      "Review meaningful choices on a schedule",
-      "Change only when predefined evidence supports it"
+      'Collect observations without acting immediately',
+      'Review meaningful choices on a schedule',
+      'Change only when predefined evidence supports it'
     ],
 
     rules: [
-      "Every improvement must name the problem it solves",
-      "Stop researching when the important tradeoffs are understood",
-      "Do not replace a sound approach due to recent performance alone"
+      'Every improvement must name the problem it solves',
+      'Stop researching when the important tradeoffs are understood',
+      'Do not replace a sound approach due to recent performance alone'
     ]
   },
 
   GA: {
     name:
-      "A foundation plus exploration system",
+      'A foundation plus exploration system',
 
     summary:
-      "Most progress comes from a stable foundation; a smaller area supports learning and higher-growth ideas within explicit limits.",
+      'Most progress comes from a stable foundation; a smaller area supports learning and higher-growth ideas within explicit limits.',
 
     components: [
       [
-        "Stable foundation",
-        "Most of the money and the main long-term return engine."
+        'Stable foundation',
+        'Most of the money and the main long-term return engine.'
       ],
       [
-        "Exploration area",
-        "A capped amount for ideas requiring more research."
+        'Exploration area',
+        'A capped amount for ideas requiring more research.'
       ],
       [
-        "Decision record",
-        "Why an idea was added, what matters, and when to review it."
+        'Decision record',
+        'Why an idea was added, what matters, and when to review it.'
       ]
     ],
 
     effort: [
       [
-        "Stable foundation",
-        "Low effort / primary expected return role"
+        'Stable foundation',
+        'Low effort / primary expected return role'
       ],
       [
-        "Exploration area",
-        "Higher effort / uncertain supplemental return"
+        'Exploration area',
+        'Higher effort / uncertain supplemental return'
       ],
       [
-        "Idea discovery",
-        "High time cost / value only after passing a clear filter"
+        'Idea discovery',
+        'High time cost / value only after passing a clear filter'
       ]
     ],
 
     monitor: [
-      "The reason and size of each exploratory choice",
-      "Whether the exploration limit is still respected",
-      "Whether a new idea duplicates an existing role"
+      'The reason and size of each exploratory choice',
+      'Whether the exploration limit is still respected',
+      'Whether a new idea duplicates an existing role'
     ],
 
     cadence: [
-      "Foundation reviewed occasionally",
-      "Exploratory choices reviewed monthly or when evidence changes",
-      "Whole system checked quarterly"
+      'Foundation reviewed occasionally',
+      'Exploratory choices reviewed monthly or when evidence changes',
+      'Whole system checked quarterly'
     ],
 
     rules: [
-      "Set the limit before choosing the idea",
-      "Write the reason and review point before acting",
-      "Do not add something merely because it is exciting or popular"
+      'Set the limit before choosing the idea',
+      'Write the reason and review point before acting',
+      'Do not add something merely because it is exciting or popular'
     ]
   },
 
   TO: {
     name:
-      "A long-term base with a limited active area",
+      'A long-term base with a limited active area',
 
     summary:
-      "Long-term progress remains protected while a small set of active decisions follows explicit triggers and exits.",
+      'Long-term progress remains protected while a small set of active decisions follows explicit triggers and exits.',
 
     components: [
       [
-        "Long-term base",
-        "Capital not governed by short-term views."
+        'Long-term base',
+        'Capital not governed by short-term views.'
       ],
       [
-        "Active decision area",
-        "A capped amount for selected market-aware choices."
+        'Active decision area',
+        'A capped amount for selected market-aware choices.'
       ],
       [
-        "Trigger and exit record",
-        "Evidence, size, downside, and exit written first."
+        'Trigger and exit record',
+        'Evidence, size, downside, and exit written first.'
       ]
     ],
 
     effort: [
       [
-        "Long-term base",
-        "Low effort / main long-term return role"
+        'Long-term base',
+        'Low effort / main long-term return role'
       ],
       [
-        "Active choices",
-        "High effort / uncertain incremental return"
+        'Active choices',
+        'High effort / uncertain incremental return'
       ],
       [
-        "Market monitoring",
-        "High time cost / useful only for selected written theses"
+        'Market monitoring',
+        'High time cost / useful only for selected written theses'
       ]
     ],
 
     monitor: [
-      "The thesis and downside for active choices",
-      "Whether expected evidence is developing",
-      "Whether the active area remains inside its limit"
+      'The thesis and downside for active choices',
+      'Whether expected evidence is developing',
+      'Whether the active area remains inside its limit'
     ],
 
     cadence: [
-      "Long-term base reviewed periodically",
-      "Active choices reviewed when predefined evidence changes",
-      "Whole system checked for activity creep"
+      'Long-term base reviewed periodically',
+      'Active choices reviewed when predefined evidence changes',
+      'Whole system checked for activity creep'
     ],
 
     rules: [
-      "No active choice without a thesis and downside limit",
-      "Do not act because the market feels urgent",
-      "Exit or revise when the original evidence no longer holds"
+      'No active choice without a thesis and downside limit',
+      'Do not act because the market feels urgent',
+      'Exit or revise when the original evidence no longer holds'
     ]
   },
 
   IP: {
     name:
-      "A dependable-needs and growth system",
+      'A dependable-needs and growth system',
 
     summary:
-      "Money needed for access or income is separated from money that can remain invested for long-term growth.",
+      'Money needed for access or income is separated from money that can remain invested for long-term growth.',
 
     components: [
       [
-        "Near-term access",
-        "Money that should remain dependable and available."
+        'Near-term access',
+        'Money that should remain dependable and available.'
       ],
       [
-        "Income or stability",
-        "Assets supporting planned use or lower uncertainty."
+        'Income or stability',
+        'Assets supporting planned use or lower uncertainty.'
       ],
       [
-        "Long-term growth",
-        "Money with enough time to tolerate more movement."
+        'Long-term growth',
+        'Money with enough time to tolerate more movement.'
       ]
     ],
 
     effort: [
       [
-        "Near-term planning",
-        "Moderate effort / protects planned use"
+        'Near-term planning',
+        'Moderate effort / protects planned use'
       ],
       [
-        "Income and stability",
-        "Periodic effort / reliability role"
+        'Income and stability',
+        'Periodic effort / reliability role'
       ],
       [
-        "Long-term growth",
-        "Low ongoing effort / compounding role"
+        'Long-term growth',
+        'Low ongoing effort / compounding role'
       ]
     ],
 
     monitor: [
-      "Upcoming withdrawals and cash flow",
-      "Income durability and purchasing power",
-      "Whether timelines or spending needs changed"
+      'Upcoming withdrawals and cash flow',
+      'Income durability and purchasing power',
+      'Whether timelines or spending needs changed'
     ],
 
     cadence: [
-      "Review around planned spending needs",
-      "Periodic review for long-term growth",
-      "Full annual check of access, income, inflation, and goals"
+      'Review around planned spending needs',
+      'Periodic review for long-term growth',
+      'Full annual check of access, income, inflation, and goals'
     ],
 
     rules: [
-      "Do not use long-term risk for money needed soon",
-      "Evaluate income durability, not yield alone",
-      "Adjust when needs or timelines change, not merely when prices move"
+      'Do not use long-term risk for money needed soon',
+      'Evaluate income durability, not yield alone',
+      'Adjust when needs or timelines change, not merely when prices move'
     ]
   }
 };
@@ -409,59 +410,172 @@ const SYSTEMS = {
 
 const QUESTION_LABELS = {
   setup:
-    "How you invest today",
+    'How you invest today',
 
   transition:
-    "What sends you searching",
+    'What sends you searching',
 
   decisionStyle:
-    "How you compare choices",
+    'How you compare choices',
 
   marketPsychology:
-    "What captures your attention",
+    'What captures your attention',
 
   evolution:
-    "What feels incomplete",
+    'What feels incomplete',
 
   tradeoff:
-    "How involved you want to be",
+    'How involved you want to be',
 
   age:
-    "Your time context",
+    'Your time context',
 
   goals:
-    "What you need investing to accomplish"
+    'What you need investing to accomplish'
 };
 
 
-function evidence(state, keys) {
-  return keys
-    .filter((key) => state.answers?.[key]?.length)
-    .map((key) => {
-      const answerLabels = state.answers[key]
-        .map((answer) => answer.label)
-        .join(" · ");
+const QUESTION_BY_KEY =
+  Object.fromEntries(
+    QUESTIONS.map(
+      (question) => [
+        question.screenKey,
+        question
+      ]
+    )
+  );
 
-      return `
-        <strong>${QUESTION_LABELS[key]}:</strong>
-        ${answerLabels}
-      `;
-    })
-    .join("<br>");
+
+function getAnswerIds(
+  state,
+  key
+) {
+  const answer =
+    state.answers?.[key];
+
+  if (Array.isArray(answer)) {
+    return answer.filter(
+      (value) =>
+        typeof value === 'string'
+    );
+  }
+
+  if (
+    typeof answer === 'string'
+  ) {
+    return [answer];
+  }
+
+  if (
+    answer &&
+    typeof answer === 'object'
+  ) {
+    if (
+      Array.isArray(
+        answer.selectedOptionIds
+      )
+    ) {
+      return answer
+        .selectedOptionIds
+        .filter(
+          (value) =>
+            typeof value === 'string'
+        );
+    }
+
+    if (
+      typeof answer.optionId ===
+      'string'
+    ) {
+      return [
+        answer.optionId
+      ];
+    }
+  }
+
+  return [];
 }
 
 
-export function renderInvestingSystem(root) {
-  document.title = "AaronBux - Your Investing System";
+function getAnswerLabels(
+  state,
+  key
+) {
+  const selectedIds =
+    getAnswerIds(
+      state,
+      key
+    );
 
-  const state = loadState();
+  const question =
+    QUESTION_BY_KEY[key];
+
+  if (!question) {
+    return [];
+  }
+
+  const labelById =
+    Object.fromEntries(
+      question.options.map(
+        (option) => [
+          option.id,
+          option.label
+        ]
+      )
+    );
+
+  return selectedIds
+    .map(
+      (optionId) =>
+        labelById[optionId]
+    )
+    .filter(Boolean);
+}
+
+
+function evidence(
+  state,
+  keys
+) {
+  return keys
+    .map((key) => ({
+      key,
+      labels:
+        getAnswerLabels(
+          state,
+          key
+        )
+    }))
+    .filter(
+      ({ labels }) =>
+        labels.length > 0
+    )
+    .map(
+      ({ key, labels }) => `
+        <strong>
+          ${QUESTION_LABELS[key]}:
+        </strong>
+
+        ${labels.join(' · ')}
+      `
+    )
+    .join('<br>');
+}
+
+
+export function renderInvestingSystem(
+  root
+) {
+  document.title =
+    'AaronBux - Your Investing System';
+
+  const state =
+    getState();
 
   root.innerHTML = `
     <div class="app-shell">
-
       <header class="topbar">
         <div class="topbar-inner">
-
           <button
             class="btn btn-secondary"
             id="backBtn"
@@ -471,8 +585,13 @@ export function renderInvestingSystem(root) {
           </button>
 
           <div style="text-align: center">
-            <div class="brand">AaronBux</div>
-            <div class="step-label">Your investing system</div>
+            <div class="brand">
+              AaronBux
+            </div>
+
+            <div class="step-label">
+              Your investing system
+            </div>
           </div>
 
           <button
@@ -482,7 +601,6 @@ export function renderInvestingSystem(root) {
           >
             Restart
           </button>
-
         </div>
 
         <div class="progress-track">
@@ -494,22 +612,36 @@ export function renderInvestingSystem(root) {
       </header>
 
       <main class="main">
-
         <div
           id="missingState"
           class="card panel"
           style="display: none"
         >
-          <h2>We could not find your answers.</h2>
+          <h2>
+            We could not find your answers.
+          </h2>
+
+          <p class="lead">
+            Complete the assessment before viewing your investing system.
+          </p>
+
+          <button
+            id="startAssessmentBtn"
+            class="btn btn-primary"
+            type="button"
+          >
+            Start assessment
+          </button>
         </div>
 
         <section
           id="result"
           style="display: none"
         >
-
           <div class="card panel result-hero">
-            <span class="pill">Your best-fit system</span>
+            <span class="pill">
+              Your best-fit system
+            </span>
 
             <h1 id="systemName"></h1>
 
@@ -543,7 +675,6 @@ export function renderInvestingSystem(root) {
             class="system-grid"
             style="margin-top: 22px"
           >
-
             <article class="system-card">
               <span class="pill">
                 Effort and return role
@@ -596,7 +727,6 @@ export function renderInvestingSystem(root) {
                 id="cadenceEvidence"
               ></div>
             </article>
-
           </div>
 
           <section
@@ -618,162 +748,283 @@ export function renderInvestingSystem(root) {
               id="rulesEvidence"
             ></div>
           </section>
-
         </section>
       </main>
     </div>
   `;
 
   const backButton =
-    root.querySelector("#backBtn");
+    root.querySelector(
+      '#backBtn'
+    );
 
   const restartButton =
-    root.querySelector("#restartBtn");
+    root.querySelector(
+      '#restartBtn'
+    );
 
   const missingState =
-    root.querySelector("#missingState");
+    root.querySelector(
+      '#missingState'
+    );
 
   const result =
-    root.querySelector("#result");
+    root.querySelector(
+      '#result'
+    );
 
-  backButton.addEventListener("click", () => {
-    navigate("recommendation/profile");
-  });
+  backButton.addEventListener(
+    'click',
+    () => {
+      navigate(
+        'recommendation/profile'
+      );
+    }
+  );
 
-  restartButton.addEventListener("click", () => {
-    resetState();
-    navigate("");
-  });
+  restartButton.addEventListener(
+    'click',
+    () => {
+      resetState();
+      navigate('');
+    }
+  );
 
   if (
     !state.answers ||
-    Object.keys(state.answers).length === 0
+    Object.keys(
+      state.answers
+    ).length === 0
   ) {
-    missingState.style.display = "block";
+    missingState.style.display =
+      'block';
+
+    root
+      .querySelector(
+        '#startAssessmentBtn'
+      )
+      .addEventListener(
+        'click',
+        () => {
+          navigate(
+            'assessment/1'
+          );
+        }
+      );
+
     return;
   }
 
   const assessmentResult =
-    state.result || resolveAssessment(state);
+    getAssessmentResult();
+
+  if (!assessmentResult) {
+    missingState.style.display =
+      'block';
+
+    root
+      .querySelector(
+        '#startAssessmentBtn'
+      )
+      .addEventListener(
+        'click',
+        () => {
+          navigate(
+            'assessment/1'
+          );
+        }
+      );
+
+    return;
+  }
 
   const system =
-    SYSTEMS[assessmentResult.archetypeId] ||
+    SYSTEMS[
+      assessmentResult.archetypeId
+    ] ||
     SYSTEMS.GD;
 
-  result.style.display = "block";
+  result.style.display =
+    'block';
 
-  root.querySelector("#systemName").textContent =
-    system.name;
+  root
+    .querySelector(
+      '#systemName'
+    )
+    .textContent =
+      system.name;
 
-  root.querySelector("#systemSummary").textContent =
-    system.summary;
+  root
+    .querySelector(
+      '#systemSummary'
+    )
+    .textContent =
+      system.summary;
 
-  root.querySelector("#components").innerHTML =
-    system.components
-      .map((component) => {
-        return `
-          <div class="component">
-            <strong>${component[0]}</strong>
-            <span>${component[1]}</span>
-          </div>
-        `;
-      })
-      .join("");
+  root
+    .querySelector(
+      '#components'
+    )
+    .innerHTML =
+      system.components
+        .map(
+          (component) => `
+            <div class="component">
+              <strong>
+                ${component[0]}
+              </strong>
 
-  root.querySelector("#effortMetrics").innerHTML =
-    system.effort
-      .map((item) => {
-        return `
-          <div class="metric">
-            <span>${item[0]}</span>
-            <strong>${item[1]}</strong>
-          </div>
-        `;
-      })
-      .join("");
+              <span>
+                ${component[1]}
+              </span>
+            </div>
+          `
+        )
+        .join('');
 
-  root.querySelector("#monitorHeading").textContent =
-    "Monitor only what can change the decision";
+  root
+    .querySelector(
+      '#effortMetrics'
+    )
+    .innerHTML =
+      system.effort
+        .map(
+          (item) => `
+            <div class="metric">
+              <span>
+                ${item[0]}
+              </span>
 
-  root.querySelector("#monitorItems").innerHTML =
-    system.monitor
-      .map((item) => {
-        return `
-          <div class="summary-item">
-            ${item}
-          </div>
-        `;
-      })
-      .join("");
+              <strong>
+                ${item[1]}
+              </strong>
+            </div>
+          `
+        )
+        .join('');
 
-  root.querySelector("#cadenceHeading").textContent =
-    "Interact at a pace you can sustain";
+  root
+    .querySelector(
+      '#monitorHeading'
+    )
+    .textContent =
+      'Monitor only what can change the decision';
 
-  root.querySelector("#cadenceItems").innerHTML =
-    system.cadence
-      .map((item) => {
-        return `
-          <div class="summary-item">
-            ${item}
-          </div>
-        `;
-      })
-      .join("");
+  root
+    .querySelector(
+      '#monitorItems'
+    )
+    .innerHTML =
+      system.monitor
+        .map(
+          (item) => `
+            <div class="summary-item">
+              ${item}
+            </div>
+          `
+        )
+        .join('');
 
-  root.querySelector("#changeRules").innerHTML =
-    system.rules
-      .map((item) => {
-        return `
-          <div class="summary-item">
-            ${item}
-          </div>
-        `;
-      })
-      .join("");
+  root
+    .querySelector(
+      '#cadenceHeading'
+    )
+    .textContent =
+      'Interact at a pace you can sustain';
 
-  root.querySelector("#structureEvidence").innerHTML =
-    evidence(
-      state,
-      [
-        "setup",
-        "goals"
-      ]
-    );
+  root
+    .querySelector(
+      '#cadenceItems'
+    )
+    .innerHTML =
+      system.cadence
+        .map(
+          (item) => `
+            <div class="summary-item">
+              ${item}
+            </div>
+          `
+        )
+        .join('');
 
-  root.querySelector("#effortEvidence").innerHTML =
-    evidence(
-      state,
-      [
-        "decisionStyle",
-        "evolution"
-      ]
-    );
+  root
+    .querySelector(
+      '#changeRules'
+    )
+    .innerHTML =
+      system.rules
+        .map(
+          (item) => `
+            <div class="summary-item">
+              ${item}
+            </div>
+          `
+        )
+        .join('');
 
-  root.querySelector("#monitorEvidence").innerHTML =
-    evidence(
-      state,
-      [
-        "marketPsychology",
-        "transition"
-      ]
-    );
+  root
+    .querySelector(
+      '#structureEvidence'
+    )
+    .innerHTML =
+      evidence(
+        state,
+        [
+          'setup',
+          'goals'
+        ]
+      );
 
-  root.querySelector("#cadenceEvidence").innerHTML =
-    evidence(
-      state,
-      [
-        "tradeoff",
-        "marketPsychology"
-      ]
-    );
+  root
+    .querySelector(
+      '#effortEvidence'
+    )
+    .innerHTML =
+      evidence(
+        state,
+        [
+          'decisionStyle',
+          'evolution'
+        ]
+      );
 
-  root.querySelector("#rulesEvidence").innerHTML =
-    evidence(
-      state,
-      [
-        "transition",
-        "goals",
-        "age"
-      ]
-    );
+  root
+    .querySelector(
+      '#monitorEvidence'
+    )
+    .innerHTML =
+      evidence(
+        state,
+        [
+          'marketPsychology',
+          'transition'
+        ]
+      );
+
+  root
+    .querySelector(
+      '#cadenceEvidence'
+    )
+    .innerHTML =
+      evidence(
+        state,
+        [
+          'tradeoff',
+          'marketPsychology'
+        ]
+      );
+
+  root
+    .querySelector(
+      '#rulesEvidence'
+    )
+    .innerHTML =
+      evidence(
+        state,
+        [
+          'transition',
+          'goals',
+          'age'
+        ]
+      );
 }
