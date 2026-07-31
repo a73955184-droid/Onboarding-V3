@@ -13,6 +13,12 @@ import {
 } from '../../content/questions.js';
 
 
+/**
+ * Existing archetype recommendation copy.
+ *
+ * This remains the fallback when portfolio composition is unavailable
+ * and continues to provide the archetype-specific operating rules.
+ */
 const SYSTEMS = {
   ES: {
     name:
@@ -446,6 +452,61 @@ const QUESTION_BY_KEY =
   );
 
 
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+
+function formatIdentifier(value = '') {
+  return String(value)
+    .replaceAll('-', ' ')
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (letter) =>
+      letter.toUpperCase()
+    );
+}
+
+
+function formatPercentage(weight) {
+  const numericWeight =
+    Number(weight);
+
+  if (
+    !Number.isFinite(
+      numericWeight
+    )
+  ) {
+    return '0%';
+  }
+
+  return `${Math.round(
+    numericWeight * 100
+  )}%`;
+}
+
+
+function formatVariant(variantId) {
+  switch (variantId) {
+    case 'essential':
+      return 'Clear and easy to maintain';
+
+    case 'intentional':
+      return 'Structured and deliberate';
+
+    case 'engaged':
+      return 'Stable with room to engage';
+
+    default:
+      return '';
+  }
+}
+
+
 function getAnswerIds(
   state,
   key
@@ -454,21 +515,43 @@ function getAnswerIds(
     state.answers?.[key];
 
   if (Array.isArray(answer)) {
-    return answer.filter(
-      (value) =>
-        typeof value === 'string'
-    );
+    return answer
+      .map((item) => {
+        if (
+          typeof item ===
+          'string'
+        ) {
+          return item;
+        }
+
+        if (
+          item &&
+          typeof item ===
+          'object'
+        ) {
+          return (
+            item.id ??
+            item.optionId ??
+            null
+          );
+        }
+
+        return null;
+      })
+      .filter(Boolean);
   }
 
   if (
-    typeof answer === 'string'
+    typeof answer ===
+    'string'
   ) {
     return [answer];
   }
 
   if (
     answer &&
-    typeof answer === 'object'
+    typeof answer ===
+    'object'
   ) {
     if (
       Array.isArray(
@@ -479,7 +562,8 @@ function getAnswerIds(
         .selectedOptionIds
         .filter(
           (value) =>
-            typeof value === 'string'
+            typeof value ===
+            'string'
         );
     }
 
@@ -540,6 +624,7 @@ function evidence(
   return keys
     .map((key) => ({
       key,
+
       labels:
         getAnswerLabels(
           state,
@@ -553,13 +638,421 @@ function evidence(
     .map(
       ({ key, labels }) => `
         <strong>
-          ${QUESTION_LABELS[key]}:
+          ${escapeHtml(
+            QUESTION_LABELS[key]
+          )}:
         </strong>
 
-        ${labels.join(' · ')}
+        ${labels
+          .map(escapeHtml)
+          .join(' · ')}
       `
     )
     .join('<br>');
+}
+
+
+function renderStaticComponents(
+  system
+) {
+  return system.components
+    .map(
+      (component) => `
+        <div class="component">
+          <strong>
+            ${escapeHtml(
+              component[0]
+            )}
+          </strong>
+
+          <span>
+            ${escapeHtml(
+              component[1]
+            )}
+          </span>
+        </div>
+      `
+    )
+    .join('');
+}
+
+
+function renderPortfolioSleeves(
+  portfolioSystem
+) {
+  return portfolioSystem.sleeves
+    .map((sleeve) => {
+      const assetCategories =
+        Array.isArray(
+          sleeve.assetCategories
+        )
+          ? sleeve.assetCategories
+          : [];
+
+      const assetLabels =
+        assetCategories
+          .map((category) => {
+            if (
+              typeof category ===
+              'string'
+            ) {
+              return formatIdentifier(
+                category
+              );
+            }
+
+            return (
+              category.label ??
+              category.displayName ??
+              formatIdentifier(
+                category.id
+              )
+            );
+          })
+          .filter(Boolean);
+
+      return `
+        <article
+          class="component sleeve-component"
+          data-sleeve-id="${escapeHtml(
+            sleeve.id
+          )}"
+        >
+          <div
+            class="sleeve-component-header"
+          >
+            <strong>
+              ${escapeHtml(
+                sleeve.label
+              )}
+            </strong>
+
+            <span class="pill">
+              ${formatPercentage(
+                sleeve.weight
+              )}
+            </span>
+          </div>
+
+          <span>
+            ${escapeHtml(
+              sleeve.description ||
+              formatIdentifier(
+                sleeve.returnFunction
+              )
+            )}
+          </span>
+
+          <div class="sleeve-meta">
+            <span>
+              ${escapeHtml(
+                formatIdentifier(
+                  sleeve.returnFunction
+                )
+              )}
+            </span>
+
+            <span>
+              ${escapeHtml(
+                formatIdentifier(
+                  sleeve.effort
+                )
+              )} effort
+            </span>
+          </div>
+
+          ${
+            assetLabels.length > 0
+              ? `
+                <div class="sleeve-assets">
+                  <strong>
+                    Default asset categories
+                  </strong>
+
+                  <span>
+                    ${assetLabels
+                      .map(escapeHtml)
+                      .join(' · ')}
+                  </span>
+                </div>
+              `
+              : ''
+          }
+
+          ${
+            sleeve.startsUnallocated
+              ? `
+                <div class="sleeve-status">
+                  Begins unallocated
+                </div>
+              `
+              : ''
+          }
+        </article>
+      `;
+    })
+    .join('');
+}
+
+
+function renderStaticEffort(
+  system
+) {
+  return system.effort
+    .map(
+      (item) => `
+        <div class="metric">
+          <span>
+            ${escapeHtml(
+              item[0]
+            )}
+          </span>
+
+          <strong>
+            ${escapeHtml(
+              item[1]
+            )}
+          </strong>
+        </div>
+      `
+    )
+    .join('');
+}
+
+
+function renderPortfolioEffort(
+  portfolioSystem
+) {
+  return portfolioSystem.sleeves
+    .map(
+      (sleeve) => `
+        <div class="metric">
+          <span>
+            ${escapeHtml(
+              sleeve.label
+            )}
+          </span>
+
+          <strong>
+            ${escapeHtml(
+              formatIdentifier(
+                sleeve.effort
+              )
+            )} effort ·
+            ${formatPercentage(
+              sleeve.weight
+            )} of portfolio
+          </strong>
+        </div>
+      `
+    )
+    .join('');
+}
+
+
+function getPortfolioMarketTrends(
+  portfolioSystem
+) {
+  const trends = [];
+
+  portfolioSystem.sleeves
+    .forEach((sleeve) => {
+      const sleeveTrends =
+        Array.isArray(
+          sleeve.marketTrends
+        )
+          ? sleeve.marketTrends
+          : [];
+
+      sleeveTrends.forEach(
+        (trend) => {
+          const trendId =
+            typeof trend ===
+            'string'
+              ? trend
+              : trend.id;
+
+          const existing =
+            trends.find(
+              (item) =>
+                item.id === trendId
+            );
+
+          if (existing) {
+            if (
+              !existing.sleeves.includes(
+                sleeve.label
+              )
+            ) {
+              existing.sleeves.push(
+                sleeve.label
+              );
+            }
+
+            return;
+          }
+
+          trends.push({
+            id:
+              trendId,
+
+            label:
+              typeof trend ===
+              'string'
+                ? formatIdentifier(
+                    trend
+                  )
+                : (
+                    trend.label ??
+                    formatIdentifier(
+                      trend.id
+                    )
+                  ),
+
+            relevance:
+              typeof trend ===
+              'object'
+                ? (
+                    trend.defaultRelevance ??
+                    'informational'
+                  )
+                : 'informational',
+
+            reviewQuestion:
+              typeof trend ===
+              'object'
+                ? (
+                    trend.reviewQuestion ??
+                    null
+                  )
+                : null,
+
+            sleeves: [
+              sleeve.label
+            ]
+          });
+        }
+      );
+    });
+
+  return trends;
+}
+
+
+function renderPortfolioMonitoring(
+  portfolioSystem
+) {
+  const trends =
+    getPortfolioMarketTrends(
+      portfolioSystem
+    );
+
+  if (
+    trends.length === 0
+  ) {
+    return `
+      <div class="summary-item">
+        Monitor whether each sleeve still performs its intended portfolio role.
+      </div>
+    `;
+  }
+
+  return trends
+    .slice(0, 6)
+    .map(
+      (trend) => `
+        <div class="summary-item">
+          <strong>
+            ${escapeHtml(
+              trend.label
+            )}
+          </strong>
+
+          <span>
+            Applies to
+            ${escapeHtml(
+              trend.sleeves.join(
+                ', '
+              )
+            )}
+          </span>
+
+          ${
+            trend.reviewQuestion
+              ? `
+                <small>
+                  ${escapeHtml(
+                    trend.reviewQuestion
+                  )}
+                </small>
+              `
+              : ''
+          }
+        </div>
+      `
+    )
+    .join('');
+}
+
+
+function renderPortfolioCadence(
+  portfolioSystem
+) {
+  const cadenceMap =
+    new Map();
+
+  portfolioSystem.sleeves
+    .forEach((sleeve) => {
+      const cadence =
+        sleeve.reviewCadence ||
+        'as-needed';
+
+      if (
+        !cadenceMap.has(
+          cadence
+        )
+      ) {
+        cadenceMap.set(
+          cadence,
+          []
+        );
+      }
+
+      cadenceMap
+        .get(cadence)
+        .push(
+          sleeve.label
+        );
+    });
+
+  return [
+    ...cadenceMap.entries()
+  ]
+    .map(
+      ([
+        cadence,
+        sleeveLabels
+      ]) => `
+        <div class="summary-item">
+          <strong>
+            ${escapeHtml(
+              formatIdentifier(
+                cadence
+              )
+            )}
+          </strong>
+
+          <span>
+            ${escapeHtml(
+              sleeveLabels.join(
+                ' · '
+              )
+            )}
+          </span>
+        </div>
+      `
+    )
+    .join('');
 }
 
 
@@ -649,6 +1142,12 @@ export function renderInvestingSystem(
               class="lead"
               id="systemSummary"
             ></p>
+
+            <div
+              id="variantSummary"
+              class="evidence"
+              style="display: none"
+            ></div>
           </div>
 
           <section
@@ -790,20 +1289,17 @@ export function renderInvestingSystem(
     }
   );
 
-  if (
-    !state.answers ||
-    Object.keys(
-      state.answers
-    ).length === 0
-  ) {
-    missingState.style.display =
-      'block';
+  const showMissingState =
+    () => {
+      missingState.style.display =
+        'block';
 
-    root
-      .querySelector(
-        '#startAssessmentBtn'
-      )
-      .addEventListener(
+      const startButton =
+        root.querySelector(
+          '#startAssessmentBtn'
+        );
+
+      startButton.addEventListener(
         'click',
         () => {
           navigate(
@@ -811,7 +1307,15 @@ export function renderInvestingSystem(
           );
         }
       );
+    };
 
+  if (
+    !state.answers ||
+    Object.keys(
+      state.answers
+    ).length === 0
+  ) {
+    showMissingState();
     return;
   }
 
@@ -819,89 +1323,99 @@ export function renderInvestingSystem(
     getAssessmentResult();
 
   if (!assessmentResult) {
-    missingState.style.display =
-      'block';
-
-    root
-      .querySelector(
-        '#startAssessmentBtn'
-      )
-      .addEventListener(
-        'click',
-        () => {
-          navigate(
-            'assessment/1'
-          );
-        }
-      );
-
+    showMissingState();
     return;
   }
 
-  const system =
+  const staticSystem =
     SYSTEMS[
       assessmentResult.archetypeId
     ] ||
     SYSTEMS.GD;
 
+  const portfolioSystem =
+    assessmentResult.portfolioSystem;
+
   result.style.display =
     'block';
 
+  /*
+   * Use the composed portfolio system when available.
+   * Preserve the existing static archetype copy as fallback.
+   */
   root
     .querySelector(
       '#systemName'
     )
     .textContent =
-      system.name;
+      portfolioSystem?.system
+        ?.systemName ||
+      staticSystem.name;
 
   root
     .querySelector(
       '#systemSummary'
     )
     .textContent =
-      system.summary;
+      portfolioSystem?.system
+        ?.philosophy ||
+      staticSystem.summary;
+
+  const variantSummary =
+    root.querySelector(
+      '#variantSummary'
+    );
+
+  if (portfolioSystem) {
+    variantSummary.style.display =
+      'block';
+
+    variantSummary.innerHTML = `
+      <strong>
+        Your version:
+      </strong>
+
+      ${escapeHtml(
+        formatVariant(
+          portfolioSystem
+            .profileVariantId
+        )
+      )}
+
+      ·
+
+      ${portfolioSystem
+        .totals
+        .sleeveCount}
+      portfolio parts
+    `;
+  }
 
   root
     .querySelector(
       '#components'
     )
     .innerHTML =
-      system.components
-        .map(
-          (component) => `
-            <div class="component">
-              <strong>
-                ${component[0]}
-              </strong>
-
-              <span>
-                ${component[1]}
-              </span>
-            </div>
-          `
-        )
-        .join('');
+      portfolioSystem
+        ? renderPortfolioSleeves(
+            portfolioSystem
+          )
+        : renderStaticComponents(
+            staticSystem
+          );
 
   root
     .querySelector(
       '#effortMetrics'
     )
     .innerHTML =
-      system.effort
-        .map(
-          (item) => `
-            <div class="metric">
-              <span>
-                ${item[0]}
-              </span>
-
-              <strong>
-                ${item[1]}
-              </strong>
-            </div>
-          `
-        )
-        .join('');
+      portfolioSystem
+        ? renderPortfolioEffort(
+            portfolioSystem
+          )
+        : renderStaticEffort(
+            staticSystem
+          );
 
   root
     .querySelector(
@@ -915,15 +1429,21 @@ export function renderInvestingSystem(
       '#monitorItems'
     )
     .innerHTML =
-      system.monitor
-        .map(
-          (item) => `
-            <div class="summary-item">
-              ${item}
-            </div>
-          `
-        )
-        .join('');
+      portfolioSystem
+        ? renderPortfolioMonitoring(
+            portfolioSystem
+          )
+        : staticSystem.monitor
+            .map(
+              (item) => `
+                <div class="summary-item">
+                  ${escapeHtml(
+                    item
+                  )}
+                </div>
+              `
+            )
+            .join('');
 
   root
     .querySelector(
@@ -937,26 +1457,39 @@ export function renderInvestingSystem(
       '#cadenceItems'
     )
     .innerHTML =
-      system.cadence
-        .map(
-          (item) => `
-            <div class="summary-item">
-              ${item}
-            </div>
-          `
-        )
-        .join('');
+      portfolioSystem
+        ? renderPortfolioCadence(
+            portfolioSystem
+          )
+        : staticSystem.cadence
+            .map(
+              (item) => `
+                <div class="summary-item">
+                  ${escapeHtml(
+                    item
+                  )}
+                </div>
+              `
+            )
+            .join('');
 
+  /*
+   * Preserve the existing archetype-level change rules.
+   * These explain the system philosophy and are not replaced by
+   * constituent sleeve data.
+   */
   root
     .querySelector(
       '#changeRules'
     )
     .innerHTML =
-      system.rules
+      staticSystem.rules
         .map(
           (item) => `
             <div class="summary-item">
-              ${item}
+              ${escapeHtml(
+                item
+              )}
             </div>
           `
         )
