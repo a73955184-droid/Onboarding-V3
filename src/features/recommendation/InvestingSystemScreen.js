@@ -1,26 +1,51 @@
-import { loadState, resetState } from '../../application/state.js';
-import { navigate } from '../../application/router.js';
-import { resolveAssessment } from '../../domain/assessment-engine.js';
 import {
-  INVESTING_SYSTEMS,
-  SYSTEM_QUESTION_LABELS
-} from '../../content/investing-system-copy.js';
+  loadState,
+  resetState
+} from '../../application/state.js';
 
-function evidence(state, keys) {
-  return keys
-    .filter((key) => state.answers?.[key]?.length)
-    .map(
-      (key) =>
-        `<strong>${SYSTEM_QUESTION_LABELS[key]}:</strong> ${
-          state.answers[key]
-            .map((answer) => answer.label)
-            .join(' · ')
-        }`
-    )
-    .join('<br>');
+import {
+  navigate
+} from '../../application/router.js';
+
+import {
+  resolveAssessment
+} from '../../domain/assessment-engine.js';
+
+import {
+  RECOMMENDATION_COPY
+} from '../../content/recommendation-copy.js';
+
+
+function getRecommendation(state) {
+  const result = state.result || resolveAssessment(state);
+
+  const archetypeId =
+    result?.archetypeId ||
+    result?.primaryArchetype ||
+    result?.archetype ||
+    'GD';
+
+  return {
+    archetypeId,
+    recommendation:
+      RECOMMENDATION_COPY[archetypeId] ||
+      RECOMMENDATION_COPY.GD
+  };
 }
 
-function summaryItems(items) {
+
+function renderList(items = []) {
+  return items
+    .map(
+      (item) => `
+        <li>${item}</li>
+      `
+    )
+    .join('');
+}
+
+
+function renderSummaryItems(items = []) {
   return items
     .map(
       (item) => `
@@ -32,202 +57,283 @@ function summaryItems(items) {
     .join('');
 }
 
-function bindHeader() {
-  document.getElementById('backBtn').onclick = () => {
-    navigate('recommendation/profile');
-  };
 
-  document.getElementById('restartBtn').onclick = () => {
-    resetState();
-    navigate('');
-  };
+function renderSystemParts(items = []) {
+  return items
+    .map((item) => {
+      const separatorIndex = item.indexOf(':');
+
+      if (separatorIndex === -1) {
+        return `
+          <div class="component">
+            <span>${item}</span>
+          </div>
+        `;
+      }
+
+      const title = item.slice(0, separatorIndex);
+      const description = item.slice(separatorIndex + 1).trim();
+
+      return `
+        <div class="component">
+          <strong>${title}</strong>
+          <span>${description}</span>
+        </div>
+      `;
+    })
+    .join('');
 }
+
+
+function bindHeaderActions() {
+  const backButton = document.getElementById('backBtn');
+  const restartButton = document.getElementById('restartBtn');
+
+  if (backButton) {
+    backButton.onclick = () => {
+      navigate('recommendation/profile');
+    };
+  }
+
+  if (restartButton) {
+    restartButton.onclick = () => {
+      resetState();
+      navigate('');
+    };
+  }
+}
+
 
 export function renderInvestingSystem(root) {
   document.title = 'AaronBux - Your Investing System';
 
   const state = loadState();
 
-  if (!state.answers || !Object.keys(state.answers).length) {
+  if (
+    !state.answers ||
+    Object.keys(state.answers).length === 0
+  ) {
     root.innerHTML = `
-      <div class="app-shell recommendation-page">
+      <div class="app-shell recommendation-page system-page">
         <header class="topbar">
           <div class="topbar-inner">
-            <button class="btn btn-secondary" id="backBtn">
+            <button
+              class="btn btn-secondary"
+              id="backBtn"
+              type="button"
+            >
               Profile
             </button>
 
             <div style="text-align: center">
               <div class="brand">AaronBux</div>
-              <div class="step-label">Your investing system</div>
+              <div class="step-label">
+                Your investing system
+              </div>
             </div>
 
-            <button class="btn btn-secondary" id="restartBtn">
+            <button
+              class="btn btn-secondary"
+              id="restartBtn"
+              type="button"
+            >
               Restart
             </button>
           </div>
 
           <div class="progress-track">
-            <div class="progress-fill" style="width: 100%"></div>
+            <div
+              class="progress-fill"
+              style="width: 100%"
+            ></div>
           </div>
         </header>
 
         <main class="main">
-          <div class="card panel">
-            <h2>We could not find your answers.</h2>
-          </div>
+          <section class="card panel">
+            <h2>We could not find your investor profile.</h2>
+
+            <p class="question-note">
+              Complete the assessment before viewing your investing system.
+            </p>
+
+            <button
+              class="btn btn-primary"
+              id="startAssessmentBtn"
+              type="button"
+            >
+              Start assessment
+            </button>
+          </section>
         </main>
       </div>
     `;
 
-    bindHeader();
+    bindHeaderActions();
+
+    document
+      .getElementById('startAssessmentBtn')
+      .onclick = () => {
+        navigate('assessment/1');
+      };
+
     return;
   }
 
-  const result = state.result || resolveAssessment(state);
-
-  const system =
-    INVESTING_SYSTEMS[result.archetypeId] ||
-    INVESTING_SYSTEMS.GD;
+  const {
+    recommendation
+  } = getRecommendation(state);
 
   root.innerHTML = `
     <div class="app-shell recommendation-page system-page">
       <header class="topbar">
         <div class="topbar-inner">
-          <button class="btn btn-secondary" id="backBtn">
+          <button
+            class="btn btn-secondary"
+            id="backBtn"
+            type="button"
+          >
             Profile
           </button>
 
           <div style="text-align: center">
             <div class="brand">AaronBux</div>
-            <div class="step-label">Your investing system</div>
+            <div class="step-label">
+              Your investing system
+            </div>
           </div>
 
-          <button class="btn btn-secondary" id="restartBtn">
+          <button
+            class="btn btn-secondary"
+            id="restartBtn"
+            type="button"
+          >
             Restart
           </button>
         </div>
 
         <div class="progress-track">
-          <div class="progress-fill" style="width: 100%"></div>
+          <div
+            class="progress-fill"
+            style="width: 100%"
+          ></div>
         </div>
       </header>
 
       <main class="main">
-        <section>
-          <div class="card panel result-hero">
-            <span class="pill">Your best-fit system</span>
+        <section class="card panel result-hero">
+          <span class="pill">
+            Your investing system
+          </span>
 
-            <h1>${system.name}</h1>
+          <h1>${recommendation.gap}</h1>
 
-            <p class="lead">${system.summary}</p>
+          <p class="lead">
+            ${recommendation.need}
+          </p>
+        </section>
+
+        <section class="card panel recommendation-section">
+          <span class="pill">
+            Structure
+          </span>
+
+          <h2>${recommendation.structure}</h2>
+
+          <div class="component-list">
+            ${renderSystemParts(recommendation.parts)}
           </div>
+        </section>
 
-          <section class="card panel recommendation-section">
-            <span class="pill">System structure</span>
-
-            <h2>Give each part of the portfolio one clear job</h2>
-
-            <div class="component-list">
-              ${system.components
-                .map(
-                  (component) => `
-                    <div class="component">
-                      <strong>${component[0]}</strong>
-                      <span>${component[1]}</span>
-                    </div>
-                  `
-                )
-                .join('')}
-            </div>
-
-            <div class="evidence">
-              ${evidence(state, ['setup', 'goals'])}
-            </div>
-          </section>
-
-          <div class="system-result-grid">
-            <article class="recommendation-card">
-              <span class="pill">
-                Effort versus expected return
-              </span>
-
-              <h2>Spend attention where it can change the outcome</h2>
-
-              <div>
-                ${system.effort
-                  .map(
-                    (metric) => `
-                      <div class="metric">
-                        <span>${metric[0]}</span>
-                        <strong>${metric[1]}</strong>
-                      </div>
-                    `
-                  )
-                  .join('')}
-              </div>
-
-              <div class="evidence">
-                ${evidence(state, ['decisionStyle', 'evolution'])}
-              </div>
-            </article>
-
-            <article class="recommendation-card">
-              <span class="pill">What to monitor</span>
-
-              <h2>Monitor only what can change the decision</h2>
-
-              <div class="summary-list">
-                ${summaryItems(system.monitor)}
-              </div>
-
-              <div class="evidence">
-                ${evidence(state, [
-                  'marketPsychology',
-                  'transition'
-                ])}
-              </div>
-            </article>
-
-            <article class="recommendation-card">
-              <span class="pill">Review rhythm</span>
-
-              <h2>Interact at a pace you can sustain</h2>
-
-              <div class="summary-list">
-                ${summaryItems(system.cadence)}
-              </div>
-
-              <div class="evidence">
-                ${evidence(state, [
-                  'tradeoff',
-                  'marketPsychology'
-                ])}
-              </div>
-            </article>
-          </div>
-
-          <section class="card panel recommendation-section">
+        <section class="system-result-grid">
+          <article class="recommendation-card">
             <span class="pill">
-              When to reconsider something
+              Where to focus effort
             </span>
 
-            <div class="summary-list">
-              ${summaryItems(system.rules)}
-            </div>
+            <h2>
+              Spend attention where it can change the outcome
+            </h2>
 
-            <div class="evidence">
-              ${evidence(state, [
-                'transition',
-                'goals',
-                'age'
-              ])}
+            <div class="summary-list">
+              ${renderSummaryItems(recommendation.attention)}
             </div>
-          </section>
+          </article>
+
+          <article class="recommendation-card">
+            <span class="pill">
+              Review rhythm
+            </span>
+
+            <h2>${recommendation.rhythm}</h2>
+
+            <div class="summary-list">
+              ${renderSummaryItems(
+                recommendation.rhythmItems
+              )}
+            </div>
+          </article>
+
+          <article class="recommendation-card">
+            <span class="pill">
+              Change rules
+            </span>
+
+            <h2>
+              Reconsider something only when the reason changes
+            </h2>
+
+            <ul class="recommendation-list">
+              ${renderList(recommendation.rules)}
+            </ul>
+          </article>
         </section>
+
+        <section class="card panel recommendation-section">
+          <span class="pill">
+            Your operating principle
+          </span>
+
+          <h2>${recommendation.gap}</h2>
+
+          <p class="lead">
+            ${recommendation.diagnosis}
+          </p>
+        </section>
+
+        <div class="recommendation-actions">
+          <button
+            class="btn btn-secondary"
+            id="profileBtn"
+            type="button"
+          >
+            Back to investor profile
+          </button>
+
+          <button
+            class="btn btn-primary"
+            id="restartAssessmentBtn"
+            type="button"
+          >
+            Retake assessment
+          </button>
+        </div>
       </main>
     </div>
   `;
 
-  bindHeader();
+  bindHeaderActions();
+
+  document
+    .getElementById('profileBtn')
+    .onclick = () => {
+      navigate('recommendation/profile');
+    };
+
+  document
+    .getElementById('restartAssessmentBtn')
+    .onclick = () => {
+      resetState();
+      navigate('assessment/1');
+    };
 }
