@@ -41,16 +41,18 @@ const DEFAULT_MODIFIER_ID =
 
 
 /*
- * Only these archetypes currently have all three constituent portfolio
- * variants defined in constituent-portfolios.js.
- *
- * Add GD, BFO, GA, TO and IP here only after their essential,
- * intentional and engaged portfolios have been implemented.
+ * Constituent portfolio generation is available for all seven
+ * portfolio archetypes.
  */
 const IMPLEMENTED_PORTFOLIO_ARCHETYPES =
   new Set([
     'ES',
-    'FT'
+    'GD',
+    'FT',
+    'BFO',
+    'GA',
+    'TO',
+    'IP'
   ]);
 
 
@@ -1186,9 +1188,9 @@ export function assessAnswers(
   };
 
   /*
-   * Constituent portfolio generation currently exists only for ES
-   * and FT. Other archetype results still remain valid assessment
-   * results and continue to use the existing static system screen.
+   * Constituent portfolio generation is available for all seven
+   * portfolio archetypes. Composition errors are captured so the
+   * assessment result remains available for diagnostics.
    */
   if (
     IMPLEMENTED_PORTFOLIO_ARCHETYPES
