@@ -1,17 +1,96 @@
 import { QUESTIONS } from '../../content/questions.js';
-import { loadState, saveState } from '../../application/state.js';
-import { navigate } from '../../application/router.js';
-import { applyAnswer } from '../../domain/assessment-engine.js';
 
-export function renderAssessment(root, step) {
-  const config = QUESTIONS[step - 1];
+import {
+  getAnswer,
+  setAnswer,
+  setCurrentQuestionId
+} from '../../application/state.js';
+
+import {
+  navigate
+} from '../../application/router.js';
+
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+
+function normalizeSelection(answer) {
+  if (Array.isArray(answer)) {
+    return answer.filter(
+      (value) => typeof value === 'string'
+    );
+  }
+
+  if (
+    typeof answer === 'string' &&
+    answer
+  ) {
+    return [answer];
+  }
+
+  if (
+    answer &&
+    typeof answer === 'object'
+  ) {
+    if (
+      Array.isArray(
+        answer.selectedOptionIds
+      )
+    ) {
+      return answer.selectedOptionIds.filter(
+        (value) =>
+          typeof value === 'string'
+      );
+    }
+
+    if (
+      typeof answer.optionId ===
+      'string'
+    ) {
+      return [answer.optionId];
+    }
+  }
+
+  return [];
+}
+
+
+export function renderAssessment(
+  root,
+  step
+) {
+  const config =
+    QUESTIONS[step - 1];
 
   if (!config) {
     navigate('assessment/1');
     return;
   }
 
-  document.title = config.documentTitle;
+  const totalSteps =
+    QUESTIONS.length;
+
+  const questionId =
+    config.screenKey;
+
+  const selected =
+    normalizeSelection(
+      getAnswer(questionId)
+    );
+
+  setCurrentQuestionId(
+    questionId
+  );
+
+  document.title =
+    config.documentTitle;
 
   root.innerHTML = `
     <div class="app-shell">
@@ -26,27 +105,44 @@ export function renderAssessment(root, step) {
           </button>
 
           <div style="text-align: center">
-            <div class="brand">AaronBux</div>
-            <div class="step-label">Step ${step} of 8</div>
+            <div class="brand">
+              AaronBux
+            </div>
+
+            <div class="step-label">
+              Step ${step} of ${totalSteps}
+            </div>
           </div>
 
-          <div class="step-label">Investing check</div>
+          <div class="step-label">
+            Investing check
+          </div>
         </div>
 
         <div class="progress-track">
           <div
             class="progress-fill"
-            style="width: ${step * 12.5}%"
+            style="width: ${
+              (step / totalSteps) * 100
+            }%"
           ></div>
         </div>
       </header>
 
       <main class="main">
-        <section class="panel card question-panel">
-          <h2>${config.heading}</h2>
+        <section
+          class="panel card question-panel"
+        >
+          <h2>
+            ${escapeHtml(
+              config.heading
+            )}
+          </h2>
 
           <p class="question-note">
-            ${config.note}
+            ${escapeHtml(
+              config.note
+            )}
           </p>
 
           <div
@@ -59,7 +155,9 @@ export function renderAssessment(root, step) {
       <nav class="bottom-nav">
         <div class="bottom-inner">
           <span class="step-label">
-            ${config.footerNote}
+            ${escapeHtml(
+              config.footerNote
+            )}
           </span>
 
           <button
@@ -74,87 +172,202 @@ export function renderAssessment(root, step) {
     </div>
   `;
 
-  const grid = document.getElementById('options');
-  const continueButton = document.getElementById('continueBtn');
-  const backButton = document.getElementById('backBtn');
-  const selected = [];
+  const grid =
+    root.querySelector(
+      '#options'
+    );
 
-  grid.innerHTML = config.options
-    .map(
-      (option) => `
-        <button
-          class="option-card"
-          data-id="${option.id}"
-          type="button"
-        >
-          <span class="option-card-title">
-            ${option.label}
-          </span>
+  const continueButton =
+    root.querySelector(
+      '#continueBtn'
+    );
 
-          <span class="option-card-meta">
-            ${option.helper || ''}
-          </span>
+  const backButton =
+    root.querySelector(
+      '#backBtn'
+    );
 
-          <span class="check">✓</span>
-        </button>
-      `
+  grid.innerHTML =
+    config.options
+      .map((option) => {
+        const isSelected =
+          selected.includes(
+            option.id
+          );
+
+        return `
+          <button
+            class="option-card${
+              isSelected
+                ? ' selected'
+                : ''
+            }"
+            data-id="${escapeHtml(
+              option.id
+            )}"
+            type="button"
+            aria-pressed="${
+              isSelected
+            }"
+          >
+            <span
+              class="option-card-title"
+            >
+              ${escapeHtml(
+                option.label
+              )}
+            </span>
+
+            <span
+              class="option-card-meta"
+            >
+              ${escapeHtml(
+                option.helper || ''
+              )}
+            </span>
+
+            <span
+              class="check"
+              aria-hidden="true"
+            >
+              ✓
+            </span>
+          </button>
+        `;
+      })
+      .join('');
+
+  const refreshContinueState =
+    () => {
+      continueButton.disabled =
+        selected.length <
+        config.min;
+    };
+
+  refreshContinueState();
+
+  grid
+    .querySelectorAll(
+      '.option-card'
     )
-    .join('');
+    .forEach((card) => {
+      card.addEventListener(
+        'click',
+        () => {
+          const id =
+            card.dataset.id;
 
-  continueButton.disabled = true;
+          const existingIndex =
+            selected.indexOf(id);
 
-  grid.querySelectorAll('.option-card').forEach((card) => {
-    card.onclick = () => {
-      const id = card.dataset.id;
-      const index = selected.indexOf(id);
+          if (
+            existingIndex >= 0
+          ) {
+            selected.splice(
+              existingIndex,
+              1
+            );
 
-      if (index >= 0) {
-        selected.splice(index, 1);
-        card.classList.remove('selected');
-      } else {
-        if (config.max === 1) {
-          selected.splice(0);
+            card.classList.remove(
+              'selected'
+            );
 
-          grid
-            .querySelectorAll('.option-card')
-            .forEach((optionCard) => {
-              optionCard.classList.remove('selected');
-            });
+            card.setAttribute(
+              'aria-pressed',
+              'false'
+            );
+          } else {
+            if (
+              config.max === 1
+            ) {
+              selected.splice(
+                0,
+                selected.length
+              );
+
+              grid
+                .querySelectorAll(
+                  '.option-card'
+                )
+                .forEach(
+                  (
+                    optionCard
+                  ) => {
+                    optionCard
+                      .classList
+                      .remove(
+                        'selected'
+                      );
+
+                    optionCard
+                      .setAttribute(
+                        'aria-pressed',
+                        'false'
+                      );
+                  }
+                );
+            }
+
+            if (
+              selected.length <
+              config.max
+            ) {
+              selected.push(id);
+
+              card.classList.add(
+                'selected'
+              );
+
+              card.setAttribute(
+                'aria-pressed',
+                'true'
+              );
+            }
+          }
+
+          refreshContinueState();
         }
+      );
+    });
 
-        if (selected.length < config.max) {
-          selected.push(id);
-          card.classList.add('selected');
-        }
+  continueButton.addEventListener(
+    'click',
+    () => {
+      if (
+        selected.length <
+        config.min
+      ) {
+        return;
       }
 
-      continueButton.disabled =
-        selected.length < config.min;
-    };
-  });
+      setAnswer(
+        questionId,
+        [...selected]
+      );
 
-  continueButton.onclick = () => {
-    const state = applyAnswer(
-      loadState(),
-      config,
-      selected
-    );
-
-    saveState(state);
-
-    navigate(
-      step === 8
-        ? 'recommendation/profile'
-        : `assessment/${step + 1}`
-    );
-  };
-
-  backButton.onclick = () => {
-    if (step === 1) {
-      navigate('');
-      return;
+      navigate(
+        step === totalSteps
+          ? 'recommendation/profile'
+          : `assessment/${
+              step + 1
+            }`
+      );
     }
+  );
 
-    navigate(`assessment/${step - 1}`);
-  };
+  backButton.addEventListener(
+    'click',
+    () => {
+      if (step === 1) {
+        navigate('');
+        return;
+      }
+
+      navigate(
+        `assessment/${
+          step - 1
+        }`
+      );
+    }
+  );
 }
