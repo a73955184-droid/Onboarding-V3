@@ -1,388 +1,77 @@
-const sleeve = ({
-  id,
-  label,
-  weight,
-  returnFunction,
-  effort,
-  assetCategories,
-  reviewCadence,
-  marketTrendTags = [],
-  startsUnallocated = false,
-}) => ({
-  id,
-  label,
-  weight,
-  returnFunction,
-  effort,
-  assetCategories,
-  reviewCadence,
-  marketTrendTags,
-  startsUnallocated,
+export const PROFILE_VARIANTS = Object.freeze({
+  ESSENTIAL: "essential",
+  INTENTIONAL: "intentional",
+  ENGAGED: "engaged",
 });
 
-export const CONSTITUENT_PORTFOLIOS = Object.freeze({
-  ES: {
-    essential: {
-      sleeves: [
-        sleeve({
-          id: "broadGrowthCore",
-          label: "Broad Growth Core",
-          weight: 0.70,
-          returnFunction: "primary-long-term-progress",
-          effort: "low",
-          assetCategories: ["global-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["broad-market", "global-growth"],
-        }),
-
-        sleeve({
-          id: "stability",
-          label: "Stability",
-          weight: 0.20,
-          returnFunction: "risk-reduction",
-          effort: "low",
-          assetCategories: ["high-quality-bonds"],
-          reviewCadence: "annual",
-          marketTrendTags: ["interest-rates", "inflation"],
-        }),
-
-        sleeve({
-          id: "liquidity",
-          label: "Liquidity",
-          weight: 0.10,
-          returnFunction: "capital-access",
-          effort: "very-low",
-          assetCategories: ["cash-equivalent"],
-          reviewCadence: "as-needs-change",
-          marketTrendTags: ["short-term-rates"],
-        }),
-      ],
-    },
-
-    intentional: {
-      sleeves: [
-        sleeve({
-          id: "usCore",
-          label: "US Core",
-          weight: 0.45,
-          returnFunction: "primary-growth",
-          effort: "low",
-          assetCategories: ["broad-us-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["us-market", "market-concentration"],
-        }),
-
-        sleeve({
-          id: "internationalCore",
-          label: "International Core",
-          weight: 0.25,
-          returnFunction: "geographic-diversification",
-          effort: "low",
-          assetCategories: ["broad-international-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["international-growth", "currency"],
-        }),
-
-        sleeve({
-          id: "stability",
-          label: "Stability",
-          weight: 0.20,
-          returnFunction: "risk-reduction",
-          effort: "low",
-          assetCategories: ["high-quality-bonds"],
-          reviewCadence: "annual",
-          marketTrendTags: ["interest-rates", "inflation"],
-        }),
-
-        sleeve({
-          id: "liquidity",
-          label: "Liquidity",
-          weight: 0.10,
-          returnFunction: "capital-access",
-          effort: "very-low",
-          assetCategories: ["cash-equivalent"],
-          reviewCadence: "as-needs-change",
-          marketTrendTags: ["short-term-rates"],
-        }),
-      ],
-    },
-
-    engaged: {
-      sleeves: [
-        sleeve({
-          id: "usCore",
-          label: "US Core",
-          weight: 0.40,
-          returnFunction: "primary-growth",
-          effort: "low",
-          assetCategories: ["broad-us-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["us-market", "market-concentration"],
-        }),
-
-        sleeve({
-          id: "internationalCore",
-          label: "International Core",
-          weight: 0.25,
-          returnFunction: "geographic-diversification",
-          effort: "low",
-          assetCategories: [
-            "developed-international-equity",
-            "emerging-market-equity",
-          ],
-          reviewCadence: "annual",
-          marketTrendTags: ["international-growth", "currency"],
-        }),
-
-        sleeve({
-          id: "stability",
-          label: "Stability",
-          weight: 0.20,
-          returnFunction: "risk-reduction",
-          effort: "low",
-          assetCategories: ["high-quality-bonds"],
-          reviewCadence: "annual",
-          marketTrendTags: ["interest-rates", "inflation"],
-        }),
-
-        sleeve({
-          id: "liquidity",
-          label: "Liquidity",
-          weight: 0.10,
-          returnFunction: "capital-access",
-          effort: "very-low",
-          assetCategories: ["cash-equivalent"],
-          reviewCadence: "as-needs-change",
-          marketTrendTags: ["short-term-rates"],
-        }),
-
-        sleeve({
-          id: "personalPreference",
-          label: "Personal Preference",
-          weight: 0.05,
-          returnFunction: "limited-customization",
-          effort: "moderate",
-          assetCategories: ["broad-preference-fund"],
-          reviewCadence: "quarterly",
-          marketTrendTags: ["theme-specific"],
-        }),
-      ],
-    },
-  },
-
-  FT: {
-    essential: {
-      sleeves: [
-        sleeve({
-          id: "durableCore",
-          label: "Durable Core",
-          weight: 0.70,
-          returnFunction: "primary-long-term-progress",
-          effort: "low",
-          assetCategories: ["global-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["broad-market", "market-concentration"],
-        }),
-
-        sleeve({
-          id: "stability",
-          label: "Stability",
-          weight: 0.20,
-          returnFunction: "risk-reduction",
-          effort: "low",
-          assetCategories: ["high-quality-bonds"],
-          reviewCadence: "annual",
-          marketTrendTags: ["interest-rates", "inflation"],
-        }),
-
-        sleeve({
-          id: "targetedImprovement",
-          label: "Targeted Improvement",
-          weight: 0.10,
-          returnFunction: "supporting-progress",
-          effort: "moderate",
-          assetCategories: ["diversified-factor-equity"],
-          reviewCadence: "quarterly",
-          marketTrendTags: [
-            "factor-evidence",
-            "valuation-spread",
-            "portfolio-overlap",
-          ],
-        }),
-      ],
-    },
-
-    intentional: {
-      sleeves: [
-        sleeve({
-          id: "durableCore",
-          label: "Durable Core",
-          weight: 0.40,
-          returnFunction: "primary-long-term-progress",
-          effort: "low",
-          assetCategories: ["broad-us-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["broad-market", "market-concentration"],
-        }),
-
-        sleeve({
-          id: "globalDiversification",
-          label: "Global Diversification",
-          weight: 0.20,
-          returnFunction: "geographic-diversification",
-          effort: "low",
-          assetCategories: ["broad-international-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["international-growth", "currency"],
-        }),
-
-        sleeve({
-          id: "stability",
-          label: "Stability",
-          weight: 0.15,
-          returnFunction: "risk-reduction",
-          effort: "low",
-          assetCategories: ["high-quality-bonds"],
-          reviewCadence: "annual",
-          marketTrendTags: ["interest-rates", "inflation"],
-        }),
-
-        sleeve({
-          id: "qualityImprovement",
-          label: "Quality Improvement",
-          weight: 0.10,
-          returnFunction: "supporting-progress",
-          effort: "moderate",
-          assetCategories: ["quality-factor-equity"],
-          reviewCadence: "quarterly",
-          marketTrendTags: ["factor-evidence", "quality-spread"],
-        }),
-
-        sleeve({
-          id: "smallValueImprovement",
-          label: "Small-Value Improvement",
-          weight: 0.10,
-          returnFunction: "supporting-progress",
-          effort: "moderate",
-          assetCategories: ["small-value-equity"],
-          reviewCadence: "quarterly",
-          marketTrendTags: ["valuation-spread", "small-cap-cycle"],
-        }),
-
-        sleeve({
-          id: "liquidity",
-          label: "Liquidity",
-          weight: 0.05,
-          returnFunction: "capital-access",
-          effort: "very-low",
-          assetCategories: ["cash-equivalent"],
-          reviewCadence: "as-needs-change",
-          marketTrendTags: ["short-term-rates"],
-        }),
-      ],
-    },
-
-    engaged: {
-      sleeves: [
-        sleeve({
-          id: "durableCore",
-          label: "Durable Core",
-          weight: 0.45,
-          returnFunction: "primary-long-term-progress",
-          effort: "low",
-          assetCategories: ["broad-us-equity", "global-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["broad-market", "market-concentration"],
-        }),
-
-        sleeve({
-          id: "globalDiversification",
-          label: "Global Diversification",
-          weight: 0.15,
-          returnFunction: "geographic-diversification",
-          effort: "low",
-          assetCategories: ["broad-international-equity"],
-          reviewCadence: "annual",
-          marketTrendTags: ["international-growth", "currency"],
-        }),
-
-        sleeve({
-          id: "stability",
-          label: "Stability",
-          weight: 0.10,
-          returnFunction: "risk-reduction",
-          effort: "low",
-          assetCategories: ["high-quality-bonds"],
-          reviewCadence: "annual",
-          marketTrendTags: ["interest-rates", "inflation"],
-        }),
-
-        sleeve({
-          id: "factorImprovements",
-          label: "Factor Improvements",
-          weight: 0.15,
-          returnFunction: "supporting-progress",
-          effort: "moderate",
-          assetCategories: [
-            "quality-factor-equity",
-            "value-factor-equity",
-            "small-value-equity",
-          ],
-          reviewCadence: "quarterly",
-          marketTrendTags: ["factor-evidence", "valuation-spread"],
-        }),
-
-        sleeve({
-          id: "strategicDiversifier",
-          label: "Strategic Diversifier",
-          weight: 0.10,
-          returnFunction: "risk-source-diversification",
-          effort: "moderate",
-          assetCategories: ["real-assets"],
-          reviewCadence: "quarterly",
-          marketTrendTags: ["inflation", "real-asset-valuations"],
-        }),
-
-        sleeve({
-          id: "researchCapacity",
-          label: "Research Capacity",
-          weight: 0.05,
-          returnFunction: "optional-upside-and-learning",
-          effort: "high",
-          assetCategories: ["selected-equity", "thematic-equity"],
-          reviewCadence: "thesis-driven",
-          marketTrendTags: ["company-specific", "theme-specific"],
-          startsUnallocated: true,
-        }),
-      ],
-    },
-  },
-
-  /*
-   * Add GD, BFO, GA, TO and IP using the same structure.
-   *
-   * Keep this first pull request smaller:
-   * implement ES and FT end-to-end, verify the engine and UI,
-   * then add the remaining five archetypes.
-   */
+const STAGE_LEVEL = Object.freeze({
+  foundation_builder: 1,
+  portfolio_organizer: 2,
+  system_builder: 3,
+  intentional_optimizer: 4,
+  adaptive_investor: 5,
 });
 
-export function getConstituentPortfolio(archetypeId, variantId) {
-  const archetypeVariants = CONSTITUENT_PORTFOLIOS[archetypeId];
+const STYLE_LEVEL = Object.freeze({
+  guided_autopilot: 1,
+  steady_steward: 2,
+  systematic_improver: 3,
+  bounded_explorer: 4,
+  active_navigator: 5,
+});
 
-  if (!archetypeVariants) {
-    throw new Error(
-      `No constituent portfolios defined for archetype: ${archetypeId}`,
-    );
+const HIGH_ENGAGEMENT_SIGNALS = new Set([
+  "active_review",
+  "research_interest",
+  "strategy_comparison",
+  "portfolio_construction_curiosity",
+  "opportunity_interest",
+  "tactical_interest",
+  "security_selection_interest",
+]);
+
+function countSignals(signals = [], acceptedSignals) {
+  if (!Array.isArray(signals)) {
+    return 0;
   }
 
-  const portfolio = archetypeVariants[variantId];
+  return signals.reduce(
+    (count, signal) => count + (acceptedSignals.has(signal) ? 1 : 0),
+    0,
+  );
+}
 
-  if (!portfolio) {
-    throw new Error(
-      `No ${variantId} portfolio defined for archetype: ${archetypeId}`,
-    );
+/**
+ * Resolves structural portfolio complexity.
+ *
+ * This is not a risk-tolerance score.
+ * It determines how many distinct portfolio concepts the user can
+ * reasonably operate and how much decision involvement is appropriate.
+ */
+export function resolveProfileVariant({
+  stageId,
+  styleId,
+  signals = [],
+}) {
+  const stageLevel = STAGE_LEVEL[stageId] ?? 2;
+  const styleLevel = STYLE_LEVEL[styleId] ?? 2;
+  const engagementSignals = countSignals(signals, HIGH_ENGAGEMENT_SIGNALS);
+
+  if (
+    stageLevel >= 4 &&
+    styleLevel >= 4 &&
+    engagementSignals >= 1
+  ) {
+    return PROFILE_VARIANTS.ENGAGED;
   }
 
-  return structuredClone(portfolio);
+  if (
+    stageLevel >= 3 ||
+    styleLevel >= 3 ||
+    engagementSignals >= 2
+  ) {
+    return PROFILE_VARIANTS.INTENTIONAL;
+  }
+
+  return PROFILE_VARIANTS.ESSENTIAL;
 }
