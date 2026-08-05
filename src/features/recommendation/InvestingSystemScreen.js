@@ -1247,6 +1247,12 @@ export function renderInvestingSystem(
               id="rulesEvidence"
             ></div>
           </section>
+
+          <section class="card panel" style="margin-top: 22px">
+            <h3>Explore further</h3>
+            <p class="lead">See how the parts of your recommended system work together.</p>
+            <button id="explorePortfolioBtn" class="btn btn-primary" type="button">Explore your portfolio</button>
+          </section>
         </section>
       </main>
     </div>
@@ -1560,4 +1566,11 @@ export function renderInvestingSystem(
           'age'
         ]
       );
+
+  const exploreBtn = root.querySelector('#explorePortfolioBtn');
+  if (exploreBtn) {
+    exploreBtn.addEventListener('click', () => {
+      navigate('recommendation/portfolio');
+    });
+  }
 }

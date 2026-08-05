@@ -25,6 +25,10 @@ export function route() {
     return { name: 'investing-system' };
   }
 
+  if (hash === 'recommendation/portfolio') {
+    return { name: 'portfolio-map' };
+  }
+
   return { name: 'welcome' };
 }
 

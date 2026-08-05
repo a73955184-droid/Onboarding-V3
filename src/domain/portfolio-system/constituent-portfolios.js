@@ -25,7 +25,8 @@ function createSleeve({
   reviewCadence,
   marketTrendTags = [],
   startsUnallocated = false,
-  description = null
+  description = null,
+  monitoringGuidance = null
 }) {
   return {
     id,
@@ -37,7 +38,8 @@ function createSleeve({
     reviewCadence,
     marketTrendTags,
     startsUnallocated,
-    description
+    description,
+    monitoringGuidance
   };
 }
 

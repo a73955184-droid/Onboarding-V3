@@ -10,6 +10,9 @@ import {
 import {
   renderInvestingSystem
 } from '../features/recommendation/InvestingSystemScreen.js';
+import {
+  renderPortfolioMap
+} from '../features/recommendation/PortfolioMapScreen.js';
 
 const root = document.getElementById('app');
 
@@ -27,6 +30,10 @@ function render() {
 
     case 'investing-system':
       renderInvestingSystem(root);
+      break;
+
+    case 'portfolio-map':
+      renderPortfolioMap(root);
       break;
 
     default:
