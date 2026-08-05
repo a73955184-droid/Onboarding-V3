@@ -1,0 +1,50 @@
+/* Portfolio Map styles - reuse existing variables */
+:root {
+  --bg: var(--app-bg, #071233);
+  --surface: var(--card-bg, #09152a);
+  --text: var(--text-primary, #f7f3e9);
+  --muted: var(--text-muted, #9fb0c8);
+  --accent: var(--accent, #f5c542);
+  --card-radius: 12px;
+}
+
+.portfolio-map-grid {
+  display: flex;
+  gap: 18px;
+}
+
+.ring-column {
+  flex: 0 0 360px;
+}
+
+.detail-column { flex: 1; }
+
+.ring-card { display:flex; align-items:center; justify-content:center; padding:18px; }
+.ring-container { width:200px; height:200px; position:relative; }
+.portfolio-ring { width:100%; height:100%; }
+.ring-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text); text-align:center; padding:8px; pointer-events:none; }
+.ring-center .center-name { font-weight:600; }
+.ring-center .center-pct { font-size:14px; color:var(--muted); }
+.ring-segment { cursor:pointer; transition:opacity 160ms, transform 160ms; }
+.ring-segment:hover, .ring-segment:focus { opacity:1; transform:scale(1.02); outline:none; }
+.ring-segment.selected { filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4)); }
+
+.sleeve-legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.sleeve-btn { background:var(--surface); color:var(--text); border-radius:8px; border:1px solid rgba(255,255,255,0.04); padding:8px 12px; display:flex; gap:8px; align-items:center; }
+.sleeve-btn.selected { box-shadow:0 6px 14px rgba(0,0,0,0.4); border-color:var(--accent); }
+.sleeve-btn .pct { color:var(--muted); font-size:12px; }
+
+.selected-summary h2 { margin:0 0 8px 0; }
+.detail-tabs .tab-buttons { display:flex; gap:8px; margin-bottom:12px; }
+.tab-btn { padding:8px 12px; border-radius:8px; background:transparent; color:var(--muted); border:1px solid transparent; }
+.tab-btn.active { background:var(--surface); color:var(--text); border-color:rgba(255,255,255,0.04); }
+.tab-panel .summary-item { margin-bottom:12px; }
+
+@media (max-width:800px) {
+  .portfolio-map-grid { flex-direction:column; }
+  .ring-column { flex:0 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-segment { transition:none; }
+}
