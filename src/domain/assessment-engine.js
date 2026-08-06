@@ -15,6 +15,10 @@ import {
   composePortfolioSystem
 } from './portfolio-system/portfolio-composer.js';
 
+import {
+  resolveInvestorJobs
+} from './investor-jobs-resolver.js';
+
 
 const ARCHETYPE_IDS = Object.freeze([
   'BFO',
@@ -1184,7 +1188,10 @@ export function assessAnswers(
       null,
 
     portfolioSystemError:
-      null
+      null,
+
+    jobs:
+      []
   };
 
   /*
@@ -1223,6 +1230,11 @@ export function assessAnswers(
         };
     }
   }
+
+  assessmentResult.jobs =
+    resolveInvestorJobs(
+      assessmentResult
+    );
 
   return assessmentResult;
 }

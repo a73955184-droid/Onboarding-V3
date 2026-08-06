@@ -1055,6 +1055,27 @@ function renderPortfolioCadence(
     .join('');
 }
 
+function renderWhyThisFits(jobs) {
+  if (!jobs || jobs.length === 0) {
+    return `
+      <section class="card panel fit-summary" style="margin-top: 22px">
+        <h2>Why this fits</h2>
+        <p class="lead">This recommendation is built from your investor profile and the jobs your answers reveal.</p>
+      </section>
+    `;
+  }
+
+  const firstJobPhrase = jobs[0]?.title || 'your main job';
+  const additional = jobs.length > 1 ? ` plus ${jobs.length - 1} other supporting jobs` : '';
+
+  return `
+    <section class="card panel fit-summary" style="margin-top: 22px">
+      <h2>Why this fits</h2>
+      <p class="lead">This portfolio system is designed to support ${escapeHtml(firstJobPhrase.toLowerCase())}${escapeHtml(additional)}. It connects your profile to the recommended archetype and keeps the system aligned with what matters most.</p>
+    </section>
+  `;
+}
+
 
 export function renderInvestingSystem(
   root

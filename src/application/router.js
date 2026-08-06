@@ -21,6 +21,10 @@ export function route() {
     return { name: 'investor-profile' };
   }
 
+  if (hash === 'recommendation/jobs') {
+    return { name: 'investor-jobs' };
+  }
+
   if (hash === 'recommendation/system') {
     return { name: 'investing-system' };
   }
