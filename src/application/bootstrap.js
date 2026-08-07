@@ -36,6 +36,15 @@ function render() {
       renderInvestorJobs(root);
       break;
 
+    case 'investor-profile-jobs':
+      import('../features/recommendation/InvestorProfileJobsScreen.js').then((module) => {
+        module.renderInvestorProfileJobs(root);
+      }).catch((error) => {
+        console.error('Failed to load InvestorProfileJobsScreen:', error);
+        renderWelcome(root);
+      });
+      break;
+
     case 'investing-system':
       renderInvestingSystem(root);
       break;

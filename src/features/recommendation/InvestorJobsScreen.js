@@ -153,6 +153,6 @@ export function renderInvestorJobs(root) {
   root.querySelector('#jobGrid').innerHTML = jobs.map((job) => renderJobCard(job)).join('');
   root.querySelector('#assessmentExplanation').innerHTML = renderJobsExplanation(jobs);
   root.querySelector('#systemBtn').addEventListener('click', () => {
-    navigate('recommendation/system');
+    navigate('recommendation/profile-jobs');
   });
 }
