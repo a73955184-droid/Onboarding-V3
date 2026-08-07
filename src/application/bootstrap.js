@@ -8,10 +8,6 @@ import {
 } from '../features/recommendation/InvestorProfileScreen.js';
 
 import {
-  renderInvestorJobs
-} from '../features/recommendation/InvestorJobsScreen.js';
-
-import {
   renderInvestingSystem
 } from '../features/recommendation/InvestingSystemScreen.js';
 import {
@@ -30,10 +26,6 @@ function render() {
 
     case 'investor-profile':
       renderInvestorProfile(root);
-      break;
-
-    case 'investor-jobs':
-      renderInvestorJobs(root);
       break;
 
     case 'investor-profile-jobs':

@@ -5,7 +5,7 @@ import {
 } from '../../application/state.js';
 
 import { navigate } from '../../application/router.js';
-import { resolveInvestorJobs } from '../../domain/investor-jobs-resolver.js';
+import { resolvePortfolioJobImplications } from '../../domain/portfolio-jobs/portfolio-job-resolver.js';
 import { JOB_SOURCE_MAP } from '../../domain/investor-jobs.js';
 import { QUESTIONS } from '../../content/questions.js';
 
@@ -236,10 +236,32 @@ function getProfileSection(assessmentResult, state, section) {
   };
 }
 
-function renderSection(sectionData, job) {
-  if (!job) {
+function renderPortfolioSupport(portfolioSupport, implication) {
+  if (!portfolioSupport && !implication) {
     return '';
   }
+
+  const details = Array.isArray(portfolioSupport?.details)
+    ? portfolioSupport.details
+    : [];
+
+  return `
+    <div class="job-implication portfolio-support">
+      <span class="pill">How your recommended portfolio supports this</span>
+      <p>${escapeHtml(implication || '')}</p>
+      ${details
+        .map((detail) => `<p>${escapeHtml(detail)}</p>`)
+        .join('')}
+    </div>
+  `;
+}
+
+function renderSection(sectionData, sectionEntry) {
+  if (!sectionEntry || !sectionEntry.job) {
+    return '';
+  }
+
+  const { job, support, implication } = sectionEntry;
 
   return `
     <article class="profile-card card panel">
@@ -257,10 +279,7 @@ function renderSection(sectionData, job) {
         <p>${escapeHtml(job.description)}</p>
       </div>
 
-      <div class="job-implication">
-        <strong>How your recommended portfolio supports this</strong>
-        <p>${escapeHtml(job.portfolioDesignImplication)}</p>
-      </div>
+      ${renderPortfolioSupport(support, implication)}
     </article>
   `;
 }
@@ -319,7 +338,7 @@ export function renderInvestorProfileJobs(root) {
   const result = root.querySelector('#result');
 
   backBtn.addEventListener('click', () => {
-    navigate('recommendation/jobs');
+    navigate('recommendation/profile');
   });
 
   restartBtn.addEventListener('click', () => {
@@ -341,18 +360,13 @@ export function renderInvestorProfileJobs(root) {
     return;
   }
 
-  const jobs = resolveInvestorJobs(assessmentResult);
-  const jobById = Object.fromEntries(jobs.map((job) => [job.id, job]));
-
-  const stageJob = jobById[JOB_SOURCE_MAP.stage[assessmentResult.stageId]];
-  const styleJob = jobById[JOB_SOURCE_MAP.style[assessmentResult.styleId]];
-  const modifierJob = jobById[JOB_SOURCE_MAP.modifier[assessmentResult.modifierId]];
+  const profileJobImplications = resolvePortfolioJobImplications(assessmentResult);
 
   result.style.display = 'block';
   root.querySelector('#profileJobsGrid').innerHTML = `
-    ${renderSection(getProfileSection(assessmentResult, state, 'stage'), stageJob)}
-    ${renderSection(getProfileSection(assessmentResult, state, 'style'), styleJob)}
-    ${renderSection(getProfileSection(assessmentResult, state, 'modifier'), modifierJob)}
+    ${renderSection(getProfileSection(assessmentResult, state, 'stage'), profileJobImplications.stage)}
+    ${renderSection(getProfileSection(assessmentResult, state, 'style'), profileJobImplications.style)}
+    ${renderSection(getProfileSection(assessmentResult, state, 'modifier'), profileJobImplications.modifier)}
   `;
 
   root.querySelector('#systemBtn').addEventListener('click', () => {

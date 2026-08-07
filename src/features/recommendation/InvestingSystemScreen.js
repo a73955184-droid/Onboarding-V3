@@ -1303,7 +1303,7 @@ export function renderInvestingSystem(
     'click',
     () => {
       navigate(
-        'recommendation/profile'
+        'recommendation/profile-jobs'
       );
     }
   );

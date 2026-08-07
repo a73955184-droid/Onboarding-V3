@@ -22,7 +22,7 @@ export function route() {
   }
 
   if (hash === 'recommendation/jobs') {
-    return { name: 'investor-jobs' };
+    return { name: 'investor-profile-jobs' };
   }
 
   if (hash === 'recommendation/profile-jobs') {

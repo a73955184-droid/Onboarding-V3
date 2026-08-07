@@ -639,7 +639,7 @@ export function renderInvestorProfile(
       'click',
       () => {
         navigate(
-          'recommendation/jobs'
+          'recommendation/profile-jobs'
         );
       }
     );
