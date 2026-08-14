@@ -65,24 +65,14 @@ function clone(value) {
   );
 }
 
-
-function assertSourceIdsExist(
-  sourceIds = [],
-  context
-) {
-  for (
-    const sourceId
-    of sourceIds
-  ) {
+function assertSourceIdsExist(sourceIds = [], context = '') {
+  for (const sourceId of sourceIds) {
     assert.ok(
-      getPhilosophySource(
-        sourceId
-      ),
-      `${context}: unknown philosophy source "${sourceId}"`
+      getPhilosophySource(sourceId),
+      context + ': unknown philosophy source "' + sourceId + '"'
     );
   }
 }
-
 
 /**
  * ------------------------------------------------------------
