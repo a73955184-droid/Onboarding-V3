@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import {
   resolvePortfolioJobFit
-} from '../src/domain/portfolio-system/portfolio-job-fit-resolver.js';
+} from '../src/domain/portfolio-philosophy/portfolio-job-fit-resolver.js';
 
 
 function approxEqual(actual, expected, tolerance = 0.0001) {

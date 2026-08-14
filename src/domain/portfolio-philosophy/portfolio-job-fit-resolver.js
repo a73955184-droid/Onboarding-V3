@@ -5,7 +5,7 @@ import {
 
 import {
   composePortfolioSystem
-} from './portfolio-composer.js';
+} from '../portfolio-system/portfolio-composer.js';
 
 import {
   resolvePortfolioPhilosophy
