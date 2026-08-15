@@ -909,6 +909,19 @@ function buildPhilosophyExplanation({
       []
     );
 
+  const investorProblem =
+    firstDefined(
+      philosophy
+        ?.investorProblem,
+      archetype
+        ?.investorProblem,
+      presentation
+        ?.philosophy
+        ?.archetype
+        ?.investorProblem,
+      null
+    );
+
   return {
     archetypeId,
 
@@ -921,6 +934,20 @@ function buildPhilosophyExplanation({
     philosophyName,
 
     summary,
+
+    investorProblem:
+      investorProblem
+        ? {
+            question:
+              investorProblem
+                ?.question ??
+              null,
+            meaning:
+              investorProblem
+                ?.meaning ??
+              null
+          }
+        : null,
 
     whyItMatters:
       'The portfolio philosophy defines how the different portfolio jobs are expected to work together. It is the organizing logic behind the sleeves, not simply a label for an allocation.',
@@ -1295,6 +1322,11 @@ function buildRecommendationReveal({
       ?.systemName ??
     archetypeDisplayName;
 
+  const investorProblem =
+    philosophy
+      ?.investorProblem ??
+    null;
+
   return {
     eyebrow:
       'YOUR RECOMMENDED PORTFOLIO SYSTEM',
@@ -1332,8 +1364,36 @@ function buildRecommendationReveal({
       sources:
         philosophy
           ?.sources ??
-        []
+        [],
+
+      investorProblem:
+        investorProblem
+          ? {
+              question:
+                investorProblem
+                  ?.question ??
+                null,
+              meaning:
+                investorProblem
+                  ?.meaning ??
+                null
+            }
+          : null
     },
+
+    investorProblem:
+      investorProblem
+        ? {
+            question:
+              investorProblem
+                ?.question ??
+              null,
+            meaning:
+              investorProblem
+                ?.meaning ??
+              null
+          }
+        : null,
 
     profileAccountability
   };

@@ -1374,6 +1374,33 @@ export function renderPortfolioSystemFit(
 
 
             <div
+              class="summary-item"
+              style="margin-top: 22px"
+            >
+
+              <strong>
+                WHAT THIS PORTFOLIO SYSTEM IS DESIGNED TO SOLVE
+              </strong>
+
+
+              <div
+                id="heroInvestorProblemQuestion"
+                style="
+                  font-weight: 700;
+                  margin-top: 10px;
+                "
+              ></div>
+
+
+              <div
+                id="heroInvestorProblemMeaning"
+                style="margin-top: 10px"
+              ></div>
+
+            </div>
+
+
+            <div
               id="heroPhilosophySources"
             ></div>
 
@@ -1851,14 +1878,37 @@ export function renderPortfolioSystemFit(
       '';
 
 
+  const investorProblem =
+    reveal
+      ?.investorProblem ??
+    reveal
+      ?.philosophy
+      ?.investorProblem ??
+    null;
+
   root
     .querySelector(
       '#heroPhilosophySummary'
     )
     .textContent =
-      reveal
-        .philosophy
-        .summary ??
+      '';
+
+  root
+    .querySelector(
+      '#heroInvestorProblemQuestion'
+    )
+    .textContent =
+      investorProblem
+        ?.question ??
+      '';
+
+  root
+    .querySelector(
+      '#heroInvestorProblemMeaning'
+    )
+    .textContent =
+      investorProblem
+        ?.meaning ??
       '';
 
 
