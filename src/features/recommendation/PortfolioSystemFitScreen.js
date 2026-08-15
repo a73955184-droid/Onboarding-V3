@@ -10,7 +10,7 @@ import {
 
 import {
   resolvePortfolioJobFit
-} from '../../domain/portfolio-system/portfolio-job-fit-resolver.js';
+} from '../../domain/portfolio-philosophy/portfolio-job-fit-resolver.js';
 
 import {
   presentPortfolioJobFit
