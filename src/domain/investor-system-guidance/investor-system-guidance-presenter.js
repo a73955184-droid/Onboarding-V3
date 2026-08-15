@@ -918,16 +918,26 @@ function buildPhilosophyExplanation({
       []
     );
 
+  /*
+   * The portfolio-philosophy domain owns the meaning.
+   *
+   * This presenter only carries the resolved archetype's
+   * investor-problem framing forward into the recommendation
+   * presentation model.
+   */
   const investorProblem =
     firstDefined(
       philosophy
         ?.investorProblem,
+
       archetype
         ?.investorProblem,
+
       presentation
         ?.philosophy
         ?.archetype
         ?.investorProblem,
+
       null
     );
 
@@ -951,6 +961,7 @@ function buildPhilosophyExplanation({
               investorProblem
                 ?.question ??
               null,
+
             meaning:
               investorProblem
                 ?.meaning ??
@@ -1161,7 +1172,6 @@ function buildProfileAccountability({
             ?.systemResponse ??
           null,
 
-
         /*
          * Preserve existing fields for compatibility.
          */
@@ -1282,6 +1292,12 @@ function buildRecommendationReveal({
       ?.systemName ??
     archetypeDisplayName;
 
+  /*
+   * Pull the archetype-level investor problem from the
+   * philosophy presentation model.
+   *
+   * No new interpretation happens here.
+   */
   const investorProblem =
     philosophy
       ?.investorProblem ??
@@ -1326,6 +1342,11 @@ function buildRecommendationReveal({
           ?.sources ??
         [],
 
+      /*
+       * Keep this here for semantic consistency:
+       *
+       * recommendationReveal.philosophy.investorProblem
+       */
       investorProblem:
         investorProblem
           ? {
@@ -1333,6 +1354,7 @@ function buildRecommendationReveal({
                 investorProblem
                   ?.question ??
                 null,
+
               meaning:
                 investorProblem
                   ?.meaning ??
@@ -1341,6 +1363,14 @@ function buildRecommendationReveal({
           : null
     },
 
+    /*
+     * Also expose at the recommendation level so the hero
+     * can consume:
+     *
+     * recommendationReveal.investorProblem
+     *
+     * without having to understand philosophy internals.
+     */
     investorProblem:
       investorProblem
         ? {
@@ -1348,6 +1378,7 @@ function buildRecommendationReveal({
               investorProblem
                 ?.question ??
               null,
+
             meaning:
               investorProblem
                 ?.meaning ??
@@ -1773,11 +1804,8 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * NEW:
-   *
    * Direct quiz evidence ->
    * user JTBD ->
-   * system JTBD ->
    * concrete system response.
    */
 
