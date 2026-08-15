@@ -3,31 +3,19 @@
  *
  * PURPOSE
  * -------
- * Build the final investor-facing translation contract between:
+ * Build the investor-facing translation contract between:
  *
- *   existing assessment / recommendation logic
+ *   assessment / recommendation logic
  *
  * and:
  *
- *   user-facing recommendation screens.
- *
- * This presenter answers:
- *
- * 1. What does my portfolio need help organizing?
- * 2. Where is my investing effort worth spending?
- * 3. What help do I need when deciding whether to act?
- * 4. What portfolio system was actually recommended?
- * 5. Why this portfolio philosophy?
- * 6. Why this variant / level of complexity?
- * 7. Why this many sleeves?
- * 8. What job does each sleeve perform?
- * 9. What belongs in each sleeve?
- * 10. What should I monitor?
- * 11. How much attention is each sleeve worth?
+ *   the Portfolio System Fit screen.
  *
  * IMPORTANT
  * ---------
- * This file does NOT:
+ * This file explains already-resolved results.
+ *
+ * It does NOT:
  *
  * - score assessment answers
  * - resolve Stage
@@ -35,12 +23,9 @@
  * - resolve Behavior
  * - resolve archetype
  * - resolve variant
- * - compose portfolios
- * - alter sleeve weights
+ * - modify allocations
  * - select securities
  * - recommend trades
- *
- * Existing domain outputs remain authoritative.
  */
 
 
@@ -65,9 +50,6 @@ import {
  * ============================================================
  * User-facing archetype names
  * ============================================================
- *
- * Internal IDs such as FT and BFO should not be used as the
- * primary recommendation name in the UI.
  */
 
 const ARCHETYPE_DISPLAY_NAMES = Object.freeze({
@@ -83,7 +65,124 @@ const ARCHETYPE_DISPLAY_NAMES = Object.freeze({
 
 /*
  * ============================================================
- * Generic helpers
+ * User JTBD
+ * ============================================================
+ *
+ * These are the investor-side jobs.
+ *
+ * They deliberately remain separate from:
+ *
+ * job.portfolioRequirement
+ *
+ * which represents the SYSTEM-side job.
+ */
+
+const PROFILE_USER_JTBD = Object.freeze({
+
+  /*
+   * STAGE
+   */
+
+  foundation_builder:
+    'Give me an understandable starting structure where I know what each part is for.',
+
+  portfolio_organizer:
+    'Help me connect separate investments into one system with clearer roles.',
+
+  system_builder:
+    'Give me repeatable rules so I can manage my portfolio without second-guessing every change.',
+
+  intentional_optimizer:
+    'Help me improve what already works without adding complexity for its own sake.',
+
+  adaptive_investor:
+    'Let me explore and grow within clear limits so new ideas do not make my portfolio unfocused.',
+
+
+  /*
+   * STYLE
+   */
+
+  guided_autopilot:
+    'Keep routine investing simple and tell me when something actually deserves my attention.',
+
+  steady_steward:
+    'Help me stay consistent with a few meaningful reviews and limited changes.',
+
+  systematic_improver:
+    'Help me compare choices with clear rules and ignore noise that does not improve my portfolio.',
+
+  bounded_explorer:
+    'Keep a stable foundation while showing me where selected ideas deserve more attention.',
+
+  active_navigator:
+    'Keep me engaged only when an opportunity or change meets clear standards.',
+
+
+  /*
+   * BEHAVIOR
+   */
+
+  validation_seeker:
+    'Show me why a recommendation fits my portfolio before I act.',
+
+  instruction_seeker:
+    'When I face an investment choice or something changes, help me understand what to do next.',
+
+  confidence_builder:
+    'Help me distinguish routine volatility from changes that actually deserve action.',
+
+  opportunity_chaser:
+    'Help me set limits for new ideas so I do not react to every opportunity.',
+
+  optimization_mindset:
+    'Help me know when an improvement is meaningful and when further comparison is no longer useful.'
+});
+
+
+/*
+ * ============================================================
+ * Which quiz answers belong to each profile dimension?
+ * ============================================================
+ *
+ * This mirrors what the Investor Profile screen communicates:
+ *
+ * Stage
+ *   - current setup
+ *   - what feels incomplete / desired evolution
+ *
+ * Style
+ *   - involvement preference
+ *   - attention trigger
+ *
+ * Behavior
+ *   - what sends user searching
+ *   - how user makes a choice
+ *
+ * We use the actual selected answer text.
+ */
+
+const PROFILE_EVIDENCE_QUESTION_IDS = Object.freeze({
+  stage: Object.freeze([
+    'setup',
+    'evolution'
+  ]),
+
+  style: Object.freeze([
+    'tradeoff',
+    'marketPsychology'
+  ]),
+
+  behavior: Object.freeze([
+    'transition',
+    'decisionStyle'
+  ])
+});
+
+
+/*
+ * ============================================================
+ * Helpers
  * ============================================================
  */
 
@@ -130,9 +229,23 @@ function titleCase(value) {
 }
 
 
+function percentage(value) {
+  if (
+    typeof value !== 'number' ||
+    Number.isNaN(value)
+  ) {
+    return null;
+  }
+
+  return Math.round(
+    value * 100
+  );
+}
+
+
 /*
  * ============================================================
- * Extractors aligned to portfolio-job-fit-presenter.js
+ * Extractors
  * ============================================================
  */
 
@@ -418,7 +531,9 @@ function extractSleeves(presentation) {
   ];
 
   for (const candidate of candidates) {
-    if (Array.isArray(candidate)) {
+    if (
+      Array.isArray(candidate)
+    ) {
       return candidate;
     }
   }
@@ -451,13 +566,112 @@ function extractStructure(presentation) {
 
 /*
  * ============================================================
- * Investor JTBD translation
+ * Evidence extraction
  * ============================================================
  */
 
+function extractSelectedAnswers(
+  presentation
+) {
+  const candidates = [
+    presentation
+      ?.evidence
+      ?.selectedAnswers,
+
+    presentation
+      ?.source
+      ?.evidence
+      ?.selectedAnswers,
+
+    presentation
+      ?.diagnostics
+      ?.evidence
+      ?.selectedAnswers,
+
+    presentation
+      ?.portfolioSystem
+      ?.evidence
+      ?.selectedAnswers
+  ];
+
+  for (const candidate of candidates) {
+    if (
+      Array.isArray(candidate)
+    ) {
+      return candidate;
+    }
+  }
+
+  /*
+   * Last-resort fallback:
+   *
+   * Some current sleeve presentations carry the same
+   * selected-answer evidence in sleeve personalization.
+   */
+  const sleeves =
+    extractSleeves(
+      presentation
+    );
+
+  for (const sleeve of sleeves) {
+    const evidence =
+      sleeve
+        ?.personalization
+        ?.evidence;
+
+    if (
+      Array.isArray(evidence) &&
+      evidence.length > 0
+    ) {
+      return evidence;
+    }
+  }
+
+  return [];
+}
+
+
+function getEvidenceForDimension(
+  selectedAnswers,
+  dimension
+) {
+  const allowedQuestionIds =
+    PROFILE_EVIDENCE_QUESTION_IDS[
+      dimension
+    ] ?? [];
+
+  return selectedAnswers
+    .filter(
+      (answer) =>
+        allowedQuestionIds.includes(
+          answer?.questionId
+        )
+    )
+    .map(
+      (answer) => ({
+        questionId:
+          answer.questionId,
+
+        optionId:
+          answer.optionId,
+
+        answerText:
+          answer.answerText
+      })
+    )
+    .filter(
+      (answer) =>
+        Boolean(
+          answer.answerText
+        )
+    );
+}
+
 
 /*
- * Stage -> organization job
+ * ============================================================
+ * Investor JTBD translation
+ * ============================================================
  */
 
 function buildOrganizationJob({
@@ -474,10 +688,14 @@ function buildOrganizationJob({
       'How should I organize my investments from where I am today?',
 
     job:
+      PROFILE_USER_JTBD[
+        stage?.profileId
+      ] ??
       'Give every important part of the portfolio a clear job.',
 
     systemResponse:
-      'Use distinct portfolio roles so investments are understood by what they contribute to the overall system rather than as a collection of unrelated holdings.',
+      stage?.systemFit ??
+      'Use distinct portfolio roles so every important part of the portfolio has a clear purpose.',
 
     resolvedProfile: {
       id:
@@ -513,10 +731,6 @@ function buildOrganizationJob({
 }
 
 
-/*
- * Style -> effort job
- */
-
 function buildEffortJob({
   style,
   effortGuidance
@@ -532,9 +746,13 @@ function buildEffortJob({
       'Where is my investing effort actually worth spending?',
 
     job:
+      PROFILE_USER_JTBD[
+        style?.profileId
+      ] ??
       'Spend attention where research or monitoring can change a meaningful portfolio decision.',
 
     systemResponse:
+      style?.systemFit ??
       effortGuidance
         ?.userFacingSummary ??
       'Match the amount of attention given to each portfolio role to the amount of attention that role actually requires.',
@@ -573,10 +791,6 @@ function buildEffortJob({
 }
 
 
-/*
- * Behavior -> decision job
- */
-
 function buildDecisionJob({
   behavior,
   behaviorGuidance
@@ -594,6 +808,9 @@ function buildDecisionJob({
       'When something makes me want to act, how should I decide what to do?',
 
     job:
+      PROFILE_USER_JTBD[
+        behavior?.profileId
+      ] ??
       behaviorGuidance
         ?.primaryNeed ??
       'Use the portfolio system as a decision framework before changing the portfolio.',
@@ -601,6 +818,8 @@ function buildDecisionJob({
     systemResponse:
       behaviorGuidance
         ?.systemPromise ??
+      behavior
+        ?.systemFit ??
       'Connect new information and investment ideas back to the portfolio job they would affect before deciding whether action is useful.',
 
     resolvedProfile: {
@@ -802,20 +1021,248 @@ function buildComplexityExplanation({
 
 /*
  * ============================================================
- * Recommendation reveal
+ * Profile accountability
  * ============================================================
  *
- * This is the first thing the user should see on the
- * Portfolio System Fit screen.
+ * Required translation:
  *
- * It deliberately reveals:
- *
- * - full archetype name
- * - variant
- * - actual AaronBux system name
- * - portfolio philosophy
- * - philosophy sources
- * - explicit accountability to Stage / Style / Behavior
+ * WHAT YOU TOLD US
+ *        ->
+ * YOUR JTBD
+ *        ->
+ * SYSTEM JTBD
+ *        ->
+ * HOW THIS SYSTEM ANSWERS
+ */
+
+function buildProfileAccountability({
+  presentation,
+  investorJobs,
+  behaviorGuidance
+}) {
+  const selectedAnswers =
+    extractSelectedAnswers(
+      presentation
+    );
+
+  const stage =
+    investorJobs
+      ?.organize ??
+    null;
+
+  const style =
+    investorJobs
+      ?.focus ??
+    null;
+
+  const behavior =
+    investorJobs
+      ?.decide ??
+    null;
+
+
+  const stageEvidence =
+    getEvidenceForDimension(
+      selectedAnswers,
+      'stage'
+    );
+
+  const styleEvidence =
+    getEvidenceForDimension(
+      selectedAnswers,
+      'style'
+    );
+
+  const behaviorEvidence =
+    getEvidenceForDimension(
+      selectedAnswers,
+      'behavior'
+    );
+
+
+  const stageSystemJTBD =
+    stage
+      ?.resolvedProfile
+      ?.portfolioRequirement ??
+    'Give every important part of the portfolio one clear responsibility.';
+
+
+  const styleSystemJTBD =
+    style
+      ?.resolvedProfile
+      ?.portfolioRequirement ??
+    'Minimize unnecessary routine decisions and define where attention is useful.';
+
+
+  const behaviorSystemJTBD =
+    behavior
+      ?.resolvedProfile
+      ?.portfolioRequirement ??
+    'Translate choices and new information into a bounded decision process.';
+
+
+  const behaviorSystemResponse =
+    behaviorGuidance
+      ?.systemPromise ??
+    behavior
+      ?.systemResponse ??
+    null;
+
+
+  return {
+    eyebrow:
+      'ACCOUNTABLE TO YOUR INVESTOR PROFILE',
+
+    title:
+      'How your answers translate into this system',
+
+    summary:
+      'Your profile creates three jobs for the portfolio system: organize your investments, focus your effort, and help you decide what to do next.',
+
+    columns: [
+      'Profile dimension',
+      'What you told us',
+      'Your JTBD',
+      'System JTBD',
+      'How this system answers'
+    ],
+
+    items: [
+      {
+        id:
+          'stage',
+
+        profileDimension:
+          'Stage — ' +
+          (
+            stage
+              ?.resolvedProfile
+              ?.label ??
+            'Your current stage'
+          ),
+
+        whatYouToldUs:
+          stageEvidence,
+
+        userJTBD:
+          stage?.job ??
+          null,
+
+        systemJTBD:
+          stageSystemJTBD,
+
+        systemResponse:
+          stage
+            ?.systemResponse ??
+          null,
+
+
+        /*
+         * Preserve existing fields for compatibility.
+         */
+        profileType:
+          'Stage',
+
+        dimension:
+          'Organize',
+
+        profileLabel:
+          stage
+            ?.resolvedProfile
+            ?.label ??
+          null
+      },
+
+
+      {
+        id:
+          'style',
+
+        profileDimension:
+          'Style — ' +
+          (
+            style
+              ?.resolvedProfile
+              ?.label ??
+            'Your investing style'
+          ),
+
+        whatYouToldUs:
+          styleEvidence,
+
+        userJTBD:
+          style?.job ??
+          null,
+
+        systemJTBD:
+          styleSystemJTBD,
+
+        systemResponse:
+          style
+            ?.systemResponse ??
+          null,
+
+        profileType:
+          'Style',
+
+        dimension:
+          'Focus effort',
+
+        profileLabel:
+          style
+            ?.resolvedProfile
+            ?.label ??
+          null
+      },
+
+
+      {
+        id:
+          'behavior',
+
+        profileDimension:
+          'Behavior — ' +
+          (
+            behavior
+              ?.resolvedProfile
+              ?.label ??
+            'Your decision pattern'
+          ),
+
+        whatYouToldUs:
+          behaviorEvidence,
+
+        userJTBD:
+          behavior?.job ??
+          null,
+
+        systemJTBD:
+          behaviorSystemJTBD,
+
+        systemResponse:
+          behaviorSystemResponse,
+
+        profileType:
+          'Behavior',
+
+        dimension:
+          'Decide',
+
+        profileLabel:
+          behavior
+            ?.resolvedProfile
+            ?.label ??
+          null
+      }
+    ]
+  };
+}
+
+
+/*
+ * ============================================================
+ * Recommendation reveal
+ * ============================================================
  */
 
 function buildRecommendationReveal({
@@ -823,7 +1270,7 @@ function buildRecommendationReveal({
   archetypeId,
   variantId,
   philosophy,
-  investorJobs
+  profileAccountability
 }) {
   const recommendation =
     presentation
@@ -843,180 +1290,10 @@ function buildRecommendationReveal({
       variantId
     );
 
-  /*
-   * The portfolio-job-fit resolver already exposes
-   * systemName when the existing constituent system has one.
-   *
-   * We do not manufacture a new system name here.
-   */
   const systemName =
     recommendation
       ?.systemName ??
     archetypeDisplayName;
-
-  const accountabilityItems = [
-    {
-      id:
-        'stage',
-
-      profileType:
-        'Stage',
-
-      dimension:
-        'Organize',
-
-      profileLabel:
-        investorJobs
-          ?.organize
-          ?.resolvedProfile
-          ?.label ??
-        null,
-
-      profileSummary:
-        investorJobs
-          ?.organize
-          ?.resolvedProfile
-          ?.summary ??
-        null,
-
-      investorQuestion:
-        investorJobs
-          ?.organize
-          ?.investorQuestion ??
-        null,
-
-      requirement:
-        investorJobs
-          ?.organize
-          ?.job ??
-        null,
-
-      portfolioRequirement:
-        investorJobs
-          ?.organize
-          ?.resolvedProfile
-          ?.portfolioRequirement ??
-        null,
-
-      systemResponse:
-        investorJobs
-          ?.organize
-          ?.resolvedProfile
-          ?.systemFit ??
-        investorJobs
-          ?.organize
-          ?.systemResponse ??
-        null
-    },
-
-    {
-      id:
-        'style',
-
-      profileType:
-        'Style',
-
-      dimension:
-        'Focus effort',
-
-      profileLabel:
-        investorJobs
-          ?.focus
-          ?.resolvedProfile
-          ?.label ??
-        null,
-
-      profileSummary:
-        investorJobs
-          ?.focus
-          ?.resolvedProfile
-          ?.summary ??
-        null,
-
-      investorQuestion:
-        investorJobs
-          ?.focus
-          ?.investorQuestion ??
-        null,
-
-      requirement:
-        investorJobs
-          ?.focus
-          ?.job ??
-        null,
-
-      portfolioRequirement:
-        investorJobs
-          ?.focus
-          ?.resolvedProfile
-          ?.portfolioRequirement ??
-        null,
-
-      systemResponse:
-        investorJobs
-          ?.focus
-          ?.resolvedProfile
-          ?.systemFit ??
-        investorJobs
-          ?.focus
-          ?.systemResponse ??
-        null
-    },
-
-    {
-      id:
-        'behavior',
-
-      profileType:
-        'Behavior',
-
-      dimension:
-        'Decide',
-
-      profileLabel:
-        investorJobs
-          ?.decide
-          ?.resolvedProfile
-          ?.label ??
-        null,
-
-      profileSummary:
-        investorJobs
-          ?.decide
-          ?.resolvedProfile
-          ?.summary ??
-        null,
-
-      investorQuestion:
-        investorJobs
-          ?.decide
-          ?.investorQuestion ??
-        null,
-
-      requirement:
-        investorJobs
-          ?.decide
-          ?.job ??
-        null,
-
-      portfolioRequirement:
-        investorJobs
-          ?.decide
-          ?.resolvedProfile
-          ?.portfolioRequirement ??
-        null,
-
-      systemResponse:
-        investorJobs
-          ?.decide
-          ?.resolvedProfile
-          ?.systemFit ??
-        investorJobs
-          ?.decide
-          ?.systemResponse ??
-        null
-    }
-  ];
 
   return {
     eyebrow:
@@ -1058,19 +1335,7 @@ function buildRecommendationReveal({
         []
     },
 
-    profileAccountability: {
-      eyebrow:
-        'ACCOUNTABLE TO YOUR INVESTOR PROFILE',
-
-      title:
-        'This system has to solve all three of your investing jobs.',
-
-      summary:
-        'Your recommendation is not based on portfolio philosophy alone. Its structure must support what you need to organize, where your effort is worth spending, and how the system should help you make decisions.',
-
-      items:
-        accountabilityItems
-    }
+    profileAccountability
   };
 }
 
@@ -1385,7 +1650,7 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Resolve explanation guidance only.
+   * Guidance resolution.
    */
 
   const behaviorGuidance =
@@ -1416,7 +1681,7 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Build investor jobs.
+   * Investor jobs.
    */
 
   const investorJobs = {
@@ -1440,7 +1705,7 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Translate portfolio architecture.
+   * Portfolio philosophy.
    */
 
   const philosophy =
@@ -1450,6 +1715,10 @@ export function presentInvestorSystemGuidance(
       presentation
     });
 
+
+  /*
+   * Complexity.
+   */
 
   const complexity =
     buildComplexityExplanation({
@@ -1461,6 +1730,10 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  /*
+   * Sleeves.
+   */
+
   const guidedSleeves =
     mergeSleeveGuidance(
       sleeves,
@@ -1469,6 +1742,10 @@ export function presentInvestorSystemGuidance(
     );
 
 
+  /*
+   * Behavior.
+   */
+
   const behaviorOperatingModel =
     buildBehaviorOperatingModel(
       behaviorGuidance
@@ -1476,7 +1753,24 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Build the new first-screen recommendation reveal.
+   * NEW:
+   *
+   * Direct quiz evidence ->
+   * user JTBD ->
+   * system JTBD ->
+   * concrete system response.
+   */
+
+  const profileAccountability =
+    buildProfileAccountability({
+      presentation,
+      investorJobs,
+      behaviorGuidance
+    });
+
+
+  /*
+   * Recommendation reveal.
    */
 
   const recommendationReveal =
@@ -1485,21 +1779,15 @@ export function presentInvestorSystemGuidance(
       archetypeId,
       variantId,
       philosophy,
-      investorJobs
+      profileAccountability
     });
 
 
   return {
-    /*
-     * Preserve original stable presenter output.
-     */
     source:
       presentation,
 
 
-    /*
-     * Resolved IDs.
-     */
     resolved: {
       stageId,
       styleId,
@@ -1511,54 +1799,24 @@ export function presentInvestorSystemGuidance(
     },
 
 
-    /*
-     * New top-level reveal.
-     */
     recommendationReveal,
 
-
-    /*
-     * User JTBD.
-     */
     investorJobs,
 
-
-    /*
-     * Portfolio philosophy.
-     */
     philosophy,
 
-
-    /*
-     * Variant / structural complexity.
-     */
     complexity,
 
-
-    /*
-     * Effort model.
-     */
     effort:
       effortGuidance,
 
-
-    /*
-     * Behavior decision-support model.
-     */
     behavior:
       behaviorOperatingModel,
 
-
-    /*
-     * Bounded sleeve explanations.
-     */
     sleeves:
       guidedSleeves,
 
 
-    /*
-     * Overall fit summary.
-     */
     systemFit: {
       title:
         'Why this system fits the way you invest',
@@ -1635,9 +1893,6 @@ export function presentInvestorSystemGuidance(
     },
 
 
-    /*
-     * User-led positioning.
-     */
     userLedPrinciple: {
       title:
         'Your system supports the decision. You make it.',
