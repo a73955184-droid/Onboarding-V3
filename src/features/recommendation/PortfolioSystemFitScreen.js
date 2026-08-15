@@ -25,43 +25,6 @@ import {
  * ============================================================
  * Portfolio System Fit Screen
  * ============================================================
- *
- * PURPOSE
- * -------
- *
- * Reveal the recommended portfolio system first, then explain
- * why it is accountable to the investor profile.
- *
- * Flow:
- *
- * Portfolio system reveal
- *      ↓
- * Philosophy + authoritative source
- *      ↓
- * Investor Profile accountability
- *      ↓
- * Why this variant / number of sleeves
- *      ↓
- * Effort model
- *      ↓
- * Behavior decision-support model
- *      ↓
- * Bounded sleeve operating system
- *
- * IMPORTANT
- * ---------
- *
- * This screen does NOT:
- *
- * - score quiz answers
- * - resolve Stage
- * - resolve Style
- * - resolve Behavior
- * - resolve archetype
- * - resolve variant
- * - modify allocations
- * - select securities
- * - recommend trades
  */
 
 
@@ -172,10 +135,54 @@ function renderSources(
  * ============================================================
  */
 
+function renderEvidenceAnswers(
+  evidence = []
+) {
+  if (
+    !Array.isArray(evidence) ||
+    evidence.length === 0
+  ) {
+    return `
+      <span>
+        Your selected answers contributed to this profile result.
+      </span>
+    `;
+  }
+
+  return evidence
+    .map(
+      (answer) => `
+        <div
+          style="
+            margin-bottom: 8px;
+            line-height: 1.45;
+          "
+        >
+          “${escapeHtml(
+            answer.answerText
+          )}”
+        </div>
+      `
+    )
+    .join('');
+}
+
+
 function renderProfileAccountability(
   accountability
 ) {
   if (!accountability) {
+    return '';
+  }
+
+  const items =
+    accountability.items ??
+    [];
+
+  if (
+    !Array.isArray(items) ||
+    items.length === 0
+  ) {
     return '';
   }
 
@@ -186,122 +193,219 @@ function renderProfileAccountability(
 
       <span class="pill">
         ${escapeHtml(
-          accountability.eyebrow
+          accountability.eyebrow ??
+          'ACCOUNTABLE TO YOUR INVESTOR PROFILE'
         )}
       </span>
+
 
       <h2
         style="margin-top: 12px"
       >
         ${escapeHtml(
-          accountability.title
+          accountability.title ??
+          'How your answers translate into this system'
         )}
       </h2>
 
-      <p>
-        ${escapeHtml(
-          accountability.summary
-        )}
-      </p>
+
+      ${
+        accountability.summary
+          ? `
+            <p>
+              ${escapeHtml(
+                accountability.summary
+              )}
+            </p>
+          `
+          : ''
+      }
 
 
       <div
-        class="result-grid"
-        style="margin-top: 18px"
+        style="
+          overflow-x: auto;
+          margin-top: 20px;
+          padding-bottom: 4px;
+        "
       >
 
-        ${(
-          accountability.items ??
-          []
-        )
-          .map(
-            (item) => `
-              <article class="profile-card">
+        <table
+          style="
+            width: 100%;
+            min-width: 1100px;
+            border-collapse: collapse;
+            table-layout: fixed;
+          "
+        >
 
-                <span class="pill">
-                  ${escapeHtml(
-                    item.profileType
-                  )}
-                  ·
-                  ${escapeHtml(
-                    item.dimension
-                  )}
-                </span>
+          <thead>
 
-                ${
-                  item.profileLabel
-                    ? `
-                      <h3
-                        style="margin-top: 12px"
-                      >
+            <tr>
+
+              <th
+                style="
+                  width: 15%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px 14px 14px 0;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                Profile dimension
+              </th>
+
+              <th
+                style="
+                  width: 23%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                What you told us
+              </th>
+
+              <th
+                style="
+                  width: 20%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                Your JTBD
+              </th>
+
+              <th
+                style="
+                  width: 20%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                System JTBD
+              </th>
+
+              <th
+                style="
+                  width: 22%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px 0 14px 14px;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                How this system answers
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            ${items
+              .map(
+                (item) => `
+                  <tr>
+
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 14px 18px 0;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
+
+                      <strong>
                         ${escapeHtml(
-                          item.profileLabel
+                          item.profileDimension
                         )}
-                      </h3>
-                    `
-                    : ''
-                }
+                      </strong>
 
-                ${
-                  item.profileSummary
-                    ? `
-                      <p>
+                    </td>
+
+
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 14px;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
+
+                      ${renderEvidenceAnswers(
+                        item.whatYouToldUs
+                      )}
+
+                    </td>
+
+
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 14px;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
+
+                      <strong>
                         ${escapeHtml(
-                          item.profileSummary
+                          item.userJTBD
                         )}
-                      </p>
-                    `
-                    : ''
-                }
+                      </strong>
 
-                ${
-                  item.requirement
-                    ? `
-                      <div
-                        class="summary-item"
-                        style="margin-top: 12px"
-                      >
-                        <strong>
-                          Your investing job
-                        </strong>
+                    </td>
 
-                        <div>
-                          ${escapeHtml(
-                            item.requirement
-                          )}
-                        </div>
-                      </div>
-                    `
-                    : ''
-                }
 
-                ${
-                  item.systemResponse
-                    ? `
-                      <div
-                        class="evidence"
-                        style="margin-top: 12px"
-                      >
-                        <strong>
-                          How this system answers it
-                        </strong>
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 14px;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
 
-                        <div>
-                          ${escapeHtml(
-                            item.systemResponse
-                          )}
-                        </div>
-                      </div>
-                    `
-                    : ''
-                }
+                      <strong>
+                        ${escapeHtml(
+                          item.systemJTBD
+                        )}
+                      </strong>
 
-              </article>
-            `
-          )
-          .join('')}
+                    </td>
+
+
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 0 18px 14px;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
+
+                      ${escapeHtml(
+                        item.systemResponse
+                      )}
+
+                    </td>
+
+                  </tr>
+                `
+              )
+              .join('')}
+
+          </tbody>
+
+        </table>
 
       </div>
+
     </div>
   `;
 }
@@ -309,7 +413,7 @@ function renderProfileAccountability(
 
 /*
  * ============================================================
- * Complexity / Variant
+ * Complexity
  * ============================================================
  */
 
@@ -339,7 +443,7 @@ function renderComplexityReason(
 
 /*
  * ============================================================
- * Effort Model
+ * Effort model
  * ============================================================
  */
 
@@ -363,6 +467,7 @@ function renderEffortDistribution(
       class="summary-list"
       style="margin-top: 16px"
     >
+
       ${distribution
         .map(
           (item) => `
@@ -400,6 +505,7 @@ function renderEffortDistribution(
           `
         )
         .join('')}
+
     </div>
   `;
 }
@@ -524,6 +630,7 @@ function renderDecisionProtocol(
       class="summary-list"
       style="margin-top: 18px"
     >
+
       ${steps
         .map(
           (step) => `
@@ -558,6 +665,7 @@ function renderDecisionProtocol(
           `
         )
         .join('')}
+
     </div>
   `;
 }
@@ -643,6 +751,7 @@ function renderBehaviorOutcomes(
         margin-top: 16px;
       "
     >
+
       ${outcomes
         .map(
           (outcome) => `
@@ -656,6 +765,7 @@ function renderBehaviorOutcomes(
           `
         )
         .join('')}
+
     </div>
   `;
 }
@@ -689,6 +799,7 @@ function renderAssetCategories(
       class="summary-item"
       style="margin-top: 12px"
     >
+
       <strong>
         What can belong here
       </strong>
@@ -708,6 +819,7 @@ function renderAssetCategories(
           )
           .join(' · ')}
       </div>
+
     </div>
   `;
 }
@@ -736,6 +848,7 @@ function renderMarketSignals(
           class="summary-item"
           style="margin-top: 12px"
         >
+
           <strong>
             What is worth monitoring
           </strong>
@@ -747,6 +860,7 @@ function renderMarketSignals(
                 .relevantSignals
             )}
           </div>
+
         </div>
       `;
     }
@@ -759,6 +873,7 @@ function renderMarketSignals(
       class="summary-item"
       style="margin-top: 12px"
     >
+
       <strong>
         What is worth monitoring
       </strong>
@@ -769,6 +884,7 @@ function renderMarketSignals(
             <div
               style="margin-top: 8px"
             >
+
               <strong>
                 ${escapeHtml(
                   trend.label
@@ -792,6 +908,7 @@ function renderMarketSignals(
           `
         )
         .join('')}
+
     </div>
   `;
 }
@@ -1169,10 +1286,6 @@ export function renderPortfolioSystemFit(
       <main class="main">
 
 
-        <!-- ==================================================
-             Missing state
-             ================================================== -->
-
         <div
           id="missingState"
           class="card panel"
@@ -1530,10 +1643,6 @@ export function renderPortfolioSystemFit(
           </section>
 
 
-          <!-- ==================================================
-               CTA
-               ================================================== -->
-
           <div class="next-row">
 
             <button
@@ -1558,9 +1667,6 @@ export function renderPortfolioSystemFit(
    * ==========================================================
    * Navigation
    * ==========================================================
-   *
-   * The old Investor Profile Jobs and Investing System screens
-   * are bypassed from the normal flow.
    */
 
   root
@@ -1769,6 +1875,10 @@ export function renderPortfolioSystemFit(
       );
 
 
+  /*
+   * NEW table-based accountability section.
+   */
+
   root
     .querySelector(
       '#profileAccountability'
@@ -1782,7 +1892,7 @@ export function renderPortfolioSystemFit(
 
   /*
    * ==========================================================
-   * PHILOSOPHY IMPLEMENTATION
+   * PHILOSOPHY
    * ==========================================================
    */
 
@@ -2053,8 +2163,6 @@ export function renderPortfolioSystemFit(
    * ==========================================================
    * Forward navigation
    * ==========================================================
-   *
-   * Existing Investing System screen is bypassed.
    */
 
   root
