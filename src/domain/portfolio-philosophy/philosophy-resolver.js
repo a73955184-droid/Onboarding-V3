@@ -14,45 +14,108 @@ export function resolvePortfolioPhilosophy({
   const variant =
     VARIANT_PHILOSOPHIES?.[variantId] ?? null;
 
-  const resolvedSleeves = (Array.isArray(sleeves) ? sleeves : []).map(
-    (sleeve) => {
-      const philosophy =
-        SLEEVE_PHILOSOPHIES?.[archetypeId]?.[variantId]?.[sleeve.id] ??
-        null;
+  const archetypeSourceIds =
+    archetype?.sourceIds ?? [];
 
-      const sourceIds =
-        philosophy?.provenance?.sourceIds ?? [];
+  const archetypeSources =
+    archetypeSourceIds
+      .map(
+        (sourceId) =>
+          PHILOSOPHY_SOURCES?.[sourceId] ?? null
+      )
+      .filter(Boolean);
 
-      return {
-        sleeve,
-        philosophy,
-        sources: sourceIds
-          .map((id) => PHILOSOPHY_SOURCES?.[id] ?? null)
-          .filter(Boolean)
-      };
-    }
-  );
+  const resolvedSleeves =
+    (
+      Array.isArray(sleeves)
+        ? sleeves
+        : []
+    ).map(
+      (sleeve) => {
+        const philosophy =
+          SLEEVE_PHILOSOPHIES
+            ?.[archetypeId]
+            ?.[variantId]
+            ?.[sleeve.id] ??
+          null;
+
+        const sourceIds =
+          philosophy
+            ?.provenance
+            ?.sourceIds ??
+          [];
+
+        const sources =
+          sourceIds
+            .map(
+              (sourceId) =>
+                PHILOSOPHY_SOURCES?.[sourceId] ?? null
+            )
+            .filter(Boolean);
+
+        return {
+          sleeve,
+          philosophy,
+          sources
+        };
+      }
+    );
+
+  const missingSleeveIds =
+    resolvedSleeves
+      .filter(
+        (entry) =>
+          !entry.philosophy
+      )
+      .map(
+        (entry) =>
+          entry.sleeve?.id
+      )
+      .filter(Boolean);
 
   return {
     archetype,
+
+    /*
+     * Fully resolved authoritative source records supporting
+     * the archetype-level philosophy.
+     */
+    archetypeSources,
+
     variant,
 
-    sleeves: resolvedSleeves,
+    /*
+     * Existing constituent sleeve data joined with the
+     * corresponding approved philosophy metadata and sources.
+     */
+    sleeves:
+      resolvedSleeves,
 
+    /*
+     * Development diagnostics.
+     *
+     * Missing philosophy metadata should not crash the app.
+     * Instead, expose the coverage gap here.
+     */
     coverage: {
-      archetypeResolved: Boolean(archetype),
-      variantResolved: Boolean(variant),
+      archetypeResolved:
+        Boolean(archetype),
 
-      sleevesTotal: resolvedSleeves.length,
+      variantResolved:
+        Boolean(variant),
 
-      sleevesResolved: resolvedSleeves.filter(
-        (entry) => Boolean(entry.philosophy)
-      ).length,
+      sleevesTotal:
+        resolvedSleeves.length,
 
-      missingSleeveIds: resolvedSleeves
-        .filter((entry) => !entry.philosophy)
-        .map((entry) => entry.sleeve?.id)
-        .filter(Boolean)
+      sleevesResolved:
+        resolvedSleeves.filter(
+          (entry) =>
+            Boolean(
+              entry.philosophy
+            )
+        ).length,
+
+      missingSleeveIds
     }
   };
 }
