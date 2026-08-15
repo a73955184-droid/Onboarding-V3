@@ -625,6 +625,18 @@ function presentPhilosophy(
           ?.systemName ??
         null,
 
+      /*
+       * AaronBux investor-facing interpretation of the
+       * core problem this archetype is designed to solve.
+       *
+       * This content is owned by archetype-philosophies.js.
+       * The presenter only passes it downstream.
+       */
+      investorProblem:
+        archetype
+          ?.investorProblem ??
+        null,
+
       summary:
         archetype
           ?.summary ??
