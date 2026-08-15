@@ -1330,32 +1330,19 @@ export function renderPortfolioSystemFit(
             ></p>
 
 
-            <div
-              class="summary-item"
-              style="margin-top: 22px"
-            >
+            <!--
+              The archetype-level problem comes from:
 
-              <strong>
-                Portfolio philosophy
-              </strong>
+              archetype-philosophies.js
+                    ↓
+              portfolio-job-fit-presenter.js
+                    ↓
+              investor-system-guidance-presenter.js
+                    ↓
+              recommendationReveal.investorProblem
 
-
-              <div
-                id="heroPhilosophyName"
-                style="
-                  font-weight: 700;
-                  margin-top: 6px;
-                "
-              ></div>
-
-
-              <div
-                id="heroPhilosophySummary"
-                style="margin-top: 6px"
-              ></div>
-
-            </div>
-
+              This screen does not infer or rewrite the meaning.
+            -->
 
             <div
               class="summary-item"
@@ -1379,6 +1366,33 @@ export function renderPortfolioSystemFit(
               <div
                 id="heroInvestorProblemMeaning"
                 style="margin-top: 10px"
+              ></div>
+
+            </div>
+
+
+            <!--
+              Preserve philosophy identity and source as provenance.
+              The generic philosophy summary is intentionally not
+              repeated in the hero.
+            -->
+
+            <div
+              class="summary-item"
+              style="margin-top: 22px"
+            >
+
+              <strong>
+                Portfolio philosophy
+              </strong>
+
+
+              <div
+                id="heroPhilosophyName"
+                style="
+                  font-weight: 700;
+                  margin-top: 6px;
+                "
               ></div>
 
             </div>
@@ -1851,17 +1865,13 @@ export function renderPortfolioSystemFit(
         : '';
 
 
-  root
-    .querySelector(
-      '#heroPhilosophyName'
-    )
-    .textContent =
-      reveal
-        .philosophy
-        .name ??
-      '';
-
-
+  /*
+   * Archetype-specific investor problem.
+   *
+   * Prefer the hero-level field exposed specifically by the
+   * investor-system-guidance presenter. Preserve the nested
+   * philosophy location as a compatibility fallback.
+   */
   const investorProblem =
     reveal
       ?.investorProblem ??
@@ -1870,12 +1880,6 @@ export function renderPortfolioSystemFit(
       ?.investorProblem ??
     null;
 
-  root
-    .querySelector(
-      '#heroPhilosophySummary'
-    )
-    .textContent =
-      '';
 
   root
     .querySelector(
@@ -1886,6 +1890,7 @@ export function renderPortfolioSystemFit(
         ?.question ??
       '';
 
+
   root
     .querySelector(
       '#heroInvestorProblemMeaning'
@@ -1893,6 +1898,23 @@ export function renderPortfolioSystemFit(
     .textContent =
       investorProblem
         ?.meaning ??
+      '';
+
+
+  /*
+   * Underlying philosophy provenance.
+   *
+   * We retain the philosophy name and source but deliberately
+   * do not repeat the generic philosophy summary in the hero.
+   */
+  root
+    .querySelector(
+      '#heroPhilosophyName'
+    )
+    .textContent =
+      reveal
+        .philosophy
+        .name ??
       '';
 
 
