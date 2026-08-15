@@ -370,6 +370,6 @@ export function renderInvestorProfileJobs(root) {
   `;
 
   root.querySelector('#systemBtn').addEventListener('click', () => {
-    navigate('recommendation/system');
+    navigate('recommendation/system-fit');
   });
 }
