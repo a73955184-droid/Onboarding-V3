@@ -1851,7 +1851,7 @@ export function renderPortfolioSystemFit(
       'click',
       () => {
         navigate(
-          'recommendation/system'
+          'recommendation/portfolio'
         );
       }
     );
