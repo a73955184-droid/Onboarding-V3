@@ -122,7 +122,7 @@ export function renderPortfolioMap(root) {
   const backBtn = root.querySelector('#backBtn');
   const restartBtn = root.querySelector('#restartBtn');
 
-  backBtn.addEventListener('click', () => navigate('recommendation/system'));
+  backBtn.addEventListener('click', () => navigate('recommendation/system-fit'));
 
   restartBtn.addEventListener('click', () => {
     resetState();
