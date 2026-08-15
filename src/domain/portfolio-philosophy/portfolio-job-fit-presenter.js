@@ -821,11 +821,27 @@ export function presentPortfolioJobFit(
       description:
         'These are some of the responses that shaped how the system interprets your investing needs.',
 
+      /*
+       * Concise evidence retained for any UI that wants
+       * only a small sample of user answers.
+       */
       items:
         presentTopEvidence(
           fitResult.evidence,
           evidenceLimit
-        )
+        ),
+
+      /*
+       * Preserve the complete quiz evidence for downstream
+       * presenters such as investor-system-guidance-presenter.
+       *
+       * Do not summarize, rewrite, or limit these responses.
+       */
+      selectedAnswers:
+        fitResult
+          ?.evidence
+          ?.selectedAnswers ??
+        []
     },
 
 
