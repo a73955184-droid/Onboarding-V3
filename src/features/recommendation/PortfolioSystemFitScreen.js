@@ -29,21 +29,24 @@ import {
  * PURPOSE
  * -------
  *
- * Translate the resolved recommendation into investor language.
+ * Reveal the recommended portfolio system first, then explain
+ * why it is accountable to the investor profile.
  *
- * The screen answers:
+ * Flow:
  *
- * 1. What does my portfolio need to help me do?
- * 2. Why this portfolio philosophy?
- * 3. Why this version / this many sleeves?
- * 4. Where is my investing effort worth spending?
- * 5. How should the system help me make decisions?
- * 6. What job does each sleeve perform?
- * 7. What belongs in each sleeve?
- * 8. What should I monitor?
- * 9. How often should I review it?
- * 10. What is redundant, mismatched, or unnecessary?
- *
+ * Portfolio system reveal
+ *      ↓
+ * Philosophy + authoritative source
+ *      ↓
+ * Investor Profile accountability
+ *      ↓
+ * Why this variant / number of sleeves
+ *      ↓
+ * Effort model
+ *      ↓
+ * Behavior decision-support model
+ *      ↓
+ * Bounded sleeve operating system
  *
  * IMPORTANT
  * ---------
@@ -56,12 +59,9 @@ import {
  * - resolve Behavior
  * - resolve archetype
  * - resolve variant
- * - modify portfolio construction
  * - modify allocations
  * - select securities
  * - recommend trades
- *
- * It consumes already-resolved domain output.
  */
 
 
@@ -75,141 +75,38 @@ function escapeHtml(value) {
   return String(
     value ?? ''
   )
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}
-
-
-function renderText(value) {
-  if (!value) {
-    return '';
-  }
-
-  return escapeHtml(value);
-}
-
-
-function renderOptionalParagraph(
-  value,
-  className = ''
-) {
-  if (!value) {
-    return '';
-  }
-
-  return `
-    <p class="${className}">
-      ${escapeHtml(value)}
-    </p>
-  `;
+    .replaceAll(
+      '&',
+      '&amp;'
+    )
+    .replaceAll(
+      '<',
+      '&lt;'
+    )
+    .replaceAll(
+      '>',
+      '&gt;'
+    )
+    .replaceAll(
+      '"',
+      '&quot;'
+    )
+    .replaceAll(
+      "'",
+      '&#039;'
+    );
 }
 
 
 /*
  * ============================================================
- * Investor Jobs
- * ============================================================
- */
-
-function renderInvestorJob(
-  job,
-  badge
-) {
-  if (!job) {
-    return '';
-  }
-
-  return `
-    <article class="profile-card">
-
-      <span class="pill">
-        ${escapeHtml(badge)}
-      </span>
-
-      <h2>
-        ${escapeHtml(job.title)}
-      </h2>
-
-      <p>
-        <strong>
-          ${escapeHtml(job.investorQuestion)}
-        </strong>
-      </p>
-
-      <p>
-        ${escapeHtml(job.job)}
-      </p>
-
-      ${
-        job.systemResponse
-          ? `
-            <div
-              class="evidence"
-              style="margin-top: 14px"
-            >
-              <strong>
-                What your system needs to do
-              </strong>
-
-              <div>
-                ${escapeHtml(job.systemResponse)}
-              </div>
-            </div>
-          `
-          : ''
-      }
-
-      ${
-        job.resolvedProfile?.label
-          ? `
-            <div
-              class="summary-item"
-              style="margin-top: 14px"
-            >
-              <strong>
-                Your diagnosed pattern
-              </strong>
-
-              <div>
-                ${escapeHtml(
-                  job.resolvedProfile.label
-                )}
-              </div>
-
-              ${
-                job.resolvedProfile.summary
-                  ? `
-                    <div
-                      style="margin-top: 6px"
-                    >
-                      ${escapeHtml(
-                        job.resolvedProfile.summary
-                      )}
-                    </div>
-                  `
-                  : ''
-              }
-            </div>
-          `
-          : ''
-      }
-
-    </article>
-  `;
-}
-
-
-/*
- * ============================================================
- * Portfolio Philosophy
+ * Sources
  * ============================================================
  */
 
 function renderSources(
-  sources = []
+  sources = [],
+  heading = 'Principles behind this system'
 ) {
   if (
     !Array.isArray(sources) ||
@@ -224,7 +121,7 @@ function renderSources(
       style="margin-top: 16px"
     >
       <strong>
-        Principles behind this system
+        ${escapeHtml(heading)}
       </strong>
 
       ${sources
@@ -241,19 +138,170 @@ function renderSources(
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      ${escapeHtml(source.organization)}
-                      — ${escapeHtml(source.title)}
+                      ${escapeHtml(
+                        source.organization
+                      )}
+                      —
+                      ${escapeHtml(
+                        source.title
+                      )}
                     </a>
                   `
                   : `
-                    ${escapeHtml(source.organization)}
-                    — ${escapeHtml(source.title)}
+                    ${escapeHtml(
+                      source.organization
+                    )}
+                    —
+                    ${escapeHtml(
+                      source.title
+                    )}
                   `
               }
             </div>
           `
         )
         .join('')}
+    </div>
+  `;
+}
+
+
+/*
+ * ============================================================
+ * Investor Profile Accountability
+ * ============================================================
+ */
+
+function renderProfileAccountability(
+  accountability
+) {
+  if (!accountability) {
+    return '';
+  }
+
+  return `
+    <div
+      style="margin-top: 28px"
+    >
+
+      <span class="pill">
+        ${escapeHtml(
+          accountability.eyebrow
+        )}
+      </span>
+
+      <h2
+        style="margin-top: 12px"
+      >
+        ${escapeHtml(
+          accountability.title
+        )}
+      </h2>
+
+      <p>
+        ${escapeHtml(
+          accountability.summary
+        )}
+      </p>
+
+
+      <div
+        class="result-grid"
+        style="margin-top: 18px"
+      >
+
+        ${(
+          accountability.items ??
+          []
+        )
+          .map(
+            (item) => `
+              <article class="profile-card">
+
+                <span class="pill">
+                  ${escapeHtml(
+                    item.profileType
+                  )}
+                  ·
+                  ${escapeHtml(
+                    item.dimension
+                  )}
+                </span>
+
+                ${
+                  item.profileLabel
+                    ? `
+                      <h3
+                        style="margin-top: 12px"
+                      >
+                        ${escapeHtml(
+                          item.profileLabel
+                        )}
+                      </h3>
+                    `
+                    : ''
+                }
+
+                ${
+                  item.profileSummary
+                    ? `
+                      <p>
+                        ${escapeHtml(
+                          item.profileSummary
+                        )}
+                      </p>
+                    `
+                    : ''
+                }
+
+                ${
+                  item.requirement
+                    ? `
+                      <div
+                        class="summary-item"
+                        style="margin-top: 12px"
+                      >
+                        <strong>
+                          Your investing job
+                        </strong>
+
+                        <div>
+                          ${escapeHtml(
+                            item.requirement
+                          )}
+                        </div>
+                      </div>
+                    `
+                    : ''
+                }
+
+                ${
+                  item.systemResponse
+                    ? `
+                      <div
+                        class="evidence"
+                        style="margin-top: 12px"
+                      >
+                        <strong>
+                          How this system answers it
+                        </strong>
+
+                        <div>
+                          ${escapeHtml(
+                            item.systemResponse
+                          )}
+                        </div>
+                      </div>
+                    `
+                    : ''
+                }
+
+              </article>
+            `
+          )
+          .join('')}
+
+      </div>
     </div>
   `;
 }
@@ -275,6 +323,7 @@ function renderComplexityReason(
 
   return `
     <div class="summary-item">
+
       <strong>
         ${escapeHtml(title)}
       </strong>
@@ -282,6 +331,7 @@ function renderComplexityReason(
       <div>
         ${escapeHtml(body)}
       </div>
+
     </div>
   `;
 }
@@ -289,7 +339,7 @@ function renderComplexityReason(
 
 /*
  * ============================================================
- * Effort
+ * Effort Model
  * ============================================================
  */
 
@@ -302,7 +352,9 @@ function renderEffortDistribution(
       ?.distribution ??
     [];
 
-  if (distribution.length === 0) {
+  if (
+    distribution.length === 0
+  ) {
     return '';
   }
 
@@ -317,12 +369,16 @@ function renderEffortDistribution(
             <div class="summary-item">
 
               <strong>
-                ${escapeHtml(item.label)}
+                ${escapeHtml(
+                  item.label
+                )}
               </strong>
 
               <div>
                 ${escapeHtml(
-                  String(item.percent)
+                  String(
+                    item.percent
+                  )
                 )}% of portfolio
               </div>
 
@@ -332,7 +388,9 @@ function renderEffortDistribution(
                     <div
                       style="margin-top: 6px"
                     >
-                      ${escapeHtml(item.meaning)}
+                      ${escapeHtml(
+                        item.meaning
+                      )}
                     </div>
                   `
                   : ''
@@ -362,17 +420,25 @@ function renderSleeveEffortRows(
       class="summary-list"
       style="margin-top: 18px"
     >
+
       ${sleeves
         .map(
           (sleeve) => `
             <div class="summary-item">
 
               <strong>
-                ${escapeHtml(sleeve.label)}
+                ${escapeHtml(
+                  sleeve.label
+                )}
+
                 ${
-                  typeof sleeve.weightPercent ===
+                  typeof sleeve
+                    .weightPercent ===
                   'number'
-                    ? ` · ${sleeve.weightPercent}%`
+                    ? ` · ${
+                        sleeve
+                          .weightPercent
+                      }%`
                     : ''
                 }
               </strong>
@@ -380,21 +446,22 @@ function renderSleeveEffortRows(
               <div
                 style="margin-top: 4px"
               >
-                ${
-                  escapeHtml(
-                    sleeve.guidance
-                      ?.effort
-                      ?.label ??
-                    ''
-                  )
-                }
+                ${escapeHtml(
+                  sleeve
+                    .guidance
+                    ?.effort
+                    ?.label ??
+                  ''
+                )}
 
                 ${
-                  sleeve.guidance
+                  sleeve
+                    .guidance
                     ?.effort
                     ?.reviewCadenceLabel
                     ? ` · ${escapeHtml(
-                        sleeve.guidance
+                        sleeve
+                          .guidance
                           .effort
                           .reviewCadenceLabel
                       )}`
@@ -403,7 +470,8 @@ function renderSleeveEffortRows(
               </div>
 
               ${
-                sleeve.guidance
+                sleeve
+                  .guidance
                   ?.effort
                   ?.whyThisEffort
                   ? `
@@ -411,7 +479,8 @@ function renderSleeveEffortRows(
                       style="margin-top: 6px"
                     >
                       ${escapeHtml(
-                        sleeve.guidance
+                        sleeve
+                          .guidance
                           .effort
                           .whyThisEffort
                       )}
@@ -424,6 +493,7 @@ function renderSleeveEffortRows(
           `
         )
         .join('')}
+
     </div>
   `;
 }
@@ -439,10 +509,13 @@ function renderDecisionProtocol(
   behavior
 ) {
   const steps =
-    behavior?.decisionProtocol ??
+    behavior
+      ?.decisionProtocol ??
     [];
 
-  if (steps.length === 0) {
+  if (
+    steps.length === 0
+  ) {
     return '';
   }
 
@@ -458,8 +531,11 @@ function renderDecisionProtocol(
 
               <strong>
                 ${escapeHtml(
-                  String(step.step)
-                )}. ${escapeHtml(
+                  String(
+                    step.step
+                  )
+                )}.
+                ${escapeHtml(
                   step.question
                 )}
               </strong>
@@ -540,7 +616,10 @@ function humanizeOutcome(
   return (
     map[outcome] ??
     String(outcome)
-      .replaceAll('-', ' ')
+      .replaceAll(
+        '-',
+        ' '
+      )
   );
 }
 
@@ -584,7 +663,7 @@ function renderBehaviorOutcomes(
 
 /*
  * ============================================================
- * Bounded Sleeve System
+ * Sleeve content
  * ============================================================
  */
 
@@ -592,11 +671,14 @@ function renderAssetCategories(
   sleeve
 ) {
   const categories =
-    sleeve.assetCategories ??
+    sleeve
+      .assetCategories ??
     [];
 
   if (
-    !Array.isArray(categories) ||
+    !Array.isArray(
+      categories
+    ) ||
     categories.length === 0
   ) {
     return '';
@@ -620,7 +702,8 @@ function renderAssetCategories(
               escapeHtml(
                 category.label ??
                 category.displayName ??
-                category.id
+                category.id ??
+                category
               )
           )
           .join(' · ')}
@@ -634,7 +717,8 @@ function renderMarketSignals(
   sleeve
 ) {
   const trends =
-    sleeve.monitoring
+    sleeve
+      ?.monitoring
       ?.marketTrends ??
     [];
 
@@ -643,7 +727,8 @@ function renderMarketSignals(
     trends.length === 0
   ) {
     if (
-      sleeve.guidance
+      sleeve
+        ?.guidance
         ?.relevantSignals
     ) {
       return `
@@ -657,7 +742,8 @@ function renderMarketSignals(
 
           <div>
             ${escapeHtml(
-              sleeve.guidance
+              sleeve
+                .guidance
                 .relevantSignals
             )}
           </div>
@@ -694,12 +780,14 @@ function renderMarketSignals(
                   ? `
                     <div>
                       ${escapeHtml(
-                        trend.reviewQuestion
+                        trend
+                          .reviewQuestion
                       )}
                     </div>
                   `
                   : ''
               }
+
             </div>
           `
         )
@@ -713,39 +801,57 @@ function renderSleeveCard(
   sleeve
 ) {
   const guidance =
-    sleeve.guidance ?? {};
+    sleeve
+      .guidance ??
+    {};
 
   const effort =
-    guidance.effort ?? {};
+    guidance
+      .effort ??
+    {};
 
   const roleLabel =
-    sleeve.role?.label ??
+    sleeve
+      ?.role
+      ?.label ??
     'Portfolio role';
 
   return `
     <article class="system-card">
 
       <span class="pill">
-        ${escapeHtml(roleLabel)}
+        ${escapeHtml(
+          roleLabel
+        )}
       </span>
 
       <h2>
-        ${escapeHtml(sleeve.label)}
+        ${escapeHtml(
+          sleeve.label
+        )}
+
         ${
-          typeof sleeve.weightPercent ===
+          typeof sleeve
+            .weightPercent ===
           'number'
-            ? ` · ${sleeve.weightPercent}%`
+            ? ` · ${
+                sleeve
+                  .weightPercent
+              }%`
             : ''
         }
       </h2>
 
+
       ${
-        guidance.investorQuestion
+        guidance
+          .investorQuestion
           ? `
             <p>
               <strong>
                 ${escapeHtml(
-                  guidance.investorQuestion
+                  guidance
+                    .investorQuestion
                 )}
               </strong>
             </p>
@@ -753,10 +859,12 @@ function renderSleeveCard(
           : ''
       }
 
+
       ${
         guidance.job
           ? `
             <div class="summary-item">
+
               <strong>
                 Its job
               </strong>
@@ -766,61 +874,75 @@ function renderSleeveCard(
                   guidance.job
                 )}
               </div>
+
             </div>
           `
           : ''
       }
 
+
       ${
-        guidance.returnContribution
+        guidance
+          .returnContribution
           ? `
             <div
               class="summary-item"
               style="margin-top: 12px"
             >
+
               <strong>
                 Return contribution
               </strong>
 
               <div>
                 ${escapeHtml(
-                  guidance.returnContribution
+                  guidance
+                    .returnContribution
                 )}
               </div>
+
             </div>
           `
           : ''
       }
 
+
       ${renderAssetCategories(
         sleeve
       )}
 
+
       ${
-        guidance.whatBelongs
+        guidance
+          .whatBelongs
           ? `
             <div
               class="summary-item"
               style="margin-top: 12px"
             >
+
               <strong>
                 Sleeve mandate
               </strong>
 
               <div>
                 ${escapeHtml(
-                  guidance.whatBelongs
+                  guidance
+                    .whatBelongs
                 )}
               </div>
+
             </div>
           `
           : ''
       }
 
+
       <div
         class="summary-item"
         style="margin-top: 12px"
       >
+
         <strong>
           Your effort
         </strong>
@@ -832,40 +954,49 @@ function renderSleeveCard(
           )}
 
           ${
-            effort.reviewCadenceLabel
+            effort
+              .reviewCadenceLabel
               ? ` · ${escapeHtml(
-                  effort.reviewCadenceLabel
+                  effort
+                    .reviewCadenceLabel
                 )}`
               : ''
           }
         </div>
 
         ${
-          effort.usefulAttention
+          effort
+            .usefulAttention
             ? `
               <div
                 style="margin-top: 6px"
               >
                 ${escapeHtml(
-                  effort.usefulAttention
+                  effort
+                    .usefulAttention
                 )}
               </div>
             `
             : ''
         }
+
       </div>
+
 
       ${renderMarketSignals(
         sleeve
       )}
 
+
       ${
-        guidance.whatUsuallyDoesNotBelong
+        guidance
+          .whatUsuallyDoesNotBelong
           ? `
             <div
               class="summary-item"
               style="margin-top: 12px"
             >
+
               <strong>
                 What usually does not belong
               </strong>
@@ -876,18 +1007,22 @@ function renderSleeveCard(
                     .whatUsuallyDoesNotBelong
                 )}
               </div>
+
             </div>
           `
           : ''
       }
 
+
       ${
-        guidance.redundancyCheck
+        guidance
+          .redundancyCheck
           ? `
             <div
               class="summary-item"
               style="margin-top: 12px"
             >
+
               <strong>
                 Redundancy check
               </strong>
@@ -898,18 +1033,22 @@ function renderSleeveCard(
                     .redundancyCheck
                 )}
               </div>
+
             </div>
           `
           : ''
       }
 
+
       ${
-        effort.redundantAttention
+        effort
+          .redundantAttention
           ? `
             <div
               class="summary-item"
               style="margin-top: 12px"
             >
+
               <strong>
                 When extra effort becomes unnecessary
               </strong>
@@ -920,18 +1059,22 @@ function renderSleeveCard(
                     .redundantAttention
                 )}
               </div>
+
             </div>
           `
           : ''
       }
 
+
       ${
-        guidance.actionBoundary
+        guidance
+          .actionBoundary
           ? `
             <div
               class="evidence"
               style="margin-top: 14px"
             >
+
               <strong>
                 When reconsideration is warranted
               </strong>
@@ -942,6 +1085,7 @@ function renderSleeveCard(
                     .actionBoundary
                 )}
               </div>
+
             </div>
           `
           : ''
@@ -962,7 +1106,7 @@ export function renderPortfolioSystemFit(
   root
 ) {
   document.title =
-    'AaronBux - Why This System Fits You';
+    'AaronBux - Your Portfolio System';
 
   const state =
     getState();
@@ -983,17 +1127,21 @@ export function renderPortfolioSystemFit(
             Back
           </button>
 
+
           <div
             style="text-align: center"
           >
+
             <div class="brand">
               AaronBux
             </div>
 
             <div class="step-label">
-              Why this system fits you
+              YOUR PORTFOLIO SYSTEM
             </div>
+
           </div>
+
 
           <button
             class="btn btn-secondary"
@@ -1005,11 +1153,14 @@ export function renderPortfolioSystemFit(
 
         </div>
 
+
         <div class="progress-track">
+
           <div
             class="progress-fill"
             style="width: 97%"
           ></div>
+
         </div>
 
       </header>
@@ -1017,18 +1168,24 @@ export function renderPortfolioSystemFit(
 
       <main class="main">
 
+
+        <!-- ==================================================
+             Missing state
+             ================================================== -->
+
         <div
           id="missingState"
           class="card panel"
           style="display: none"
         >
+
           <h2>
             We could not find your recommendation.
           </h2>
 
           <p class="lead">
             Complete the assessment before reviewing
-            why this portfolio system fits you.
+            your portfolio system.
           </p>
 
           <button
@@ -1038,6 +1195,7 @@ export function renderPortfolioSystemFit(
           >
             Start assessment
           </button>
+
         </div>
 
 
@@ -1046,148 +1204,173 @@ export function renderPortfolioSystemFit(
           style="display: none"
         >
 
+
           <!-- ==================================================
-               HERO
+               HERO / SYSTEM REVEAL
                ================================================== -->
 
           <section
             class="card panel result-hero"
           >
-            <span class="pill">
-              YOUR PORTFOLIO SYSTEM
-            </span>
 
-            <h1 id="systemFitTitle"></h1>
+            <span
+              class="pill"
+              id="recommendationEyebrow"
+            ></span>
+
+
+            <h1
+              id="recommendationTitle"
+            ></h1>
+
 
             <p
-              class="lead"
-              id="systemFitSummary"
+              id="systemName"
+              style="
+                font-weight: 700;
+                margin-top: 10px;
+              "
             ></p>
-          </section>
 
-
-          <!-- ==================================================
-               1. INVESTOR JOBS
-               ================================================== -->
-
-          <section
-            style="margin-top: 24px"
-          >
-            <span class="pill">
-              YOUR INVESTING JOBS
-            </span>
-
-            <h2>
-              What your system needs to help you do
-            </h2>
-
-            <p>
-              Your profile translates into three different
-              jobs: organize the portfolio, focus your effort,
-              and support your decisions.
-            </p>
-
-            <div
-              class="result-grid"
-              id="investorJobCards"
-            ></div>
-          </section>
-
-
-          <!-- ==================================================
-               2. PHILOSOPHY
-               ================================================== -->
-
-          <section
-            class="card panel"
-            style="margin-top: 24px"
-          >
-            <span class="pill">
-              WHY THIS PORTFOLIO PHILOSOPHY
-            </span>
-
-            <h2 id="philosophyName"></h2>
-
-            <p
-              class="lead"
-              id="philosophySummary"
-            ></p>
 
             <div
               class="summary-item"
-              style="margin-top: 16px"
+              style="margin-top: 22px"
             >
+
               <strong>
-                Why this matters
+                Portfolio philosophy
               </strong>
 
-              <div id="philosophyWhy"></div>
+
+              <div
+                id="heroPhilosophyName"
+                style="
+                  font-weight: 700;
+                  margin-top: 6px;
+                "
+              ></div>
+
+
+              <div
+                id="heroPhilosophySummary"
+                style="margin-top: 6px"
+              ></div>
+
             </div>
 
-            <div id="philosophySources"></div>
+
+            <div
+              id="heroPhilosophySources"
+            ></div>
+
+
+            <div
+              id="profileAccountability"
+            ></div>
+
           </section>
 
 
           <!-- ==================================================
-               3. VARIANT / COMPLEXITY
+               PHILOSOPHY IMPLEMENTATION
                ================================================== -->
 
           <section
             class="card panel"
             style="margin-top: 24px"
           >
+
+            <span class="pill">
+              HOW THIS PHILOSOPHY ORGANIZES YOUR SYSTEM
+            </span>
+
+            <h2>
+              What this philosophy requires from the portfolio
+            </h2>
+
+            <p
+              class="lead"
+              id="philosophyWhy"
+            ></p>
+
+          </section>
+
+
+          <!-- ==================================================
+               VARIANT / COMPLEXITY
+               ================================================== -->
+
+          <section
+            class="card panel"
+            style="margin-top: 24px"
+          >
+
             <span class="pill">
               WHY THIS VERSION
             </span>
 
-            <h2 id="complexityHeading"></h2>
+
+            <h2
+              id="complexityHeading"
+            ></h2>
+
 
             <p
               class="lead"
               id="complexitySummary"
             ></p>
 
+
             <div
               class="summary-list"
               id="complexityReasons"
               style="margin-top: 16px"
             ></div>
+
           </section>
 
 
           <!-- ==================================================
-               4. EFFORT MODEL
+               EFFORT MODEL
                ================================================== -->
 
           <section
             class="card panel"
             style="margin-top: 24px"
           >
+
             <span class="pill">
               YOUR EFFORT MODEL
             </span>
 
+
             <h2>
               Where is your investing effort worth spending?
             </h2>
+
 
             <p
               class="lead"
               id="effortSummary"
             ></p>
 
+
             <div
               id="effortDistribution"
             ></div>
+
 
             <div
               id="sleeveEffortRows"
             ></div>
 
+
             <div
               class="evidence"
               style="margin-top: 18px"
             >
+
               <strong>
                 Effort vs. return contribution
               </strong>
@@ -1195,12 +1378,15 @@ export function renderPortfolioSystemFit(
               <div
                 id="returnEffortExplanation"
               ></div>
+
             </div>
+
 
             <div
               class="summary-item"
               style="margin-top: 14px"
             >
+
               <strong>
                 When extra effort becomes redundant
               </strong>
@@ -1208,33 +1394,42 @@ export function renderPortfolioSystemFit(
               <div
                 id="effortWarning"
               ></div>
+
             </div>
+
           </section>
 
 
           <!-- ==================================================
-               5. BEHAVIOR / DECISION SUPPORT
+               BEHAVIOR
                ================================================== -->
 
           <section
             class="card panel"
             style="margin-top: 24px"
           >
+
             <span class="pill">
               HOW YOUR SYSTEM HELPS YOU DECIDE
             </span>
 
-            <h2 id="behaviorFraming"></h2>
+
+            <h2
+              id="behaviorFraming"
+            ></h2>
+
 
             <p
               class="lead"
               id="behaviorSummary"
             ></p>
 
+
             <div
               class="summary-item"
               style="margin-top: 16px"
             >
+
               <strong>
                 The decision question your system helps answer
               </strong>
@@ -1242,12 +1437,15 @@ export function renderPortfolioSystemFit(
               <div
                 id="behaviorQuestion"
               ></div>
+
             </div>
+
 
             <div
               class="summary-item"
               style="margin-top: 14px"
             >
+
               <strong>
                 System guardrail
               </strong>
@@ -1255,32 +1453,39 @@ export function renderPortfolioSystemFit(
               <div
                 id="behaviorGuardrail"
               ></div>
+
             </div>
+
 
             <div
               id="decisionProtocol"
             ></div>
 
+
             <div
               id="behaviorOutcomes"
             ></div>
+
           </section>
 
 
           <!-- ==================================================
-               6. BOUNDED SLEEVES
+               BOUNDED SLEEVES
                ================================================== -->
 
           <section
             style="margin-top: 24px"
           >
+
             <span class="pill">
               YOUR BOUNDED PORTFOLIO SYSTEM
             </span>
 
+
             <h2>
               Every part has a job, boundary, and effort budget
             </h2>
+
 
             <p>
               Each sleeve defines what belongs, what outcome it
@@ -1289,31 +1494,39 @@ export function renderPortfolioSystemFit(
               actually warranted.
             </p>
 
+
             <div
               class="system-grid"
               id="boundedSleeveCards"
             ></div>
+
           </section>
 
 
           <!-- ==================================================
-               7. USER-LED PRINCIPLE
+               USER LED
                ================================================== -->
 
           <section
             class="card panel"
             style="margin-top: 24px"
           >
+
             <span class="pill">
               USER LED
             </span>
 
-            <h2 id="userLedTitle"></h2>
+
+            <h2
+              id="userLedTitle"
+            ></h2>
+
 
             <p
               class="lead"
               id="userLedExplanation"
             ></p>
+
           </section>
 
 
@@ -1324,11 +1537,11 @@ export function renderPortfolioSystemFit(
           <div class="next-row">
 
             <button
-              id="systemBtn"
+              id="portfolioBtn"
               class="btn btn-primary"
               type="button"
             >
-              Interact with your portfolio system
+              Continue to your portfolio
             </button>
 
           </div>
@@ -1345,6 +1558,9 @@ export function renderPortfolioSystemFit(
    * ==========================================================
    * Navigation
    * ==========================================================
+   *
+   * The old Investor Profile Jobs and Investing System screens
+   * are bypassed from the normal flow.
    */
 
   root
@@ -1355,7 +1571,7 @@ export function renderPortfolioSystemFit(
       'click',
       () => {
         navigate(
-          'recommendation/profile-jobs'
+          'recommendation/profile'
         );
       }
     );
@@ -1400,6 +1616,7 @@ export function renderPortfolioSystemFit(
     missingState.style.display =
       'block';
 
+
     root
       .querySelector(
         '#startAssessmentBtn'
@@ -1413,6 +1630,7 @@ export function renderPortfolioSystemFit(
         }
       );
 
+
     return;
   }
 
@@ -1424,6 +1642,7 @@ export function renderPortfolioSystemFit(
   if (!assessmentResult) {
     missingState.style.display =
       'block';
+
     return;
   }
 
@@ -1432,14 +1651,6 @@ export function renderPortfolioSystemFit(
    * ==========================================================
    * Domain pipeline
    * ==========================================================
-   *
-   * Assessment result
-   *      ↓
-   * Portfolio Job Fit
-   *      ↓
-   * Existing Fit Presenter
-   *      ↓
-   * Investor System Guidance Presenter
    */
 
   let guidance;
@@ -1468,6 +1679,7 @@ export function renderPortfolioSystemFit(
       error
     );
 
+
     missingState.style.display =
       'block';
 
@@ -1481,92 +1693,98 @@ export function renderPortfolioSystemFit(
 
   /*
    * ==========================================================
-   * HERO
+   * HERO / SYSTEM REVEAL
    * ==========================================================
    */
 
+  const reveal =
+    guidance
+      .recommendationReveal;
+
+
   root
     .querySelector(
-      '#systemFitTitle'
+      '#recommendationEyebrow'
     )
     .textContent =
-      guidance
-        .systemFit
+      reveal
+        .eyebrow;
+
+
+  root
+    .querySelector(
+      '#recommendationTitle'
+    )
+    .textContent =
+      reveal
         .title;
 
 
   root
     .querySelector(
-      '#systemFitSummary'
+      '#systemName'
     )
     .textContent =
-      guidance
-        .systemFit
-        .summary;
+      reveal
+        .systemName
+        ? (
+            'AaronBux system: ' +
+            reveal.systemName
+          )
+        : '';
 
-
-  /*
-   * ==========================================================
-   * INVESTOR JOBS
-   * ==========================================================
-   */
 
   root
     .querySelector(
-      '#investorJobCards'
-    )
-    .innerHTML =
-      [
-        renderInvestorJob(
-          guidance
-            .investorJobs
-            .organize,
-          'ORGANIZE'
-        ),
-
-        renderInvestorJob(
-          guidance
-            .investorJobs
-            .focus,
-          'FOCUS EFFORT'
-        ),
-
-        renderInvestorJob(
-          guidance
-            .investorJobs
-            .decide,
-          'DECIDE'
-        )
-      ].join('');
-
-
-  /*
-   * ==========================================================
-   * PHILOSOPHY
-   * ==========================================================
-   */
-
-  root
-    .querySelector(
-      '#philosophyName'
+      '#heroPhilosophyName'
     )
     .textContent =
-      guidance
+      reveal
         .philosophy
-        .philosophyName ??
-      'Your portfolio philosophy';
+        .name ??
+      '';
 
 
   root
     .querySelector(
-      '#philosophySummary'
+      '#heroPhilosophySummary'
     )
     .textContent =
-      guidance
+      reveal
         .philosophy
         .summary ??
       '';
 
+
+  root
+    .querySelector(
+      '#heroPhilosophySources'
+    )
+    .innerHTML =
+      renderSources(
+        reveal
+          .philosophy
+          .sources,
+        'Philosophy source'
+      );
+
+
+  root
+    .querySelector(
+      '#profileAccountability'
+    )
+    .innerHTML =
+      renderProfileAccountability(
+        reveal
+          .profileAccountability
+      );
+
+
+  /*
+   * ==========================================================
+   * PHILOSOPHY IMPLEMENTATION
+   * ==========================================================
+   */
 
   root
     .querySelector(
@@ -1579,26 +1797,15 @@ export function renderPortfolioSystemFit(
       '';
 
 
-  root
-    .querySelector(
-      '#philosophySources'
-    )
-    .innerHTML =
-      renderSources(
-        guidance
-          .philosophy
-          .sources
-      );
-
-
   /*
    * ==========================================================
-   * COMPLEXITY / VARIANT
+   * COMPLEXITY
    * ==========================================================
    */
 
   const complexity =
-    guidance.complexity;
+    guidance
+      .complexity;
 
 
   root
@@ -1607,7 +1814,8 @@ export function renderPortfolioSystemFit(
     )
     .textContent =
       'Why ' +
-      complexity.sleeveCount +
+      complexity
+        .sleeveCount +
       ' portfolio roles?';
 
 
@@ -1662,7 +1870,8 @@ export function renderPortfolioSystemFit(
    */
 
   const effort =
-    guidance.effort;
+    guidance
+      .effort;
 
 
   root
@@ -1694,7 +1903,8 @@ export function renderPortfolioSystemFit(
     )
     .innerHTML =
       renderSleeveEffortRows(
-        guidance.sleeves
+        guidance
+          .sleeves
       );
 
 
@@ -1729,7 +1939,8 @@ export function renderPortfolioSystemFit(
    */
 
   const behavior =
-    guidance.behavior;
+    guidance
+      .behavior;
 
 
   root
@@ -1788,7 +1999,8 @@ export function renderPortfolioSystemFit(
     )
     .innerHTML =
       renderBehaviorOutcomes(
-        behavior?.outcomes
+        behavior
+          ?.outcomes
       );
 
 
@@ -1841,11 +2053,13 @@ export function renderPortfolioSystemFit(
    * ==========================================================
    * Forward navigation
    * ==========================================================
+   *
+   * Existing Investing System screen is bypassed.
    */
 
   root
     .querySelector(
-      '#systemBtn'
+      '#portfolioBtn'
     )
     .addEventListener(
       'click',
