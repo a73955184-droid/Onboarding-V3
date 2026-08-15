@@ -16,6 +16,10 @@ import {
   presentPortfolioJobFit
 } from '../../domain/portfolio-philosophy/portfolio-job-fit-presenter.js';
 
+import {
+  presentInvestorSystemGuidance
+} from '../../domain/investor-system-guidance/investor-system-guidance-presenter.js';
+
 
 /*
  * ============================================================
@@ -23,106 +27,188 @@ import {
  * ============================================================
  *
  * PURPOSE
+ * -------
  *
- * Explain:
+ * Translate the resolved recommendation into investor language.
  *
- *   quiz evidence
- *       ->
- *   investor jobs
- *       ->
- *   portfolio philosophy
- *       ->
- *   variant
- *       ->
- *   portfolio structure
- *       ->
- *   sleeve rationale
- *       ->
- *   how the whole system supports the user
+ * The screen answers:
+ *
+ * 1. What does my portfolio need to help me do?
+ * 2. Why this portfolio philosophy?
+ * 3. Why this version / this many sleeves?
+ * 4. Where is my investing effort worth spending?
+ * 5. How should the system help me make decisions?
+ * 6. What job does each sleeve perform?
+ * 7. What belongs in each sleeve?
+ * 8. What should I monitor?
+ * 9. How often should I review it?
+ * 10. What is redundant, mismatched, or unnecessary?
  *
  *
  * IMPORTANT
+ * ---------
  *
- * This screen MUST NOT:
+ * This screen does NOT:
  *
- * - score the quiz
+ * - score quiz answers
  * - resolve Stage
  * - resolve Style
  * - resolve Behavior
  * - resolve archetype
  * - resolve variant
- * - construct allocations
- * - change portfolio weights
- * - infer investment needs from sleeves
+ * - modify portfolio construction
+ * - modify allocations
+ * - select securities
+ * - recommend trades
  *
- * All domain reasoning comes from:
- *
- *   resolvePortfolioJobFit()
- *   presentPortfolioJobFit()
+ * It consumes already-resolved domain output.
  */
 
 
 /*
- * ------------------------------------------------------------
+ * ============================================================
  * HTML helpers
- * ------------------------------------------------------------
+ * ============================================================
  */
 
 function escapeHtml(value) {
   return String(
     value ?? ''
   )
-    .replaceAll(
-      '&',
-      '&amp;'
-    )
-    .replaceAll(
-      '<',
-      '&lt;'
-    )
-    .replaceAll(
-      '>',
-      '&gt;'
-    )
-    .replaceAll(
-      '"',
-      '&quot;'
-    )
-    .replaceAll(
-      "'",
-      '&#039;'
-    );
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
 
 
-function renderEvidenceItems(
-  items = []
-) {
-  if (
-    !Array.isArray(items) ||
-    items.length === 0
-  ) {
-    return `
-      <p>
-        Your assessment responses were used to
-        build this explanation.
-      </p>
-    `;
+function renderText(value) {
+  if (!value) {
+    return '';
   }
 
-  return items
-    .map(
-      (item) => `
-        <div class="summary-item">
-          ${escapeHtml(item.text)}
-        </div>
-      `
-    )
-    .join('');
+  return escapeHtml(value);
 }
 
 
-function renderSourceLinks(
+function renderOptionalParagraph(
+  value,
+  className = ''
+) {
+  if (!value) {
+    return '';
+  }
+
+  return `
+    <p class="${className}">
+      ${escapeHtml(value)}
+    </p>
+  `;
+}
+
+
+/*
+ * ============================================================
+ * Investor Jobs
+ * ============================================================
+ */
+
+function renderInvestorJob(
+  job,
+  badge
+) {
+  if (!job) {
+    return '';
+  }
+
+  return `
+    <article class="profile-card">
+
+      <span class="pill">
+        ${escapeHtml(badge)}
+      </span>
+
+      <h2>
+        ${escapeHtml(job.title)}
+      </h2>
+
+      <p>
+        <strong>
+          ${escapeHtml(job.investorQuestion)}
+        </strong>
+      </p>
+
+      <p>
+        ${escapeHtml(job.job)}
+      </p>
+
+      ${
+        job.systemResponse
+          ? `
+            <div
+              class="evidence"
+              style="margin-top: 14px"
+            >
+              <strong>
+                What your system needs to do
+              </strong>
+
+              <div>
+                ${escapeHtml(job.systemResponse)}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        job.resolvedProfile?.label
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 14px"
+            >
+              <strong>
+                Your diagnosed pattern
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  job.resolvedProfile.label
+                )}
+              </div>
+
+              ${
+                job.resolvedProfile.summary
+                  ? `
+                    <div
+                      style="margin-top: 6px"
+                    >
+                      ${escapeHtml(
+                        job.resolvedProfile.summary
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+            </div>
+          `
+          : ''
+      }
+
+    </article>
+  `;
+}
+
+
+/*
+ * ============================================================
+ * Portfolio Philosophy
+ * ============================================================
+ */
+
+function renderSources(
   sources = []
 ) {
   if (
@@ -133,15 +219,20 @@ function renderSourceLinks(
   }
 
   return `
-    <div class="evidence">
+    <div
+      class="evidence"
+      style="margin-top: 16px"
+    >
       <strong>
-        Principles behind this system:
+        Principles behind this system
       </strong>
 
       ${sources
         .map(
           (source) => `
-            <div>
+            <div
+              style="margin-top: 6px"
+            >
               ${
                 source.url
                   ? `
@@ -168,104 +259,85 @@ function renderSourceLinks(
 }
 
 
-function renderJobCard(
-  job
+/*
+ * ============================================================
+ * Complexity / Variant
+ * ============================================================
+ */
+
+function renderComplexityReason(
+  title,
+  body
 ) {
-  if (!job) {
+  if (!body) {
     return '';
   }
 
   return `
-    <article class="profile-card">
+    <div class="summary-item">
+      <strong>
+        ${escapeHtml(title)}
+      </strong>
 
-      <span class="pill">
-        ${escapeHtml(job.eyebrow)}
-      </span>
-
-      <h2>
-        ${escapeHtml(job.title)}
-      </h2>
-
-      ${
-        job.description
-          ? `
-            <p>
-              ${escapeHtml(job.description)}
-            </p>
-          `
-          : ''
-      }
-
-      ${
-        job.portfolioRequirement
-          ? `
-            <div class="evidence">
-              <strong>
-                What that means for your portfolio:
-              </strong>
-
-              ${escapeHtml(job.portfolioRequirement)}
-            </div>
-          `
-          : ''
-      }
-
-      ${
-        job.systemFit
-          ? `
-            <div
-              class="evidence"
-              style="margin-top: 14px"
-            >
-              <strong>
-                How this system supports it:
-              </strong>
-
-              ${escapeHtml(job.systemFit)}
-            </div>
-          `
-          : ''
-      }
-
-    </article>
+      <div>
+        ${escapeHtml(body)}
+      </div>
+    </div>
   `;
 }
 
 
-function renderDirectEvidence(
-  userFit
-) {
-  if (
-    userFit?.type !==
-    'direct-evidence'
-  ) {
-    return '';
-  }
+/*
+ * ============================================================
+ * Effort
+ * ============================================================
+ */
 
-  const evidence =
-    userFit.evidence ??
+function renderEffortDistribution(
+  effort
+) {
+  const distribution =
+    effort
+      ?.portfolioEffort
+      ?.distribution ??
     [];
 
-  if (
-    evidence.length === 0
-  ) {
+  if (distribution.length === 0) {
     return '';
   }
 
   return `
     <div
-      class="evidence"
-      style="margin-top: 14px"
+      class="summary-list"
+      style="margin-top: 16px"
     >
-      <strong>
-        ${escapeHtml(userFit.heading)}
-      </strong>
-
-      ${evidence
+      ${distribution
         .map(
           (item) => `
-            <div>
-              ${escapeHtml(item.text)}
+            <div class="summary-item">
+
+              <strong>
+                ${escapeHtml(item.label)}
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  String(item.percent)
+                )}% of portfolio
+              </div>
+
+              ${
+                item.meaning
+                  ? `
+                    <div
+                      style="margin-top: 6px"
+                    >
+                      ${escapeHtml(item.meaning)}
+                    </div>
+                  `
+                  : ''
+              }
+
             </div>
           `
         )
@@ -275,57 +347,386 @@ function renderDirectEvidence(
 }
 
 
-function renderSystemDesignExplanation(
-  userFit
+function renderSleeveEffortRows(
+  sleeves = []
 ) {
   if (
-    userFit?.type !==
-    'system-design-only'
+    !Array.isArray(sleeves) ||
+    sleeves.length === 0
   ) {
     return '';
   }
 
   return `
     <div
-      class="evidence"
-      style="margin-top: 14px"
+      class="summary-list"
+      style="margin-top: 18px"
     >
-      <strong>
-        ${escapeHtml(userFit.heading)}
-      </strong>
+      ${sleeves
+        .map(
+          (sleeve) => `
+            <div class="summary-item">
 
-      ${
-        userFit.explanation
-          ? escapeHtml(
-              userFit.explanation
-            )
-          : ''
-      }
+              <strong>
+                ${escapeHtml(sleeve.label)}
+                ${
+                  typeof sleeve.weightPercent ===
+                  'number'
+                    ? ` · ${sleeve.weightPercent}%`
+                    : ''
+                }
+              </strong>
+
+              <div
+                style="margin-top: 4px"
+              >
+                ${
+                  escapeHtml(
+                    sleeve.guidance
+                      ?.effort
+                      ?.label ??
+                    ''
+                  )
+                }
+
+                ${
+                  sleeve.guidance
+                    ?.effort
+                    ?.reviewCadenceLabel
+                    ? ` · ${escapeHtml(
+                        sleeve.guidance
+                          .effort
+                          .reviewCadenceLabel
+                      )}`
+                    : ''
+                }
+              </div>
+
+              ${
+                sleeve.guidance
+                  ?.effort
+                  ?.whyThisEffort
+                  ? `
+                    <div
+                      style="margin-top: 6px"
+                    >
+                      ${escapeHtml(
+                        sleeve.guidance
+                          .effort
+                          .whyThisEffort
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+
+            </div>
+          `
+        )
+        .join('')}
     </div>
   `;
 }
 
 
-function renderSleeve(
+/*
+ * ============================================================
+ * Behavior
+ * ============================================================
+ */
+
+function renderDecisionProtocol(
+  behavior
+) {
+  const steps =
+    behavior?.decisionProtocol ??
+    [];
+
+  if (steps.length === 0) {
+    return '';
+  }
+
+  return `
+    <div
+      class="summary-list"
+      style="margin-top: 18px"
+    >
+      ${steps
+        .map(
+          (step) => `
+            <div class="summary-item">
+
+              <strong>
+                ${escapeHtml(
+                  String(step.step)
+                )}. ${escapeHtml(
+                  step.question
+                )}
+              </strong>
+
+              ${
+                step.purpose
+                  ? `
+                    <div
+                      style="margin-top: 6px"
+                    >
+                      ${escapeHtml(
+                        step.purpose
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+
+            </div>
+          `
+        )
+        .join('')}
+    </div>
+  `;
+}
+
+
+function humanizeOutcome(
+  outcome
+) {
+  const map = {
+    'leave-alone':
+      'Leave alone',
+
+    monitor:
+      'Monitor',
+
+    review:
+      'Review',
+
+    'consider-action':
+      'Consider action',
+
+    'keep-current-system':
+      'Keep current system',
+
+    'continue-research':
+      'Continue research',
+
+    'review-existing-sleeve':
+      'Review existing sleeve',
+
+    'consider-change':
+      'Consider change',
+
+    'ignore-opportunity':
+      'Ignore opportunity',
+
+    'watch-opportunity':
+      'Watch opportunity',
+
+    'research-within-sleeve':
+      'Research within sleeve',
+
+    'consider-bounded-allocation':
+      'Consider bounded allocation',
+
+    'continue-comparison':
+      'Continue comparison',
+
+    'review-improvement-sleeve':
+      'Review improvement sleeve',
+
+    'consider-improvement':
+      'Consider improvement'
+  };
+
+  return (
+    map[outcome] ??
+    String(outcome)
+      .replaceAll('-', ' ')
+  );
+}
+
+
+function renderBehaviorOutcomes(
+  outcomes = []
+) {
+  if (
+    !Array.isArray(outcomes) ||
+    outcomes.length === 0
+  ) {
+    return '';
+  }
+
+  return `
+    <div
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      "
+    >
+      ${outcomes
+        .map(
+          (outcome) => `
+            <span class="pill">
+              ${escapeHtml(
+                humanizeOutcome(
+                  outcome
+                )
+              )}
+            </span>
+          `
+        )
+        .join('')}
+    </div>
+  `;
+}
+
+
+/*
+ * ============================================================
+ * Bounded Sleeve System
+ * ============================================================
+ */
+
+function renderAssetCategories(
   sleeve
 ) {
-  const operatingParts = [
-    sleeve
-      ?.operatingProfile
-      ?.effortLabel,
+  const categories =
+    sleeve.assetCategories ??
+    [];
 
-    sleeve
-      ?.operatingProfile
-      ?.reviewCadenceLabel
-  ].filter(Boolean);
+  if (
+    !Array.isArray(categories) ||
+    categories.length === 0
+  ) {
+    return '';
+  }
+
+  return `
+    <div
+      class="summary-item"
+      style="margin-top: 12px"
+    >
+      <strong>
+        What can belong here
+      </strong>
+
+      <div
+        style="margin-top: 6px"
+      >
+        ${categories
+          .map(
+            (category) =>
+              escapeHtml(
+                category.label ??
+                category.displayName ??
+                category.id
+              )
+          )
+          .join(' · ')}
+      </div>
+    </div>
+  `;
+}
+
+
+function renderMarketSignals(
+  sleeve
+) {
+  const trends =
+    sleeve.monitoring
+      ?.marketTrends ??
+    [];
+
+  if (
+    !Array.isArray(trends) ||
+    trends.length === 0
+  ) {
+    if (
+      sleeve.guidance
+        ?.relevantSignals
+    ) {
+      return `
+        <div
+          class="summary-item"
+          style="margin-top: 12px"
+        >
+          <strong>
+            What is worth monitoring
+          </strong>
+
+          <div>
+            ${escapeHtml(
+              sleeve.guidance
+                .relevantSignals
+            )}
+          </div>
+        </div>
+      `;
+    }
+
+    return '';
+  }
+
+  return `
+    <div
+      class="summary-item"
+      style="margin-top: 12px"
+    >
+      <strong>
+        What is worth monitoring
+      </strong>
+
+      ${trends
+        .map(
+          (trend) => `
+            <div
+              style="margin-top: 8px"
+            >
+              <strong>
+                ${escapeHtml(
+                  trend.label
+                )}
+              </strong>
+
+              ${
+                trend.reviewQuestion
+                  ? `
+                    <div>
+                      ${escapeHtml(
+                        trend.reviewQuestion
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+            </div>
+          `
+        )
+        .join('')}
+    </div>
+  `;
+}
+
+
+function renderSleeveCard(
+  sleeve
+) {
+  const guidance =
+    sleeve.guidance ?? {};
+
+  const effort =
+    guidance.effort ?? {};
+
+  const roleLabel =
+    sleeve.role?.label ??
+    'Portfolio role';
 
   return `
     <article class="system-card">
 
       <span class="pill">
-        ${escapeHtml(
-          sleeve?.role?.label
-        )}
+        ${escapeHtml(roleLabel)}
       </span>
 
       <h2>
@@ -339,13 +740,13 @@ function renderSleeve(
       </h2>
 
       ${
-        operatingParts.length > 0
+        guidance.investorQuestion
           ? `
             <p>
               <strong>
-                ${operatingParts
-                  .map(escapeHtml)
-                  .join(' · ')}
+                ${escapeHtml(
+                  guidance.investorQuestion
+                )}
               </strong>
             </p>
           `
@@ -353,19 +754,16 @@ function renderSleeve(
       }
 
       ${
-        sleeve.whyItExists
+        guidance.job
           ? `
-            <div
-              class="summary-item"
-              style="margin-top: 14px"
-            >
+            <div class="summary-item">
               <strong>
-                Why this part exists
+                Its job
               </strong>
 
               <div>
                 ${escapeHtml(
-                  sleeve.whyItExists
+                  guidance.job
                 )}
               </div>
             </div>
@@ -374,19 +772,19 @@ function renderSleeve(
       }
 
       ${
-        sleeve.contributionToSystem
+        guidance.returnContribution
           ? `
             <div
               class="summary-item"
-              style="margin-top: 14px"
+              style="margin-top: 12px"
             >
               <strong>
-                What it contributes to the system
+                Return contribution
               </strong>
 
               <div>
                 ${escapeHtml(
-                  sleeve.contributionToSystem
+                  guidance.returnContribution
                 )}
               </div>
             </div>
@@ -394,17 +792,160 @@ function renderSleeve(
           : ''
       }
 
-      ${renderDirectEvidence(
-        sleeve.userFit
+      ${renderAssetCategories(
+        sleeve
       )}
 
-      ${renderSystemDesignExplanation(
-        sleeve.userFit
+      ${
+        guidance.whatBelongs
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 12px"
+            >
+              <strong>
+                Sleeve mandate
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance.whatBelongs
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      <div
+        class="summary-item"
+        style="margin-top: 12px"
+      >
+        <strong>
+          Your effort
+        </strong>
+
+        <div>
+          ${escapeHtml(
+            effort.label ??
+            'Not specified'
+          )}
+
+          ${
+            effort.reviewCadenceLabel
+              ? ` · ${escapeHtml(
+                  effort.reviewCadenceLabel
+                )}`
+              : ''
+          }
+        </div>
+
+        ${
+          effort.usefulAttention
+            ? `
+              <div
+                style="margin-top: 6px"
+              >
+                ${escapeHtml(
+                  effort.usefulAttention
+                )}
+              </div>
+            `
+            : ''
+        }
+      </div>
+
+      ${renderMarketSignals(
+        sleeve
       )}
 
-      ${renderSourceLinks(
-        sleeve.sources
-      )}
+      ${
+        guidance.whatUsuallyDoesNotBelong
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 12px"
+            >
+              <strong>
+                What usually does not belong
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance
+                    .whatUsuallyDoesNotBelong
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        guidance.redundancyCheck
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 12px"
+            >
+              <strong>
+                Redundancy check
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance
+                    .redundancyCheck
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        effort.redundantAttention
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 12px"
+            >
+              <strong>
+                When extra effort becomes unnecessary
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  effort
+                    .redundantAttention
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        guidance.actionBoundary
+          ? `
+            <div
+              class="evidence"
+              style="margin-top: 14px"
+            >
+              <strong>
+                When reconsideration is warranted
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance
+                    .actionBoundary
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
 
     </article>
   `;
@@ -412,9 +953,9 @@ function renderSleeve(
 
 
 /*
- * ------------------------------------------------------------
+ * ============================================================
  * Main screen
- * ------------------------------------------------------------
+ * ============================================================
  */
 
 export function renderPortfolioSystemFit(
@@ -426,10 +967,12 @@ export function renderPortfolioSystemFit(
   const state =
     getState();
 
+
   root.innerHTML = `
     <div class="app-shell">
 
       <header class="topbar">
+
         <div class="topbar-inner">
 
           <button
@@ -440,7 +983,9 @@ export function renderPortfolioSystemFit(
             Back
           </button>
 
-          <div style="text-align: center">
+          <div
+            style="text-align: center"
+          >
             <div class="brand">
               AaronBux
             </div>
@@ -466,6 +1011,7 @@ export function renderPortfolioSystemFit(
             style="width: 97%"
           ></div>
         </div>
+
       </header>
 
 
@@ -482,7 +1028,7 @@ export function renderPortfolioSystemFit(
 
           <p class="lead">
             Complete the assessment before reviewing
-            why this investing system fits you.
+            why this portfolio system fits you.
           </p>
 
           <button
@@ -500,209 +1046,280 @@ export function renderPortfolioSystemFit(
           style="display: none"
         >
 
-          <!--
-            HERO
-          -->
+          <!-- ==================================================
+               HERO
+               ================================================== -->
 
-          <div
+          <section
             class="card panel result-hero"
           >
-            <span
-              class="pill"
-              id="screenEyebrow"
-            ></span>
+            <span class="pill">
+              YOUR PORTFOLIO SYSTEM
+            </span>
 
-            <h1
-              id="screenTitle"
-            ></h1>
+            <h1 id="systemFitTitle"></h1>
 
             <p
               class="lead"
-              id="screenDescription"
+              id="systemFitSummary"
             ></p>
-          </div>
+          </section>
 
 
-          <!--
-            SECTION 1
-            QUIZ EVIDENCE
-          -->
+          <!-- ==================================================
+               1. INVESTOR JOBS
+               ================================================== -->
 
           <section
-            class="card panel"
-            style="margin-top: 22px"
+            style="margin-top: 24px"
           >
             <span class="pill">
-              What your answers told us
+              YOUR INVESTING JOBS
             </span>
 
             <h2>
-              The signals behind your profile
+              What your system needs to help you do
             </h2>
 
-            <p id="evidenceDescription"></p>
+            <p>
+              Your profile translates into three different
+              jobs: organize the portfolio, focus your effort,
+              and support your decisions.
+            </p>
 
             <div
-              id="evidenceItems"
-              class="summary-list"
-              style="margin-top: 14px"
-            ></div>
-          </section>
-
-
-          <!--
-            SECTION 2
-            INVESTOR JOBS
-          -->
-
-          <section
-            style="margin-top: 22px"
-          >
-            <span class="pill">
-              What your portfolio needs to do
-            </span>
-
-            <h2 id="jobsHeading"></h2>
-
-            <p id="jobsDescription"></p>
-
-            <div
-              id="jobCards"
               class="result-grid"
+              id="investorJobCards"
             ></div>
           </section>
 
 
-          <!--
-            SECTION 3
-            PORTFOLIO PHILOSOPHY
-          -->
+          <!-- ==================================================
+               2. PHILOSOPHY
+               ================================================== -->
 
           <section
             class="card panel"
-            style="margin-top: 22px"
+            style="margin-top: 24px"
           >
             <span class="pill">
-              Why this portfolio philosophy
+              WHY THIS PORTFOLIO PHILOSOPHY
             </span>
 
-            <h2
-              id="philosophyTitle"
-            ></h2>
+            <h2 id="philosophyName"></h2>
 
             <p
+              class="lead"
               id="philosophySummary"
             ></p>
 
             <div
-              class="evidence"
-              id="philosophySources"
-            ></div>
+              class="summary-item"
+              style="margin-top: 16px"
+            >
+              <strong>
+                Why this matters
+              </strong>
+
+              <div id="philosophyWhy"></div>
+            </div>
+
+            <div id="philosophySources"></div>
           </section>
 
 
-          <!--
-            SECTION 4
-            VARIANT
-          -->
+          <!-- ==================================================
+               3. VARIANT / COMPLEXITY
+               ================================================== -->
 
           <section
             class="card panel"
-            style="margin-top: 22px"
+            style="margin-top: 24px"
           >
             <span class="pill">
-              Why this version
+              WHY THIS VERSION
             </span>
 
-            <h2
-              id="variantTitle"
-            ></h2>
+            <h2 id="complexityHeading"></h2>
 
             <p
-              id="variantSummary"
-            ></p>
-          </section>
-
-
-          <!--
-            SECTION 5
-            STRUCTURE
-          -->
-
-          <section
-            class="card panel"
-            style="margin-top: 22px"
-          >
-            <span class="pill">
-              How this philosophy becomes a portfolio
-            </span>
-
-            <h2
-              id="structureHeading"
-            ></h2>
-
-            <p
-              id="structureSummary"
+              class="lead"
+              id="complexitySummary"
             ></p>
 
             <div
-              id="structureMetrics"
-              style="margin-top: 14px"
-            ></div>
-          </section>
-
-
-          <!--
-            SECTION 6
-            SLEEVES
-          -->
-
-          <section
-            style="margin-top: 22px"
-          >
-            <span class="pill">
-              Why these portfolio parts exist
-            </span>
-
-            <h2>
-              Each part has a different job
-            </h2>
-
-            <p
-              id="sleeveDescription"
-            ></p>
-
-            <div
-              id="sleeveCards"
-              class="system-grid"
-            ></div>
-          </section>
-
-
-          <!--
-            SECTION 7
-            SYSTEM FIT RECAP
-          -->
-
-          <section
-            class="card panel"
-            style="margin-top: 22px"
-          >
-            <span class="pill">
-              How the whole system supports you
-            </span>
-
-            <h2>
-              Your three jobs become operating rules
-            </h2>
-
-            <div
-              id="systemFitItems"
               class="summary-list"
-              style="margin-top: 14px"
+              id="complexityReasons"
+              style="margin-top: 16px"
             ></div>
           </section>
 
+
+          <!-- ==================================================
+               4. EFFORT MODEL
+               ================================================== -->
+
+          <section
+            class="card panel"
+            style="margin-top: 24px"
+          >
+            <span class="pill">
+              YOUR EFFORT MODEL
+            </span>
+
+            <h2>
+              Where is your investing effort worth spending?
+            </h2>
+
+            <p
+              class="lead"
+              id="effortSummary"
+            ></p>
+
+            <div
+              id="effortDistribution"
+            ></div>
+
+            <div
+              id="sleeveEffortRows"
+            ></div>
+
+            <div
+              class="evidence"
+              style="margin-top: 18px"
+            >
+              <strong>
+                Effort vs. return contribution
+              </strong>
+
+              <div
+                id="returnEffortExplanation"
+              ></div>
+            </div>
+
+            <div
+              class="summary-item"
+              style="margin-top: 14px"
+            >
+              <strong>
+                When extra effort becomes redundant
+              </strong>
+
+              <div
+                id="effortWarning"
+              ></div>
+            </div>
+          </section>
+
+
+          <!-- ==================================================
+               5. BEHAVIOR / DECISION SUPPORT
+               ================================================== -->
+
+          <section
+            class="card panel"
+            style="margin-top: 24px"
+          >
+            <span class="pill">
+              HOW YOUR SYSTEM HELPS YOU DECIDE
+            </span>
+
+            <h2 id="behaviorFraming"></h2>
+
+            <p
+              class="lead"
+              id="behaviorSummary"
+            ></p>
+
+            <div
+              class="summary-item"
+              style="margin-top: 16px"
+            >
+              <strong>
+                The decision question your system helps answer
+              </strong>
+
+              <div
+                id="behaviorQuestion"
+              ></div>
+            </div>
+
+            <div
+              class="summary-item"
+              style="margin-top: 14px"
+            >
+              <strong>
+                System guardrail
+              </strong>
+
+              <div
+                id="behaviorGuardrail"
+              ></div>
+            </div>
+
+            <div
+              id="decisionProtocol"
+            ></div>
+
+            <div
+              id="behaviorOutcomes"
+            ></div>
+          </section>
+
+
+          <!-- ==================================================
+               6. BOUNDED SLEEVES
+               ================================================== -->
+
+          <section
+            style="margin-top: 24px"
+          >
+            <span class="pill">
+              YOUR BOUNDED PORTFOLIO SYSTEM
+            </span>
+
+            <h2>
+              Every part has a job, boundary, and effort budget
+            </h2>
+
+            <p>
+              Each sleeve defines what belongs, what outcome it
+              contributes, what information matters, how much
+              attention it deserves, and when reconsideration is
+              actually warranted.
+            </p>
+
+            <div
+              class="system-grid"
+              id="boundedSleeveCards"
+            ></div>
+          </section>
+
+
+          <!-- ==================================================
+               7. USER-LED PRINCIPLE
+               ================================================== -->
+
+          <section
+            class="card panel"
+            style="margin-top: 24px"
+          >
+            <span class="pill">
+              USER LED
+            </span>
+
+            <h2 id="userLedTitle"></h2>
+
+            <p
+              class="lead"
+              id="userLedExplanation"
+            ></p>
+          </section>
+
+
+          <!-- ==================================================
+               CTA
+               ================================================== -->
 
           <div class="next-row">
 
@@ -711,7 +1328,7 @@ export function renderPortfolioSystemFit(
               class="btn btn-primary"
               type="button"
             >
-              See how your system works
+              Interact with your portfolio system
             </button>
 
           </div>
@@ -719,25 +1336,49 @@ export function renderPortfolioSystemFit(
         </section>
 
       </main>
+
     </div>
   `;
 
 
   /*
-   * ----------------------------------------------------------
+   * ==========================================================
    * Navigation
-   * ----------------------------------------------------------
+   * ==========================================================
    */
 
-  const backButton =
-    root.querySelector(
+  root
+    .querySelector(
       '#backBtn'
+    )
+    .addEventListener(
+      'click',
+      () => {
+        navigate(
+          'recommendation/profile-jobs'
+        );
+      }
     );
 
-  const restartButton =
-    root.querySelector(
+
+  root
+    .querySelector(
       '#restartBtn'
+    )
+    .addEventListener(
+      'click',
+      () => {
+        resetState();
+        navigate('');
+      }
     );
+
+
+  /*
+   * ==========================================================
+   * Missing state
+   * ==========================================================
+   */
 
   const missingState =
     root.querySelector(
@@ -749,37 +1390,6 @@ export function renderPortfolioSystemFit(
       '#result'
     );
 
-
-  /*
-   * This is intentionally the conceptual previous screen.
-   *
-   * Do not change the existing Profile + Jobs screen yet.
-   * Routing will be wired in a later step.
-   */
-  backButton.addEventListener(
-    'click',
-    () => {
-      navigate(
-        'recommendation/profile-jobs'
-      );
-    }
-  );
-
-
-  restartButton.addEventListener(
-    'click',
-    () => {
-      resetState();
-      navigate('');
-    }
-  );
-
-
-  /*
-   * ----------------------------------------------------------
-   * State validation
-   * ----------------------------------------------------------
-   */
 
   if (
     !state.answers ||
@@ -810,21 +1420,30 @@ export function renderPortfolioSystemFit(
   const assessmentResult =
     getAssessmentResult();
 
+
   if (!assessmentResult) {
     missingState.style.display =
       'block';
-
     return;
   }
 
 
   /*
-   * ----------------------------------------------------------
-   * Domain resolution
-   * ----------------------------------------------------------
+   * ==========================================================
+   * Domain pipeline
+   * ==========================================================
+   *
+   * Assessment result
+   *      ↓
+   * Portfolio Job Fit
+   *      ↓
+   * Existing Fit Presenter
+   *      ↓
+   * Investor System Guidance Presenter
    */
 
-  let presentation;
+  let guidance;
+
 
   try {
     const fitResult =
@@ -832,13 +1451,20 @@ export function renderPortfolioSystemFit(
         assessmentResult
       );
 
-    presentation =
+
+    const fitPresentation =
       presentPortfolioJobFit(
         fitResult
       );
+
+
+    guidance =
+      presentInvestorSystemGuidance(
+        fitPresentation
+      );
   } catch (error) {
     console.error(
-      'Unable to resolve portfolio system fit:',
+      'Unable to resolve investor system guidance:',
       error
     );
 
@@ -854,343 +1480,367 @@ export function renderPortfolioSystemFit(
 
 
   /*
-   * ----------------------------------------------------------
+   * ==========================================================
    * HERO
-   * ----------------------------------------------------------
+   * ==========================================================
    */
 
   root
     .querySelector(
-      '#screenEyebrow'
+      '#systemFitTitle'
     )
     .textContent =
-      presentation
-        .screen
-        .eyebrow;
-
-  root
-    .querySelector(
-      '#screenTitle'
-    )
-    .textContent =
-      presentation
-        .screen
+      guidance
+        .systemFit
         .title;
 
+
   root
     .querySelector(
-      '#screenDescription'
+      '#systemFitSummary'
     )
     .textContent =
-      presentation
-        .screen
-        .description;
+      guidance
+        .systemFit
+        .summary;
 
 
   /*
-   * ----------------------------------------------------------
-   * EVIDENCE
-   * ----------------------------------------------------------
+   * ==========================================================
+   * INVESTOR JOBS
+   * ==========================================================
    */
 
   root
     .querySelector(
-      '#evidenceDescription'
-    )
-    .textContent =
-      presentation
-        .evidence
-        .description;
-
-  root
-    .querySelector(
-      '#evidenceItems'
-    )
-    .innerHTML =
-      renderEvidenceItems(
-        presentation
-          .evidence
-          .items
-      );
-
-
-  /*
-   * ----------------------------------------------------------
-   * JOBS
-   * ----------------------------------------------------------
-   */
-
-  root
-    .querySelector(
-      '#jobsHeading'
-    )
-    .textContent =
-      presentation
-        .jobs
-        .heading;
-
-  root
-    .querySelector(
-      '#jobsDescription'
-    )
-    .textContent =
-      presentation
-        .jobs
-        .description;
-
-  root
-    .querySelector(
-      '#jobCards'
+      '#investorJobCards'
     )
     .innerHTML =
       [
-        presentation
-          .jobs
-          .stage,
+        renderInvestorJob(
+          guidance
+            .investorJobs
+            .organize,
+          'ORGANIZE'
+        ),
 
-        presentation
-          .jobs
-          .style,
+        renderInvestorJob(
+          guidance
+            .investorJobs
+            .focus,
+          'FOCUS EFFORT'
+        ),
 
-        presentation
-          .jobs
-          .behavior
-      ]
-        .filter(Boolean)
-        .map(
-          renderJobCard
+        renderInvestorJob(
+          guidance
+            .investorJobs
+            .decide,
+          'DECIDE'
         )
-        .join('');
+      ].join('');
 
 
   /*
-   * ----------------------------------------------------------
+   * ==========================================================
    * PHILOSOPHY
-   * ----------------------------------------------------------
+   * ==========================================================
    */
 
   root
     .querySelector(
-      '#philosophyTitle'
+      '#philosophyName'
     )
     .textContent =
-      presentation
+      guidance
         .philosophy
-        .archetype
-        .title ??
-      '';
+        .philosophyName ??
+      'Your portfolio philosophy';
+
 
   root
     .querySelector(
       '#philosophySummary'
     )
     .textContent =
-      presentation
+      guidance
         .philosophy
-        .archetype
         .summary ??
       '';
+
+
+  root
+    .querySelector(
+      '#philosophyWhy'
+    )
+    .textContent =
+      guidance
+        .philosophy
+        .whyItMatters ??
+      '';
+
 
   root
     .querySelector(
       '#philosophySources'
     )
     .innerHTML =
-      renderSourceLinks(
-        presentation
+      renderSources(
+        guidance
           .philosophy
-          .archetype
           .sources
       );
 
 
   /*
-   * ----------------------------------------------------------
-   * VARIANT
-   * ----------------------------------------------------------
+   * ==========================================================
+   * COMPLEXITY / VARIANT
+   * ==========================================================
    */
 
-  root
-    .querySelector(
-      '#variantTitle'
-    )
-    .textContent =
-      presentation
-        .philosophy
-        .variant
-        .title ??
-      '';
+  const complexity =
+    guidance.complexity;
+
 
   root
     .querySelector(
-      '#variantSummary'
+      '#complexityHeading'
     )
     .textContent =
-      presentation
-        .philosophy
-        .variant
-        .summary ??
+      'Why ' +
+      complexity.sleeveCount +
+      ' portfolio roles?';
+
+
+  root
+    .querySelector(
+      '#complexitySummary'
+    )
+    .textContent =
+      complexity
+        .userFacingSummary ??
+      complexity
+        .generalMeaning ??
       '';
+
+
+  root
+    .querySelector(
+      '#complexityReasons'
+    )
+    .innerHTML =
+      [
+        renderComplexityReason(
+          'Why this version',
+          complexity
+            .whyThisVersion
+        ),
+
+        renderComplexityReason(
+          'What the additional separation gives you',
+          complexity
+            .whatSeparationProvides
+        ),
+
+        renderComplexityReason(
+          'Why not simpler?',
+          complexity
+            .whyNotSimpler
+        ),
+
+        renderComplexityReason(
+          'Why not more complex?',
+          complexity
+            .whyNotMoreComplex
+        )
+      ].join('');
 
 
   /*
-   * ----------------------------------------------------------
-   * STRUCTURE
-   * ----------------------------------------------------------
+   * ==========================================================
+   * EFFORT
+   * ==========================================================
    */
+
+  const effort =
+    guidance.effort;
+
 
   root
     .querySelector(
-      '#structureHeading'
+      '#effortSummary'
     )
     .textContent =
-      presentation
-        .structure
-        .sleeveCount +
-      (
-        presentation
-          .structure
-          .sleeveCount === 1
-          ? ' portfolio part'
-          : ' portfolio parts'
+      effort
+        ?.portfolioEffort
+        ?.summary ??
+      effort
+        ?.userFacingSummary ??
+      '';
+
+
+  root
+    .querySelector(
+      '#effortDistribution'
+    )
+    .innerHTML =
+      renderEffortDistribution(
+        effort
       );
 
-  root
-    .querySelector(
-      '#structureSummary'
-    )
-    .textContent =
-      presentation
-        .structure
-        .summary;
-
-  const structureMetrics = [];
-
-  if (
-    typeof presentation
-      .structure
-      .lowEffortPercent ===
-    'number'
-  ) {
-    structureMetrics.push(`
-      <div class="metric">
-        <span>
-          Low / very-low effort
-        </span>
-
-        <strong>
-          ${
-            presentation
-              .structure
-              .lowEffortPercent
-          }% of portfolio
-        </strong>
-      </div>
-    `);
-  }
-
-  if (
-    presentation
-      .structure
-      .roleLabels
-      ?.length
-  ) {
-    structureMetrics.push(`
-      <div class="metric">
-        <span>
-          Portfolio roles
-        </span>
-
-        <strong>
-          ${
-            presentation
-              .structure
-              .roleLabels
-              .map(escapeHtml)
-              .join(' · ')
-          }
-        </strong>
-      </div>
-    `);
-  }
 
   root
     .querySelector(
-      '#structureMetrics'
+      '#sleeveEffortRows'
     )
     .innerHTML =
-      structureMetrics.join('');
+      renderSleeveEffortRows(
+        guidance.sleeves
+      );
+
+
+  root
+    .querySelector(
+      '#returnEffortExplanation'
+    )
+    .textContent =
+      effort
+        ?.returnEffortPrinciple
+        ?.explanation ??
+      '';
+
+
+  root
+    .querySelector(
+      '#effortWarning'
+    )
+    .textContent =
+      effort
+        ?.excessiveEffortWarning ??
+      effort
+        ?.systemBoundary
+        ?.excessive ??
+      '';
 
 
   /*
-   * ----------------------------------------------------------
-   * SLEEVES
-   * ----------------------------------------------------------
+   * ==========================================================
+   * BEHAVIOR
+   * ==========================================================
+   */
+
+  const behavior =
+    guidance.behavior;
+
+
+  root
+    .querySelector(
+      '#behaviorFraming'
+    )
+    .textContent =
+      behavior
+        ?.decisionFraming ??
+      'Use your system before reacting.';
+
+
+  root
+    .querySelector(
+      '#behaviorSummary'
+    )
+    .textContent =
+      behavior
+        ?.userFacingSummary ??
+      '';
+
+
+  root
+    .querySelector(
+      '#behaviorQuestion'
+    )
+    .textContent =
+      behavior
+        ?.investorQuestion ??
+      '';
+
+
+  root
+    .querySelector(
+      '#behaviorGuardrail'
+    )
+    .textContent =
+      behavior
+        ?.systemGuardrail ??
+      '';
+
+
+  root
+    .querySelector(
+      '#decisionProtocol'
+    )
+    .innerHTML =
+      renderDecisionProtocol(
+        behavior
+      );
+
+
+  root
+    .querySelector(
+      '#behaviorOutcomes'
+    )
+    .innerHTML =
+      renderBehaviorOutcomes(
+        behavior?.outcomes
+      );
+
+
+  /*
+   * ==========================================================
+   * BOUNDED SLEEVES
+   * ==========================================================
    */
 
   root
     .querySelector(
-      '#sleeveDescription'
-    )
-    .textContent =
-      presentation
-        .sleeves
-        .description;
-
-  root
-    .querySelector(
-      '#sleeveCards'
+      '#boundedSleeveCards'
     )
     .innerHTML =
-      presentation
+      guidance
         .sleeves
-        .items
         .map(
-          renderSleeve
+          renderSleeveCard
         )
         .join('');
 
 
   /*
-   * ----------------------------------------------------------
-   * SYSTEM FIT RECAP
-   * ----------------------------------------------------------
+   * ==========================================================
+   * USER LED
+   * ==========================================================
    */
 
   root
     .querySelector(
-      '#systemFitItems'
+      '#userLedTitle'
     )
-    .innerHTML =
-      presentation
-        .systemFit
-        .items
-        .map(
-          (job) => `
-            <div class="summary-item">
+    .textContent =
+      guidance
+        .userLedPrinciple
+        .title;
 
-              <strong>
-                ${escapeHtml(
-                  job.title
-                )}
-              </strong>
 
-              <div>
-                ${escapeHtml(
-                  job.systemFit
-                )}
-              </div>
-
-            </div>
-          `
-        )
-        .join('');
+  root
+    .querySelector(
+      '#userLedExplanation'
+    )
+    .textContent =
+      guidance
+        .userLedPrinciple
+        .explanation;
 
 
   /*
-   * ----------------------------------------------------------
+   * ==========================================================
    * Forward navigation
-   * ----------------------------------------------------------
+   * ==========================================================
    */
 
   root
