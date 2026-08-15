@@ -45,6 +45,10 @@ import {
   getSleeveBoundaries
 } from './sleeve-boundary-guidance.js';
 
+import {
+  getQuestionLabel
+} from '../investor-jobs.js';
+
 
 /*
  * ============================================================
@@ -655,6 +659,11 @@ function getEvidenceForDimension(
         optionId:
           answer.optionId,
 
+        questionLabel:
+          getQuestionLabel(
+            answer.questionId
+          ),
+
         answerText:
           answer.answerText
       })
@@ -1026,13 +1035,13 @@ function buildComplexityExplanation({
  *
  * Required translation:
  *
- * WHAT YOU TOLD US
+ * GUIDANCE INDICATION
  *        ->
- * YOUR JTBD
+ * YOUR QUIZ RESPONSE
  *        ->
- * SYSTEM JTBD
+ * INVESTING SYSTEM JTBD
  *        ->
- * HOW THIS SYSTEM ANSWERS
+ * HOW YOUR RECOMMENDED SYSTEM HELPS
  */
 
 function buildProfileAccountability({
@@ -1080,27 +1089,6 @@ function buildProfileAccountability({
     );
 
 
-  const stageSystemJTBD =
-    stage
-      ?.resolvedProfile
-      ?.portfolioRequirement ??
-    'Give every important part of the portfolio one clear responsibility.';
-
-
-  const styleSystemJTBD =
-    style
-      ?.resolvedProfile
-      ?.portfolioRequirement ??
-    'Minimize unnecessary routine decisions and define where attention is useful.';
-
-
-  const behaviorSystemJTBD =
-    behavior
-      ?.resolvedProfile
-      ?.portfolioRequirement ??
-    'Translate choices and new information into a bounded decision process.';
-
-
   const behaviorSystemResponse =
     behaviorGuidance
       ?.systemPromise ??
@@ -1120,11 +1108,10 @@ function buildProfileAccountability({
       'Your profile creates three jobs for the portfolio system: organize your investments, focus your effort, and help you decide what to do next.',
 
     columns: [
-      'Profile dimension',
-      'What you told us',
-      'Your JTBD',
-      'System JTBD',
-      'How this system answers'
+      'Guidance indication',
+      'Your quiz response',
+      'Investing system JTBD',
+      'How your recommended system helps'
     ],
 
     items: [
@@ -1132,14 +1119,8 @@ function buildProfileAccountability({
         id:
           'stage',
 
-        profileDimension:
-          'Stage — ' +
-          (
-            stage
-              ?.resolvedProfile
-              ?.label ??
-            'Your current stage'
-          ),
+        guidanceIndication:
+          'Portfolio evolution guidance',
 
         whatYouToldUs:
           stageEvidence,
@@ -1147,9 +1128,6 @@ function buildProfileAccountability({
         userJTBD:
           stage?.job ??
           null,
-
-        systemJTBD:
-          stageSystemJTBD,
 
         systemResponse:
           stage
@@ -1178,14 +1156,8 @@ function buildProfileAccountability({
         id:
           'style',
 
-        profileDimension:
-          'Style — ' +
-          (
-            style
-              ?.resolvedProfile
-              ?.label ??
-            'Your investing style'
-          ),
+        guidanceIndication:
+          'Portfolio interaction guidance',
 
         whatYouToldUs:
           styleEvidence,
@@ -1193,9 +1165,6 @@ function buildProfileAccountability({
         userJTBD:
           style?.job ??
           null,
-
-        systemJTBD:
-          styleSystemJTBD,
 
         systemResponse:
           style
@@ -1220,14 +1189,8 @@ function buildProfileAccountability({
         id:
           'behavior',
 
-        profileDimension:
-          'Behavior — ' +
-          (
-            behavior
-              ?.resolvedProfile
-              ?.label ??
-            'Your decision pattern'
-          ),
+        guidanceIndication:
+          'Portfolio decision-making guidance',
 
         whatYouToldUs:
           behaviorEvidence,
@@ -1235,9 +1198,6 @@ function buildProfileAccountability({
         userJTBD:
           behavior?.job ??
           null,
-
-        systemJTBD:
-          behaviorSystemJTBD,
 
         systemResponse:
           behaviorSystemResponse,
