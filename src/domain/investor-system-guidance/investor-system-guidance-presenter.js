@@ -61,15 +61,19 @@ import {
 
 
 /*
- * Helpers
+ * ============================================================
+ * Generic helpers
+ * ============================================================
  */
 
 function firstDefined(...values) {
-  return values.find(
-    (value) =>
-      value !== undefined &&
-      value !== null
-  ) ?? null;
+  return (
+    values.find(
+      (value) =>
+        value !== undefined &&
+        value !== null
+    ) ?? null
+  );
 }
 
 
@@ -89,9 +93,39 @@ function normalizeId(value) {
 }
 
 
+/*
+ * ============================================================
+ * Extractors aligned to the ACTUAL
+ * portfolio-job-fit-presenter.js contract
+ * ============================================================
+ *
+ * Existing presenter currently exposes:
+ *
+ * presentation.jobs.stage.profileId
+ * presentation.jobs.style.profileId
+ * presentation.jobs.behavior.profileId
+ *
+ * presentation.philosophy.archetype
+ * presentation.philosophy.variant
+ *
+ * presentation.structure
+ *
+ * presentation.sleeves.items
+ *
+ * presentation.diagnostics.recommendation
+ */
+
+
+/*
+ * ------------------------------------------------------------
+ * Resolved IDs
+ * ------------------------------------------------------------
+ */
+
 function extractStageId(presentation) {
   return normalizeId(
     firstDefined(
+      presentation?.jobs?.stage?.profileId,
       presentation?.profile?.stage?.id,
       presentation?.stage?.id,
       presentation?.stageId
@@ -103,6 +137,7 @@ function extractStageId(presentation) {
 function extractStyleId(presentation) {
   return normalizeId(
     firstDefined(
+      presentation?.jobs?.style?.profileId,
       presentation?.profile?.style?.id,
       presentation?.style?.id,
       presentation?.styleId
@@ -114,6 +149,7 @@ function extractStyleId(presentation) {
 function extractBehaviorId(presentation) {
   return normalizeId(
     firstDefined(
+      presentation?.jobs?.behavior?.profileId,
       presentation?.profile?.behavior?.id,
       presentation?.profile?.modifier?.id,
       presentation?.behavior?.id,
@@ -127,9 +163,10 @@ function extractBehaviorId(presentation) {
 
 function extractArchetypeId(presentation) {
   return firstDefined(
+    presentation?.philosophy?.archetype?.id,
+    presentation?.diagnostics?.recommendation?.archetypeId,
     presentation?.system?.archetype?.id,
     presentation?.portfolioSystem?.archetype?.id,
-    presentation?.philosophy?.archetype?.id,
     presentation?.archetype?.id,
     presentation?.archetypeId
   );
@@ -139,9 +176,10 @@ function extractArchetypeId(presentation) {
 function extractVariantId(presentation) {
   return normalizeId(
     firstDefined(
+      presentation?.philosophy?.variant?.id,
+      presentation?.diagnostics?.recommendation?.variantId,
       presentation?.system?.variant?.id,
       presentation?.portfolioSystem?.variant?.id,
-      presentation?.philosophy?.variant?.id,
       presentation?.variant?.id,
       presentation?.variantId
     )
@@ -149,8 +187,69 @@ function extractVariantId(presentation) {
 }
 
 
+/*
+ * ------------------------------------------------------------
+ * Resolved objects
+ * ------------------------------------------------------------
+ */
+
+function extractStage(presentation) {
+  return firstDefined(
+    presentation?.jobs?.stage,
+    presentation?.profile?.stage,
+    presentation?.stage,
+    null
+  );
+}
+
+
+function extractStyle(presentation) {
+  return firstDefined(
+    presentation?.jobs?.style,
+    presentation?.profile?.style,
+    presentation?.style,
+    null
+  );
+}
+
+
+function extractBehavior(presentation) {
+  return firstDefined(
+    presentation?.jobs?.behavior,
+    presentation?.profile?.behavior,
+    presentation?.profile?.modifier,
+    presentation?.behavior,
+    presentation?.modifier,
+    null
+  );
+}
+
+
+function extractArchetype(presentation) {
+  return firstDefined(
+    presentation?.philosophy?.archetype,
+    presentation?.system?.archetype,
+    presentation?.portfolioSystem?.archetype,
+    presentation?.archetype,
+    null
+  );
+}
+
+
+function extractVariant(presentation) {
+  return firstDefined(
+    presentation?.philosophy?.variant,
+    presentation?.system?.variant,
+    presentation?.portfolioSystem?.variant,
+    presentation?.variant,
+    null
+  );
+}
+
+
 function extractSleeves(presentation) {
   const candidates = [
+    presentation?.sleeves?.items,
     presentation?.system?.sleeves,
     presentation?.portfolioSystem?.sleeves,
     presentation?.portfolio?.sleeves,
@@ -170,73 +269,32 @@ function extractSleeves(presentation) {
 
 function extractStructure(presentation) {
   return firstDefined(
+    presentation?.structure,
     presentation?.system?.structure,
     presentation?.portfolioSystem?.structure,
     presentation?.portfolio?.structure,
-    presentation?.structure,
     {}
   );
 }
 
 
-function extractArchetype(presentation) {
-  return firstDefined(
-    presentation?.system?.archetype,
-    presentation?.portfolioSystem?.archetype,
-    presentation?.philosophy?.archetype,
-    presentation?.archetype,
-    null
-  );
-}
-
-
-function extractVariant(presentation) {
-  return firstDefined(
-    presentation?.system?.variant,
-    presentation?.portfolioSystem?.variant,
-    presentation?.philosophy?.variant,
-    presentation?.variant,
-    null
-  );
-}
-
-
-function extractStage(presentation) {
-  return firstDefined(
-    presentation?.profile?.stage,
-    presentation?.stage,
-    null
-  );
-}
-
-
-function extractStyle(presentation) {
-  return firstDefined(
-    presentation?.profile?.style,
-    presentation?.style,
-    null
-  );
-}
-
-
-function extractBehavior(presentation) {
-  return firstDefined(
-    presentation?.profile?.behavior,
-    presentation?.profile?.modifier,
-    presentation?.behavior,
-    presentation?.modifier,
-    null
-  );
-}
+/*
+ * ============================================================
+ * Investor JTBD translation
+ * ============================================================
+ *
+ * Existing canonical Stage / Style / Behavior copy remains
+ * authoritative.
+ *
+ * This layer translates those profiles into the questions
+ * the user is trying to answer.
+ */
 
 
 /*
- * JTBD translation
- *
- * These are deliberately generic contracts.
- *
- * Existing profile copy remains authoritative for the specific
- * resolved Stage / Style / Behavior labels and evidence.
+ * ------------------------------------------------------------
+ * Stage -> Organization JTBD
+ * ------------------------------------------------------------
  */
 
 function buildOrganizationJob({
@@ -259,24 +317,41 @@ function buildOrganizationJob({
 
     resolvedProfile: {
       id:
-        stage?.id ?? null,
+        stage?.profileId ??
+        stage?.id ??
+        null,
 
       label:
         firstDefined(
+          stage?.title,
           stage?.label,
           stage?.name
         ),
 
       summary:
         firstDefined(
-          stage?.summary,
           stage?.description,
+          stage?.summary,
           stage?.explanation
-        )
+        ),
+
+      portfolioRequirement:
+        stage?.portfolioRequirement ??
+        null,
+
+      systemFit:
+        stage?.systemFit ??
+        null
     }
   };
 }
 
+
+/*
+ * ------------------------------------------------------------
+ * Style -> Effort JTBD
+ * ------------------------------------------------------------
+ */
 
 function buildEffortJob({
   style,
@@ -301,24 +376,41 @@ function buildEffortJob({
 
     resolvedProfile: {
       id:
-        style?.id ?? null,
+        style?.profileId ??
+        style?.id ??
+        null,
 
       label:
         firstDefined(
+          style?.title,
           style?.label,
           style?.name
         ),
 
       summary:
         firstDefined(
-          style?.summary,
           style?.description,
+          style?.summary,
           style?.explanation
-        )
+        ),
+
+      portfolioRequirement:
+        style?.portfolioRequirement ??
+        null,
+
+      systemFit:
+        style?.systemFit ??
+        null
     }
   };
 }
 
+
+/*
+ * ------------------------------------------------------------
+ * Behavior -> Decision JTBD
+ * ------------------------------------------------------------
+ */
 
 function buildDecisionJob({
   behavior,
@@ -347,27 +439,40 @@ function buildDecisionJob({
 
     resolvedProfile: {
       id:
-        behavior?.id ?? null,
+        behavior?.profileId ??
+        behavior?.id ??
+        null,
 
       label:
         firstDefined(
+          behavior?.title,
           behavior?.label,
           behavior?.name
         ),
 
       summary:
         firstDefined(
-          behavior?.summary,
           behavior?.description,
+          behavior?.summary,
           behavior?.explanation
-        )
+        ),
+
+      portfolioRequirement:
+        behavior?.portfolioRequirement ??
+        null,
+
+      systemFit:
+        behavior?.systemFit ??
+        null
     }
   };
 }
 
 
 /*
- * Philosophy translation
+ * ============================================================
+ * Portfolio philosophy translation
+ * ============================================================
  */
 
 function buildPhilosophyExplanation({
@@ -388,11 +493,16 @@ function buildPhilosophyExplanation({
       philosophy?.summary,
       philosophy?.description,
       philosophy?.explanation,
-      philosophy?.philosophySummary
+      philosophy?.philosophySummary,
+      presentation
+        ?.philosophy
+        ?.archetype
+        ?.summary
     );
 
   const philosophyName =
     firstDefined(
+      philosophy?.title,
       philosophy?.philosophyName,
       philosophy?.label,
       philosophy?.name,
@@ -402,6 +512,10 @@ function buildPhilosophyExplanation({
   const sources =
     firstDefined(
       philosophy?.sources,
+      presentation
+        ?.philosophy
+        ?.archetype
+        ?.sources,
       presentation
         ?.philosophy
         ?.archetypeSources,
@@ -433,7 +547,9 @@ function buildPhilosophyExplanation({
 
 
 /*
- * Variant translation
+ * ============================================================
+ * Variant / complexity translation
+ * ============================================================
  */
 
 function buildComplexityExplanation({
@@ -450,6 +566,7 @@ function buildComplexityExplanation({
 
     variantName:
       firstDefined(
+        variant?.title,
         variant?.label,
         variant?.name,
         variant?.philosophyName,
@@ -516,11 +633,9 @@ function buildComplexityExplanation({
 
 
 /*
+ * ============================================================
  * Sleeve translation
- *
- * Merge the existing resolved sleeve with its guidance.
- *
- * Existing sleeve values remain untouched.
+ * ============================================================
  */
 
 function mergeSleeveGuidance(
@@ -551,6 +666,7 @@ function mergeSleeveGuidance(
       )
     );
 
+
   return sleeves.map(
     (sleeve) => {
       const boundary =
@@ -563,9 +679,10 @@ function mergeSleeveGuidance(
           sleeve.id
         ) ?? null;
 
+
       return {
         /*
-         * Preserve original resolved sleeve.
+         * Preserve the entire existing sleeve presentation.
          */
         ...sleeve,
 
@@ -580,7 +697,8 @@ function mergeSleeveGuidance(
             firstDefined(
               sleeve?.role?.label,
               sleeve?.role?.description,
-              sleeve?.purpose
+              sleeve?.purpose,
+              sleeve?.whyItExists
             ),
 
           returnContribution:
@@ -631,30 +749,46 @@ function mergeSleeveGuidance(
           effort: {
             level:
               effort?.effortId ??
+              sleeve
+                ?.operatingProfile
+                ?.effort ??
               null,
 
             label:
               effort?.effortLabel ??
+              sleeve
+                ?.operatingProfile
+                ?.effortLabel ??
               null,
 
             whyThisEffort:
-              effort?.whyThisEffort ??
+              effort
+                ?.whyThisEffort ??
               null,
 
             usefulAttention:
-              effort?.usefulAttention ??
+              effort
+                ?.usefulAttention ??
               null,
 
             redundantAttention:
-              effort?.redundantAttention ??
+              effort
+                ?.redundantAttention ??
               null,
 
             reviewCadence:
-              effort?.reviewCadence ??
+              effort
+                ?.reviewCadence ??
+              sleeve
+                ?.operatingProfile
+                ?.reviewCadence ??
               null,
 
             reviewCadenceLabel:
               effort
+                ?.reviewCadenceLabel ??
+              sleeve
+                ?.operatingProfile
                 ?.reviewCadenceLabel ??
               null
           }
@@ -666,7 +800,9 @@ function mergeSleeveGuidance(
 
 
 /*
- * Decision-support translation
+ * ============================================================
+ * Behavior operating model
+ * ============================================================
  */
 
 function buildBehaviorOperatingModel(
@@ -723,16 +859,20 @@ function buildBehaviorOperatingModel(
 
 
 /*
- * Main presenter
+ * ============================================================
+ * Public API
+ * ============================================================
  *
  * INPUT
  * -----
- * `presentation` should be the already-built output from the
- * existing portfolio-job-fit presenter.
+ * Output from the already-working:
+ *
+ *   presentPortfolioJobFit()
+ *
  *
  * OUTPUT
  * ------
- * A richer UI-ready contract.
+ * Rich investor-facing explanation model.
  */
 
 export function presentInvestorSystemGuidance(
@@ -753,6 +893,7 @@ export function presentInvestorSystemGuidance(
       presentation
     );
 
+
   const stageId =
     extractStageId(
       presentation
@@ -768,6 +909,7 @@ export function presentInvestorSystemGuidance(
       presentation
     );
 
+
   const archetypeId =
     extractArchetypeId(
       presentation
@@ -778,6 +920,7 @@ export function presentInvestorSystemGuidance(
       presentation
     );
 
+
   const archetype =
     extractArchetype(
       presentation
@@ -787,6 +930,7 @@ export function presentInvestorSystemGuidance(
     extractVariant(
       presentation
     );
+
 
   const sleeves =
     extractSleeves(
@@ -800,9 +944,11 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Resolve guidance only.
+   * ----------------------------------------------------------
+   * Resolve guidance.
    *
-   * None of these calls resolve the portfolio itself.
+   * These functions explain existing results only.
+   * ----------------------------------------------------------
    */
 
   const behaviorGuidance =
@@ -810,11 +956,13 @@ export function presentInvestorSystemGuidance(
       behaviorId
     );
 
+
   const complexityGuidance =
     getVariantComplexityGuidance(
       archetypeId,
       variantId
     );
+
 
   const effortGuidance =
     getEffortReturnGuidance({
@@ -823,6 +971,7 @@ export function presentInvestorSystemGuidance(
       sleeves
     });
 
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -830,7 +979,9 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Build the user JTBD layer.
+   * ----------------------------------------------------------
+   * Build user JTBD.
+   * ----------------------------------------------------------
    */
 
   const investorJobs = {
@@ -854,7 +1005,9 @@ export function presentInvestorSystemGuidance(
 
 
   /*
-   * Translate system architecture.
+   * ----------------------------------------------------------
+   * Translate portfolio architecture.
+   * ----------------------------------------------------------
    */
 
   const philosophy =
@@ -863,6 +1016,7 @@ export function presentInvestorSystemGuidance(
       archetypeId,
       presentation
     });
+
 
   const complexity =
     buildComplexityExplanation({
@@ -873,6 +1027,7 @@ export function presentInvestorSystemGuidance(
       complexityGuidance
     });
 
+
   const guidedSleeves =
     mergeSleeveGuidance(
       sleeves,
@@ -880,20 +1035,32 @@ export function presentInvestorSystemGuidance(
       effortGuidance
     );
 
+
   const behaviorOperatingModel =
     buildBehaviorOperatingModel(
       behaviorGuidance
     );
 
 
+  /*
+   * ----------------------------------------------------------
+   * Final UI-ready contract.
+   * ----------------------------------------------------------
+   */
+
   return {
     /*
-     * Preserve the existing presenter result so downstream
-     * consumers can still access the original contract.
+     * Preserve original working presentation.
+     *
+     * This keeps the new layer additive.
      */
     source:
       presentation,
 
+
+    /*
+     * Resolved IDs for development/debugging and UI labels.
+     */
     resolved: {
       stageId,
       styleId,
@@ -904,48 +1071,68 @@ export function presentInvestorSystemGuidance(
         sleeves.length
     },
 
+
     /*
+     * --------------------------------------------------------
      * USER QUESTION:
      * "What does my system need to help me do?"
+     * --------------------------------------------------------
      */
     investorJobs,
 
+
     /*
+     * --------------------------------------------------------
      * USER QUESTION:
      * "Why this kind of portfolio?"
+     * --------------------------------------------------------
      */
     philosophy,
 
+
     /*
+     * --------------------------------------------------------
      * USER QUESTION:
-     * "Why this many parts?"
+     * "Why this many independently useful portfolio roles?"
+     * --------------------------------------------------------
      */
     complexity,
 
+
     /*
+     * --------------------------------------------------------
      * USER QUESTION:
      * "Where is my effort worth spending?"
+     * --------------------------------------------------------
      */
     effort:
       effortGuidance,
 
+
     /*
+     * --------------------------------------------------------
      * USER QUESTION:
-     * "How does my Behavior change the way
-     * I should operate this portfolio?"
+     * "How should the system help me make decisions?"
+     * --------------------------------------------------------
      */
     behavior:
       behaviorOperatingModel,
 
+
     /*
+     * --------------------------------------------------------
      * USER QUESTION:
-     * "What does every part of the system do?"
+     * "What does each part of the system do?"
+     * --------------------------------------------------------
      */
     sleeves:
       guidedSleeves,
 
+
     /*
-     * High-level explanation for the System Fit screen.
+     * --------------------------------------------------------
+     * Top-level explanation for System Fit screen.
+     * --------------------------------------------------------
      */
     systemFit: {
       title:
@@ -956,7 +1143,8 @@ export function presentInvestorSystemGuidance(
 
       questions: [
         {
-          id: 'organize',
+          id:
+            'organize',
 
           question:
             'What needs to be organized?',
@@ -968,7 +1156,8 @@ export function presentInvestorSystemGuidance(
         },
 
         {
-          id: 'philosophy',
+          id:
+            'philosophy',
 
           question:
             'Why this portfolio philosophy?',
@@ -978,10 +1167,13 @@ export function presentInvestorSystemGuidance(
         },
 
         {
-          id: 'complexity',
+          id:
+            'complexity',
 
           question:
-            `Why ${sleeves.length} portfolio roles?`,
+            'Why ' +
+            sleeves.length +
+            ' portfolio roles?',
 
           answer:
             complexity
@@ -989,7 +1181,8 @@ export function presentInvestorSystemGuidance(
         },
 
         {
-          id: 'effort',
+          id:
+            'effort',
 
           question:
             'Where is your attention worth spending?',
@@ -1001,7 +1194,8 @@ export function presentInvestorSystemGuidance(
         },
 
         {
-          id: 'behavior',
+          id:
+            'behavior',
 
           question:
             'How should the system help you make decisions?',
@@ -1014,10 +1208,11 @@ export function presentInvestorSystemGuidance(
       ]
     },
 
+
     /*
-     * Shared user-led product principle.
-     *
-     * Useful for UI footer / explanatory copy.
+     * --------------------------------------------------------
+     * Product-positioning principle.
+     * --------------------------------------------------------
      */
     userLedPrinciple: {
       title:
@@ -1031,7 +1226,7 @@ export function presentInvestorSystemGuidance(
 
 
 /*
- * Alias with a shorter name for UI consumers.
+ * Shorter UI-facing alias.
  */
 
 export function presentSystemGuidance(
