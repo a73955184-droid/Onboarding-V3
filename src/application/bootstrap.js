@@ -10,11 +10,14 @@ import {
 import {
   renderInvestingSystem
 } from '../features/recommendation/InvestingSystemScreen.js';
+
 import {
   renderPortfolioMap
 } from '../features/recommendation/PortfolioMapScreen.js';
 
+
 const root = document.getElementById('app');
+
 
 function render() {
   const current = route();
@@ -24,26 +27,68 @@ function render() {
       renderAssessment(root, current.step);
       break;
 
+
     case 'investor-profile':
       renderInvestorProfile(root);
       break;
 
+
     case 'investor-profile-jobs':
-      import('../features/recommendation/InvestorProfileJobsScreen.js').then((module) => {
-        module.renderInvestorProfileJobs(root);
-      }).catch((error) => {
-        console.error('Failed to load InvestorProfileJobsScreen:', error);
-        renderWelcome(root);
-      });
+      import(
+        '../features/recommendation/InvestorProfileJobsScreen.js'
+      )
+        .then((module) => {
+          module.renderInvestorProfileJobs(root);
+        })
+        .catch((error) => {
+          console.error(
+            'Failed to load InvestorProfileJobsScreen:',
+            error
+          );
+
+          renderWelcome(root);
+        });
+
       break;
+
+
+    /*
+     * Explanation bridge:
+     *
+     * Investor Profile / Jobs
+     *        ↓
+     * Portfolio System Fit
+     *        ↓
+     * Investing System
+     */
+    case 'portfolio-system-fit':
+      import(
+        '../features/recommendation/PortfolioSystemFitScreen.js'
+      )
+        .then((module) => {
+          module.renderPortfolioSystemFit(root);
+        })
+        .catch((error) => {
+          console.error(
+            'Failed to load PortfolioSystemFitScreen:',
+            error
+          );
+
+          renderWelcome(root);
+        });
+
+      break;
+
 
     case 'investing-system':
       renderInvestingSystem(root);
       break;
 
+
     case 'portfolio-map':
       renderPortfolioMap(root);
       break;
+
 
     default:
       renderWelcome(root);
@@ -51,6 +96,10 @@ function render() {
   }
 }
 
-window.addEventListener('hashchange', render);
+
+window.addEventListener(
+  'hashchange',
+  render
+);
 
 render();
