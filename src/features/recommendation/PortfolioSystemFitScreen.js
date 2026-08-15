@@ -158,9 +158,22 @@ function renderEvidenceAnswers(
             line-height: 1.45;
           "
         >
-          “${escapeHtml(
+          ${
+            answer.questionLabel
+              ? `
+                <strong>
+                  ${escapeHtml(
+                    answer.questionLabel
+                  )}:
+                </strong>
+                <br>
+              `
+              : ''
+          }
+
+          ${escapeHtml(
             answer.answerText
-          )}”
+          )}
         </div>
       `
     )
@@ -233,7 +246,7 @@ function renderProfileAccountability(
         <table
           style="
             width: 100%;
-            min-width: 1100px;
+            min-width: 980px;
             border-collapse: collapse;
             table-layout: fixed;
           "
@@ -245,62 +258,50 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 15%;
+                  width: 20%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 14px 14px 0;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
-                Profile dimension
+                Guidance indication
               </th>
 
               <th
                 style="
-                  width: 23%;
+                  width: 30%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
-                What you told us
+                Your quiz response
               </th>
 
               <th
                 style="
-                  width: 20%;
+                  width: 25%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
-                Your JTBD
+                Investing system JTBD
               </th>
 
               <th
                 style="
-                  width: 20%;
-                  text-align: left;
-                  vertical-align: top;
-                  padding: 14px;
-                  border-bottom: 1px solid rgba(0,0,0,0.12);
-                "
-              >
-                System JTBD
-              </th>
-
-              <th
-                style="
-                  width: 22%;
+                  width: 25%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 0 14px 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
-                How this system answers
+                How your recommended system helps
               </th>
 
             </tr>
@@ -325,7 +326,7 @@ function renderProfileAccountability(
 
                       <strong>
                         ${escapeHtml(
-                          item.profileDimension
+                          item.guidanceIndication
                         )}
                       </strong>
 
@@ -358,23 +359,6 @@ function renderProfileAccountability(
                       <strong>
                         ${escapeHtml(
                           item.userJTBD
-                        )}
-                      </strong>
-
-                    </td>
-
-
-                    <td
-                      style="
-                        vertical-align: top;
-                        padding: 18px 14px;
-                        border-bottom: 1px solid rgba(0,0,0,0.08);
-                      "
-                    >
-
-                      <strong>
-                        ${escapeHtml(
-                          item.systemJTBD
                         )}
                       </strong>
 
@@ -1876,7 +1860,7 @@ export function renderPortfolioSystemFit(
 
 
   /*
-   * NEW table-based accountability section.
+   * Updated four-column accountability section.
    */
 
   root
