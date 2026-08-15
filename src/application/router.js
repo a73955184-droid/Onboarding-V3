@@ -29,6 +29,19 @@ export function route() {
     return { name: 'investor-profile-jobs' };
   }
 
+  /*
+   * Explanation bridge:
+   *
+   * Investor Jobs
+   *      ↓
+   * Portfolio System Fit
+   *      ↓
+   * Investing System
+   */
+  if (hash === 'recommendation/system-fit') {
+    return { name: 'portfolio-system-fit' };
+  }
+
   if (hash === 'recommendation/system') {
     return { name: 'investing-system' };
   }
