@@ -809,6 +809,132 @@ function renderAssetCategories(
 }
 
 
+function renderSleeveOverviewCard(
+  sleeve
+) {
+  const guidance =
+    sleeve
+      ?.guidance ??
+    {};
+
+  return `
+    <article class="system-card">
+
+      <h2>
+        ${escapeHtml(
+          sleeve
+            ?.label ??
+          ''
+        )}
+
+        ${
+          typeof sleeve
+            ?.weightPercent ===
+          'number'
+            ? ` · ${
+                sleeve
+                  .weightPercent
+              }%`
+            : ''
+        }
+      </h2>
+
+      ${
+        guidance
+          ?.investorQuestion
+          ? `
+            <p>
+              <strong>
+                ${escapeHtml(
+                  guidance
+                    .investorQuestion
+                )}
+              </strong>
+            </p>
+          `
+          : ''
+      }
+
+      ${
+        guidance
+          ?.job
+          ? `
+            <div class="summary-item">
+
+              <strong>
+                Its job
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance.job
+                )}
+              </div>
+
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        guidance
+          ?.returnContribution
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 12px"
+            >
+
+              <strong>
+                Return contribution
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance
+                    .returnContribution
+                )}
+              </div>
+
+            </div>
+          `
+          : ''
+      }
+
+      ${renderAssetCategories(
+        sleeve
+      )}
+
+      ${
+        guidance
+          ?.whatBelongs
+          ? `
+            <div
+              class="summary-item"
+              style="margin-top: 12px"
+            >
+
+              <strong>
+                Sleeve mandate
+              </strong>
+
+              <div>
+                ${escapeHtml(
+                  guidance
+                    .whatBelongs
+                )}
+              </div>
+
+            </div>
+          `
+          : ''
+      }
+
+    </article>
+  `;
+}
+
+
 function renderMarketSignals(
   sleeve
 ) {
@@ -1415,6 +1541,33 @@ export function renderPortfolioSystemFit(
                ================================================== -->
 
           <section
+            style="margin-top: 24px"
+          >
+
+            <span class="pill">
+              YOUR BOUNDED PORTFOLIO SYSTEM
+            </span>
+
+            <h2>
+              Every part has a job, boundary, and effort budget
+            </h2>
+
+            <p>
+              Each sleeve defines what belongs, what outcome it
+              contributes, what information matters, how much
+              attention it deserves, and when reconsideration is
+              actually warranted.
+            </p>
+
+            <div
+              class="system-grid"
+              id="boundedSleeveOverviewCards"
+            ></div>
+
+          </section>
+
+
+          <section
             class="card panel"
             style="margin-top: 24px"
           >
@@ -1944,6 +2097,19 @@ export function renderPortfolioSystemFit(
         reveal
           .profileAccountability
       );
+
+
+  root
+    .querySelector(
+      '#boundedSleeveOverviewCards'
+    )
+    .innerHTML =
+      guidance
+        .sleeves
+        .map(
+          renderSleeveOverviewCard
+        )
+        .join('');
 
 
   /*
