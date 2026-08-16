@@ -841,22 +841,6 @@ function renderSleeveOverviewCard(
 
       ${
         guidance
-          ?.investorQuestion
-          ? `
-            <p>
-              <strong>
-                ${escapeHtml(
-                  guidance
-                    .investorQuestion
-                )}
-              </strong>
-            </p>
-          `
-          : ''
-      }
-
-      ${
-        guidance
           ?.job
           ? `
             <div class="summary-item">
@@ -1547,17 +1531,6 @@ export function renderPortfolioSystemFit(
             <span class="pill">
               YOUR BOUNDED PORTFOLIO SYSTEM
             </span>
-
-            <h2>
-              Every part has a job, boundary, and effort budget
-            </h2>
-
-            <p>
-              Each sleeve defines what belongs, what outcome it
-              contributes, what information matters, how much
-              attention it deserves, and when reconsideration is
-              actually warranted.
-            </p>
 
             <div
               class="system-grid"
