@@ -102,6 +102,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Build the foundation with the fewest moving parts. Growth, resilience, and accessible money are kept in broad, easy-to-understand roles so the investor can establish a coherent system before adding complexity.',
+
       whyThisVersion:
         'The ES philosophy works when broad long-term roles remain dominant and easy to maintain. The Essential version therefore combines related exposures into a small number of broad responsibilities.',
 
@@ -121,6 +124,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Make the foundation more understandable without making it meaningfully harder to manage. The broad growth allocation is separated into US and international roles so geographic exposure can be understood and rebalanced deliberately.',
+
       whyThisVersion:
         'The Intentional version preserves the ES commitment to simplicity while making important parts of the growth foundation separately visible.',
 
@@ -139,6 +145,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Keep the simple diversified foundation, but create one controlled place for personal preferences. Most of the portfolio stays broad and passive while a small customization sleeve gives the investor room to express a theme or preference without redefining the system.',
 
       whyThisVersion:
         'The Engaged version keeps the broad ES foundation intact but creates one bounded place for personal preference or additional involvement.',
@@ -167,6 +176,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Get global diversification mostly through broad funds. Countries and regions do not need to be managed separately; the system keeps global growth, stability, and liquidity consolidated.',
+
       whyThisVersion:
         'The Essential GD system expresses global diversification through broad combined exposures rather than separate regional decisions.',
 
@@ -186,6 +198,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Make the important sources of global diversification visible. US, developed international, emerging markets, inflation resilience, stability, and liquidity are separated so the investor can understand where diversification is actually coming from.',
+
       whyThisVersion:
         'The Intentional GD system makes several important diversification dimensions separately visible.',
 
@@ -204,6 +219,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Manage diversification across more than geography alone. The portfolio adds explicit small-cap and real-asset diversification, giving the investor more distinct return drivers to monitor while keeping a broad global foundation.',
 
       whyThisVersion:
         'The Engaged GD system expands diversification beyond geography into company size and real-economy exposures.',
@@ -232,6 +250,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Improve one clearly identified limitation without disturbing the core. Most capital remains in a durable diversified foundation, with one bounded improvement sleeve allowed to address a specific weakness such as concentration or exposure imbalance.',
+
       whyThisVersion:
         'The Essential FT system keeps the durable core dominant and allows only one explicitly bounded improvement role.',
 
@@ -251,6 +272,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Separate several evidence-based improvements so each has to justify its role. The core remains dominant, but geographic diversification, quality, and small-value improvements are managed independently instead of being bundled together.',
+
       whyThisVersion:
         'The Intentional FT system separates several improvement decisions because they target different portfolio properties.',
 
@@ -269,6 +293,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Create a broader improvement toolkit while protecting the durable foundation. Systematic factor improvements and a strategic diversifier are joined by a small research sleeve where selected ideas can be evaluated under explicit boundaries.',
 
       whyThisVersion:
         'The Engaged FT system supports several systematic improvements plus a small research capacity while preserving a dominant durable core.',
@@ -297,6 +324,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Separate only the three financial jobs that should never be confused: growth, resilience, and access. The system preserves the multi-purpose philosophy while minimizing the number of independently managed pools.',
+
       whyThisVersion:
         'The Essential BFO system separates the three broadest portfolio jobs: growth, stability, and liquidity.',
 
@@ -316,6 +346,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Give each major household and wealth-management job its own place. Growth, income, stability, diversification, liquidity, and a small opportunity allocation are separated so decisions can be made according to the job the capital is meant to perform.',
+
       whyThisVersion:
         'The Intentional BFO system separates more household and wealth-management jobs because they are useful to manage independently.',
 
@@ -334,6 +367,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Operate the multi-purpose portfolio with greater specialization. Growth, income, resilience, real assets, alternatives, liquidity, and selected opportunities all become explicit roles, giving the investor more control without allowing any non-core activity to dominate the system.',
 
       whyThisVersion:
         'The Engaged BFO system supports a broader set of wealth-management roles, including real assets, strategic alternatives, and bounded opportunities.',
@@ -362,6 +398,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Keep growth overwhelmingly dominant and add only one broad source of differentiated return. Alternatives remain a supporting exposure rather than becoming a collection of separate strategies.',
+
       whyThisVersion:
         'The Essential GA system keeps broad growth dominant and introduces only one bounded alternatives role alongside stability and liquidity.',
 
@@ -381,6 +420,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Separate the different ways the portfolio is trying to improve on a traditional growth core. Growth enhancers, real assets, and an alternative strategy each get a distinct role so their purpose and contribution can be evaluated independently.',
+
       whyThisVersion:
         'The Intentional GA system separates different sources of growth enhancement and diversification so they can be evaluated independently.',
 
@@ -399,6 +441,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Use several bounded growth and alternative engines while keeping a permanent core. Structural themes, smaller/emerging growth, real assets, alternatives, and an opportunity sleeve create more places for research, but all remain subordinate to the long-term growth foundation.',
 
       whyThisVersion:
         'The Engaged GA system supports multiple specialized growth sources, alternatives, real assets, stability, and a bounded opportunity capacity.',
@@ -427,6 +472,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Protect the long-term portfolio while reserving a small amount of capital for opportunities. The investor can pursue selected ideas, but opportunity-taking stays clearly separated from the permanent core.',
+
       whyThisVersion:
         'The Essential TO system creates only one bounded opportunity role alongside a permanent core and stability reserve.',
 
@@ -446,6 +494,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Separate different kinds of active decisions instead of treating every opportunity the same. Tactical allocation changes and security/theme selection receive distinct bounded sleeves, while the core and reserve remain protected.',
+
       whyThisVersion:
         'The Intentional TO system separates tactical allocation decisions from thesis-driven opportunity selection.',
 
@@ -464,6 +515,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Run a genuinely active opportunity layer around a protected permanent core. Tactical allocation, themes, and individual security selection are separately managed, each with explicit sizing and decision rules.',
 
       whyThisVersion:
         'The Engaged TO system separates tactical allocation, thematic opportunities, and security selection into different bounded roles.',
@@ -492,6 +546,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     essential: Object.freeze({
       variantId: 'essential',
 
+      variantRationale:
+        'Cover the essential preservation jobs with broad, dependable building blocks. Most of the portfolio focuses on high-quality income and accessible capital, while a measured growth allocation helps preserve purchasing power over time.',
+
       whyThisVersion:
         'The Essential IP system separates the major needs of income, liquidity, measured growth, and inflation protection.',
 
@@ -511,6 +568,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
     intentional: Object.freeze({
       variantId: 'intentional',
 
+      variantRationale:
+        'Separate the major sources of income, liquidity, growth, and inflation protection so they can be managed according to different needs. Duration-sensitive income, core bonds, income equity, growth, and inflation resilience each have an explicit job.',
+
       whyThisVersion:
         'The Intentional IP system separates immediate liquidity, short-duration income, core fixed income, equity income, measured growth, and inflation protection.',
 
@@ -529,6 +589,9 @@ export const VARIANT_COMPLEXITY_GUIDANCE = Object.freeze({
 
     engaged: Object.freeze({
       variantId: 'engaged',
+
+      variantRationale:
+        'Manage income and preservation at a more granular source-of-risk level. Government bonds, credit, dividend equity, inflation protection, growth, liquidity, and selected income opportunities are separated so the investor can evaluate income quality and risk rather than simply chasing yield.',
 
       whyThisVersion:
         'The Engaged IP system separates liquidity timing, government bonds, credit, inflation protection, dividend equity, global growth, and selected income opportunities.',
@@ -615,6 +678,11 @@ export function getVariantComplexityGuidance(
     defaultSummary:
       defaultMeaning
         ?.userFacingSummary ??
+      null,
+
+    variantRationale:
+      variantGuidance
+        ?.variantRationale ??
       null,
 
     whyThisVersion:

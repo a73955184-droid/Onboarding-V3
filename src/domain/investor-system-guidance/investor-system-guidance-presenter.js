@@ -1061,6 +1061,11 @@ function buildComplexityExplanation({
     userFacingSummary:
       complexityGuidance
         ?.userFacingSummary ??
+      null,
+
+    variantRationale:
+      complexityGuidance
+        ?.variantRationale ??
       null
   };
 }

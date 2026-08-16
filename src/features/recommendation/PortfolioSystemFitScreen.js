@@ -1974,15 +1974,32 @@ export function renderPortfolioSystemFit(
       .complexity;
 
 
+  const variantLabel =
+    String(
+      complexity
+        ?.variantId ??
+      ''
+    )
+      .replace(
+        /_/g,
+        ' '
+      )
+      .replace(
+        /\b\w/g,
+        (character) =>
+          character.toUpperCase()
+      );
+
   root
     .querySelector(
       '#complexityHeading'
     )
     .textContent =
-      'Why ' +
-      complexity
-        .sleeveCount +
-      ' portfolio roles?';
+      variantLabel
+        ? 'Why ' +
+          variantLabel +
+          '?'
+        : 'Why this version?';
 
 
   root
@@ -1991,9 +2008,11 @@ export function renderPortfolioSystemFit(
     )
     .textContent =
       complexity
-        .userFacingSummary ??
+        ?.variantRationale ??
       complexity
-        .generalMeaning ??
+        ?.userFacingSummary ??
+      complexity
+        ?.generalMeaning ??
       '';
 
 

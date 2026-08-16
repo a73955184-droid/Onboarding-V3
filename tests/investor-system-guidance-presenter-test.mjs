@@ -12,6 +12,35 @@ import {
   presentInvestorSystemGuidance
 } from '../src/domain/investor-system-guidance/investor-system-guidance-presenter.js';
 
+import {
+  getVariantComplexityGuidance
+} from '../src/domain/investor-system-guidance/variant-complexity-guidance.js';
+
+
+const EXPECTED_VARIANT_RATIONALES = Object.freeze({
+  'ES essential': 'Build the foundation with the fewest moving parts. Growth, resilience, and accessible money are kept in broad, easy-to-understand roles so the investor can establish a coherent system before adding complexity.',
+  'ES intentional': 'Make the foundation more understandable without making it meaningfully harder to manage. The broad growth allocation is separated into US and international roles so geographic exposure can be understood and rebalanced deliberately.',
+  'ES engaged': 'Keep the simple diversified foundation, but create one controlled place for personal preferences. Most of the portfolio stays broad and passive while a small customization sleeve gives the investor room to express a theme or preference without redefining the system.',
+  'GD essential': 'Get global diversification mostly through broad funds. Countries and regions do not need to be managed separately; the system keeps global growth, stability, and liquidity consolidated.',
+  'GD intentional': 'Make the important sources of global diversification visible. US, developed international, emerging markets, inflation resilience, stability, and liquidity are separated so the investor can understand where diversification is actually coming from.',
+  'GD engaged': 'Manage diversification across more than geography alone. The portfolio adds explicit small-cap and real-asset diversification, giving the investor more distinct return drivers to monitor while keeping a broad global foundation.',
+  'FT essential': 'Improve one clearly identified limitation without disturbing the core. Most capital remains in a durable diversified foundation, with one bounded improvement sleeve allowed to address a specific weakness such as concentration or exposure imbalance.',
+  'FT intentional': 'Separate several evidence-based improvements so each has to justify its role. The core remains dominant, but geographic diversification, quality, and small-value improvements are managed independently instead of being bundled together.',
+  'FT engaged': 'Create a broader improvement toolkit while protecting the durable foundation. Systematic factor improvements and a strategic diversifier are joined by a small research sleeve where selected ideas can be evaluated under explicit boundaries.',
+  'BFO essential': 'Separate only the three financial jobs that should never be confused: growth, resilience, and access. The system preserves the multi-purpose philosophy while minimizing the number of independently managed pools.',
+  'BFO intentional': 'Give each major household and wealth-management job its own place. Growth, income, stability, diversification, liquidity, and a small opportunity allocation are separated so decisions can be made according to the job the capital is meant to perform.',
+  'BFO engaged': 'Operate the multi-purpose portfolio with greater specialization. Growth, income, resilience, real assets, alternatives, liquidity, and selected opportunities all become explicit roles, giving the investor more control without allowing any non-core activity to dominate the system.',
+  'GA essential': 'Keep growth overwhelmingly dominant and add only one broad source of differentiated return. Alternatives remain a supporting exposure rather than becoming a collection of separate strategies.',
+  'GA intentional': 'Separate the different ways the portfolio is trying to improve on a traditional growth core. Growth enhancers, real assets, and an alternative strategy each get a distinct role so their purpose and contribution can be evaluated independently.',
+  'GA engaged': 'Use several bounded growth and alternative engines while keeping a permanent core. Structural themes, smaller/emerging growth, real assets, alternatives, and an opportunity sleeve create more places for research, but all remain subordinate to the long-term growth foundation.',
+  'TO essential': 'Protect the long-term portfolio while reserving a small amount of capital for opportunities. The investor can pursue selected ideas, but opportunity-taking stays clearly separated from the permanent core.',
+  'TO intentional': 'Separate different kinds of active decisions instead of treating every opportunity the same. Tactical allocation changes and security/theme selection receive distinct bounded sleeves, while the core and reserve remain protected.',
+  'TO engaged': 'Run a genuinely active opportunity layer around a protected permanent core. Tactical allocation, themes, and individual security selection are separately managed, each with explicit sizing and decision rules.',
+  'IP essential': 'Cover the essential preservation jobs with broad, dependable building blocks. Most of the portfolio focuses on high-quality income and accessible capital, while a measured growth allocation helps preserve purchasing power over time.',
+  'IP intentional': 'Separate the major sources of income, liquidity, growth, and inflation protection so they can be managed according to different needs. Duration-sensitive income, core bonds, income equity, growth, and inflation resilience each have an explicit job.',
+  'IP engaged': 'Manage income and preservation at a more granular source-of-risk level. Government bonds, credit, dividend equity, inflation protection, growth, liquidity, and selected income opportunities are separated so the investor can evaluate income quality and risk rather than simply chasing yield.'
+});
+
 
 function buildGuidance(assessmentResult) {
   const fitResult =
@@ -196,6 +225,29 @@ function assertCommonContract(
       .whyNotMoreComplex,
     'Variant should explain why more complexity is unnecessary'
   );
+
+
+  /*
+   * ----------------------------------------------------------
+   * Exact variant rationale registry
+   * ----------------------------------------------------------
+   */
+
+  for (const [key, expectedText] of Object.entries(EXPECTED_VARIANT_RATIONALES)) {
+    const [archetypeId, variantId] = key.split(' ');
+    const guidanceForVariant = getVariantComplexityGuidance(archetypeId, variantId);
+
+    assert.ok(
+      guidanceForVariant,
+      'Expected guidance for ' + key
+    );
+
+    assert.equal(
+      guidanceForVariant.variantRationale,
+      expectedText,
+      'Exact rationale mismatch for ' + key
+    );
+  }
 
 
   /*
