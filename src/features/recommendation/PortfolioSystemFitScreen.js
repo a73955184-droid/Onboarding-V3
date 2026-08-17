@@ -1160,129 +1160,6 @@ function renderPortfolioDonutVisualization(
 }
 
 
-/**
- * Render one cohesive detail panel for the selected sleeve.
- */
-function renderSleeveDetailCallouts(
-  sleeve
-) {
-  if (!sleeve) {
-    return '';
-  }
-
-  const guidance =
-    sleeve.guidance ?? {};
-
-  return `
-    <div
-      id="portfolioSleeveDetails"
-      class="portfolio-sleeve-details"
-    >
-      <div class="portfolio-sleeve-details-header">
-        <strong>
-          ${escapeHtml(sleeve.label)}
-        </strong>
-
-        <span>
-          ${escapeHtml(
-            sleeve.weightPercent
-          )}%
-        </span>
-      </div>
-
-      <div
-        class="portfolio-sleeve-details-body"
-      >
-      ${
-        guidance.job
-          ? `
-            <div class="portfolio-sleeve-detail-group">
-              <strong>Its job</strong>
-              <div>${escapeHtml(
-                guidance.job
-              )}</div>
-            </div>
-          `
-          : ''
-      }
-
-      ${
-        guidance.returnContribution
-          ? `
-            <div class="portfolio-sleeve-detail-group">
-              <strong>Return contribution</strong>
-              <div>${escapeHtml(
-                guidance.returnContribution
-              )}</div>
-            </div>
-          `
-          : ''
-      }
-
-      ${renderAssetCategoriesCallout(
-        sleeve
-      )}
-
-      ${
-        guidance.whatBelongs
-          ? `
-            <div class="portfolio-sleeve-detail-group">
-              <strong>Sleeve mandate</strong>
-              <div>${escapeHtml(
-                guidance.whatBelongs
-              )}</div>
-            </div>
-          `
-          : ''
-      }
-      </div>
-    </div>
-  `;
-}
-
-
-/**
- * Render asset categories as a detail callout.
- */
-function renderAssetCategoriesCallout(
-  sleeve
-) {
-  const categories =
-    sleeve
-      .assetCategories ??
-    [];
-
-  if (
-    !Array.isArray(
-      categories
-    ) ||
-    categories.length === 0
-  ) {
-    return '';
-  }
-
-  return `
-    <div class="portfolio-sleeve-detail-group">
-      <strong>What can belong here</strong>
-      <div>
-        ${categories
-          .map(
-            (category) =>
-              escapeHtml(
-                category.label ??
-                category
-                  .displayName ??
-                category.id ??
-                category
-              )
-          )
-          .join(' · ')}
-      </div>
-    </div>
-  `;
-}
-
-
 function renderSleeveOverviewCard(
   sleeve
 ) {
@@ -2017,6 +1894,7 @@ export function renderPortfolioSystemFit(
               #portfolioVisualizationSection
               .portfolio-donut-segment {
                 cursor: pointer;
+                outline: none;
                 stroke-linecap: butt;
                 transform-box: fill-box;
                 transform-origin: center;
@@ -2112,117 +1990,17 @@ export function renderPortfolioSystemFit(
                 outline-offset: 2px;
               }
 
-              #portfolioVisualizationSection
-              .portfolio-sleeve-details {
-                overflow: hidden;
-                border: 1px solid #424a4e;
-                border-radius: 16px;
-                background: #161c22;
-                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-details-header {
-                display: flex;
-                align-items: baseline;
-                justify-content: space-between;
-                gap: 20px;
-                padding: 20px 24px;
-                border-bottom: 1px solid #2f353c;
-                background: #1a2026;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-details-header strong {
-                color: #dde3eb;
-                font-size: 1.2rem;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-details-header span {
-                color: #ffe2ab;
-                font-size: 1.25rem;
-                font-weight: 700;
-                font-variant-numeric: tabular-nums;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-details-body {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                padding: 4px 24px;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-detail-group {
-                padding: 20px 0;
-                border-bottom: 1px solid #2f353c;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-detail-group:nth-child(odd) {
-                padding-right: 24px;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-detail-group:nth-child(even) {
-                padding-left: 24px;
-                border-left: 1px solid #2f353c;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-detail-group:nth-last-child(-n + 2) {
-                border-bottom: 0;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-detail-group strong {
-                display: block;
-                margin-bottom: 8px;
-                color: #d4c5ab;
-                font-size: 0.7rem;
-                letter-spacing: 0.09em;
-                text-transform: uppercase;
-              }
-
-              #portfolioVisualizationSection
-              .portfolio-sleeve-detail-group div {
-                color: #bfc8cc;
-                font-size: 0.92rem;
-                line-height: 1.55;
-              }
-
               @media (max-width: 640px) {
                 #portfolioVisualizationSection {
                   padding: 24px 16px;
                   border-radius: 16px;
                 }
-
-                #portfolioVisualizationSection
-                .portfolio-sleeve-details-body {
-                  display: block;
-                  padding: 4px 18px;
-                }
-
-                #portfolioVisualizationSection
-                .portfolio-sleeve-detail-group:nth-child(n) {
-                  padding: 18px 0;
-                  border-right: 0;
-                  border-bottom: 1px solid #2f353c;
-                  border-left: 0;
-                }
-
-                #portfolioVisualizationSection
-                .portfolio-sleeve-detail-group:last-child {
-                  border-bottom: 0;
-                }
-
-                #portfolioVisualizationSection
-                .portfolio-sleeve-details-header {
-                  padding: 18px;
-                }
               }
             </style>
+
+            <span class="pill">
+              YOUR PORTFOLIO SYSTEM
+            </span>
 
             <div
               style="
@@ -2230,6 +2008,7 @@ export function renderPortfolioSystemFit(
                 flex-direction: column;
                 align-items: center;
                 gap: 24px;
+                margin-top: 24px;
               "
             >
 
@@ -2239,14 +2018,6 @@ export function renderPortfolioSystemFit(
                   width: 100%;
                   max-width: 500px;
                   margin: 0 auto;
-                "
-              ></div>
-
-              <div
-                id="portfolioDetailsContainer"
-                style="
-                  width: 100%;
-                  max-width: 800px;
                 "
               ></div>
 
@@ -2914,35 +2685,6 @@ export function renderPortfolioSystemFit(
     }
   }
 
-  // Function to update details
-  function updateSleeveDetails(
-    sleeveId
-  ) {
-    const sleeve =
-      guidance
-        .sleeves
-        .find(
-          (s) =>
-            s.id === sleeveId
-        );
-
-    const detailsContainer =
-      root.querySelector(
-        '#portfolioDetailsContainer'
-      );
-
-    if (!sleeve) {
-      detailsContainer.innerHTML =
-        '';
-      return;
-    }
-
-    detailsContainer.innerHTML =
-      renderSleeveDetailCallouts(
-        sleeve
-      );
-  }
-
   // Function to update arc styling
   function updateArcStyling(
     activeSleeveId
@@ -3012,10 +2754,6 @@ export function renderPortfolioSystemFit(
     sleeveId
   ) {
     updateDonutCenter(
-      sleeveId
-    );
-
-    updateSleeveDetails(
       sleeveId
     );
 
