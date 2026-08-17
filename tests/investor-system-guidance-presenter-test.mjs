@@ -947,6 +947,23 @@ function assertCommonContract(
           item.id === 'behavior'
       );
 
+  assert.deepEqual(
+    [
+      stageAccountability
+        .guidanceIndication,
+      styleAccountability
+        .guidanceIndication,
+      behaviorAccountability
+        .guidanceIndication
+    ],
+    [
+      'Portfolio evolution guidance',
+      'Portfolio interaction guidance',
+      'Portfolio decision-making guidance'
+    ],
+    'Accountability rows should preserve all three guidance labels'
+  );
+
   assert.equal(
     organizationJob.job,
     'Help me understand where a new idea belongs, what it would change or overlap with in my existing portfolio, and whether it adds a useful role without disrupting what already works.',

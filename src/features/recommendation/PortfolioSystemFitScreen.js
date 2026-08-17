@@ -246,7 +246,7 @@ function renderProfileAccountability(
         <table
           style="
             width: 100%;
-            min-width: 900px;
+            min-width: 1080px;
             border-collapse: collapse;
             table-layout: fixed;
           "
@@ -258,10 +258,22 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 30%;
+                  width: 19%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 14px 14px 0;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                Guidance indication
+              </th>
+
+              <th
+                style="
+                  width: 25%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
@@ -270,7 +282,7 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 34%;
+                  width: 27%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px;
@@ -282,7 +294,7 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 36%;
+                  width: 29%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 0 14px 14px;
@@ -308,6 +320,23 @@ function renderProfileAccountability(
                       style="
                         vertical-align: top;
                         padding: 18px 14px 18px 0;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
+
+                      <strong>
+                        ${escapeHtml(
+                          item.guidanceIndication
+                        )}
+                      </strong>
+
+                    </td>
+
+
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 14px;
                         border-bottom: 1px solid rgba(0,0,0,0.08);
                       "
                     >

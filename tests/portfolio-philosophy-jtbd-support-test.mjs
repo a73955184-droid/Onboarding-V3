@@ -726,8 +726,8 @@ assert.equal(
       /<th\b/g
     ) ?? []
   ).length,
-  3,
-  'Accountability table should render exactly three headers'
+  4,
+  'Accountability table should render exactly four headers'
 );
 
 assert.equal(
@@ -736,8 +736,20 @@ assert.equal(
       /<td\b/g
     ) ?? []
   ).length,
-  3,
-  'Each accountability row should render exactly three cells'
+  4,
+  'Each accountability row should render exactly four cells'
+);
+
+assert.match(
+  accountabilitySource,
+  /Guidance indication/,
+  'Guidance-indication header should be restored'
+);
+
+assert.match(
+  accountabilitySource,
+  /item\.guidanceIndication/,
+  'Each row should render its existing guidance indication'
 );
 
 assert.match(
@@ -772,8 +784,8 @@ assert.doesNotMatch(
 
 assert.doesNotMatch(
   accountabilitySource,
-  /item\.userJTBD|item\.guidanceIndication/,
-  'User-JTBD and guidance-label cells should not remain visible'
+  /item\.userJTBD/,
+  'User-JTBD cells should not be restored'
 );
 
 assert.match(
