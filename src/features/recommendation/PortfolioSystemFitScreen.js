@@ -246,7 +246,7 @@ function renderProfileAccountability(
         <table
           style="
             width: 100%;
-            min-width: 980px;
+            min-width: 1220px;
             border-collapse: collapse;
             table-layout: fixed;
           "
@@ -258,7 +258,7 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 20%;
+                  width: 16%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 14px 14px 0;
@@ -270,7 +270,7 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 30%;
+                  width: 24%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px;
@@ -282,7 +282,7 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 25%;
+                  width: 20%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px;
@@ -294,14 +294,26 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 25%;
+                  width: 20%;
+                  text-align: left;
+                  vertical-align: top;
+                  padding: 14px;
+                  border-bottom: 1px solid rgba(0,0,0,0.12);
+                "
+              >
+                How your recommended system helps
+              </th>
+
+              <th
+                style="
+                  width: 20%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 0 14px 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
-                How your recommended system helps
+                HOW YOUR RECOMMENDED SYSTEM DELIVERS IT
               </th>
 
             </tr>
@@ -368,13 +380,31 @@ function renderProfileAccountability(
                     <td
                       style="
                         vertical-align: top;
-                        padding: 18px 0 18px 14px;
+                        padding: 18px 14px;
                         border-bottom: 1px solid rgba(0,0,0,0.08);
                       "
                     >
 
                       ${escapeHtml(
                         item.systemResponse
+                      )}
+
+                    </td>
+
+
+                    <td
+                      style="
+                        vertical-align: top;
+                        padding: 18px 0 18px 14px;
+                        border-bottom: 1px solid rgba(0,0,0,0.08);
+                      "
+                    >
+
+                      ${escapeHtml(
+                        item
+                          .recommendedSystemDelivery
+                          ?.systemDelivery ??
+                          '—'
                       )}
 
                     </td>

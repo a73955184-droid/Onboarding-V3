@@ -1053,6 +1053,68 @@ function assertCommonContract(
     'Stage guidance indication should remain unchanged'
   );
 
+  assert.deepEqual(
+    organizationJob.recommendedSystemDelivery,
+    stageAccountability.recommendedSystemDelivery,
+    'Portfolio Evolution accountability should expose the resolved delivery'
+  );
+
+  assert.equal(
+    stageAccountability
+      .recommendedSystemDelivery
+      .archetypeId,
+    'TO',
+    'Delivery should consume the resolved archetype'
+  );
+
+  assert.equal(
+    stageAccountability
+      .recommendedSystemDelivery
+      .variantId,
+    guidance.resolved.variantId,
+    'Delivery should consume the resolved variant'
+  );
+
+  assert.equal(
+    stageAccountability
+      .recommendedSystemDelivery
+      .evolutionOptionId,
+    'experiment',
+    'Delivery should reuse the existing evolution capability'
+  );
+
+  assert.ok(
+    stageAccountability
+      .recommendedSystemDelivery
+      .systemDelivery,
+    'Portfolio Evolution row should contain delivery copy'
+  );
+
+  assert.equal(
+    styleAccountability
+      .recommendedSystemDelivery,
+    null,
+    'Portfolio Interaction delivery should remain unimplemented'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .recommendedSystemDelivery,
+    null,
+    'Portfolio Decision-Making delivery should remain unimplemented'
+  );
+
+  assert.ok(
+    guidance
+      .recommendationReveal
+      .profileAccountability
+      .columns
+      .includes(
+        'HOW YOUR RECOMMENDED SYSTEM DELIVERS IT'
+      ),
+    'Accountability presenter should expose the new exact column header'
+  );
+
   assert.equal(
     interactionJob.job,
     'Help me actively explore new investment ideas while keeping that research effort contained so opportunity-seeking does not take over the entire portfolio.',
@@ -1599,6 +1661,14 @@ function assertCommonContract(
       .organize
       .systemResponse,
     'Missing evolution evidence should retain the existing Stage system-response fallback'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .recommendedSystemDelivery,
+    null,
+    'Missing evolution evidence should not invent recommended-system delivery'
   );
 }
 

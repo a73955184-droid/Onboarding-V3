@@ -54,6 +54,10 @@ import {
 } from './portfolio-decision-making-guidance.js';
 
 import {
+  getPortfolioEvolutionDelivery
+} from './portfolio-philosophy-jtbd-support.js';
+
+import {
   getSleeveBoundaries
 } from './sleeve-boundary-guidance.js';
 
@@ -697,7 +701,8 @@ function getEvidenceForDimension(
 
 function buildOrganizationJob({
   stage,
-  portfolioEvolutionGuidance
+  portfolioEvolutionGuidance,
+  recommendedSystemDelivery
 }) {
   return {
     id:
@@ -760,6 +765,10 @@ function buildOrganizationJob({
 
     portfolioEvolution:
       portfolioEvolutionGuidance ??
+      null,
+
+    recommendedSystemDelivery:
+      recommendedSystemDelivery ??
       null
   };
 }
@@ -1188,7 +1197,8 @@ function buildProfileAccountability({
       'Guidance indication',
       'Your quiz response',
       'Investing system JTBD',
-      'How your recommended system helps'
+      'How your recommended system helps',
+      'HOW YOUR RECOMMENDED SYSTEM DELIVERS IT'
     ],
 
     items: [
@@ -1218,6 +1228,11 @@ function buildProfileAccountability({
             ?.systemJTBD ??
           stage
             ?.systemResponse ??
+          null,
+
+        recommendedSystemDelivery:
+          stage
+            ?.recommendedSystemDelivery ??
           null,
 
         /*
@@ -1256,6 +1271,9 @@ function buildProfileAccountability({
             ?.systemResponse ??
           null,
 
+        recommendedSystemDelivery:
+          null,
+
         profileType:
           'Style',
 
@@ -1286,6 +1304,9 @@ function buildProfileAccountability({
 
         systemResponse:
           behaviorSystemResponse,
+
+        recommendedSystemDelivery:
+          null,
 
         profileType:
           'Behavior',
@@ -1857,6 +1878,27 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const recommendedSystemDelivery =
+    getPortfolioEvolutionDelivery({
+      archetypeId,
+      variantId,
+      evolutionOptionId:
+        portfolioEvolutionGuidance
+          ?.evolutionOptionId ??
+        null,
+      portfolioSystem: {
+        name:
+          presentation
+            ?.diagnostics
+            ?.recommendation
+            ?.systemName ??
+          null,
+        structure,
+        sleeves
+      }
+    });
+
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -1871,7 +1913,8 @@ export function presentInvestorSystemGuidance(
     organize:
       buildOrganizationJob({
         stage,
-        portfolioEvolutionGuidance
+        portfolioEvolutionGuidance,
+        recommendedSystemDelivery
       }),
 
     focus:
