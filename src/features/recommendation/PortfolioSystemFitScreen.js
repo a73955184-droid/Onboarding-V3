@@ -928,49 +928,30 @@ function createArcPath(
   const largeArc =
     angleSpan > 180 ? 1 : 0;
 
-  // Outer arc
-  const outerStart =
+  const radius =
+    (outerRadius + innerRadius) /
+    2;
+
+  const start =
     polarToCartesian(
       centerX,
       centerY,
-      outerRadius,
+      radius,
       startAngle
     );
 
-  const outerEnd =
+  const end =
     polarToCartesian(
       centerX,
       centerY,
-      outerRadius,
+      radius,
       endAngle
     );
 
-  // Inner arc
-  const innerEnd =
-    polarToCartesian(
-      centerX,
-      centerY,
-      innerRadius,
-      endAngle
-    );
-
-  const innerStart =
-    polarToCartesian(
-      centerX,
-      centerY,
-      innerRadius,
-      startAngle
-    );
-
-  const path = [
-    `M ${outerStart.x} ${outerStart.y}`,
-    `A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
-    `L ${innerEnd.x} ${innerEnd.y}`,
-    `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x} ${innerStart.y}`,
-    'Z'
+  return [
+    `M ${start.x} ${start.y}`,
+    `A ${radius} ${radius} 0 ${largeArc} 1 ${end.x} ${end.y}`
   ].join(' ');
-
-  return path;
 }
 
 
@@ -996,19 +977,19 @@ function renderPortfolioDonutVisualization(
   }
 
   // SVG dimensions
-  const svgSize = 400;
+  const svgSize = 360;
   const center = svgSize / 2;
-  const outerRadius = 80;
-  const innerRadius = 50;
+  const outerRadius = 126;
+  const innerRadius = 98;
 
-  // Color palette - restrained set for sleeve differentiation
+  // AaronBux tonal family: quiet structure with selection-led emphasis.
   const colors = [
-    '#2E7D32', // green
-    '#1565C0', // blue
-    '#F57C00', // orange
-    '#6A1B9A', // purple
-    '#C62828', // red
-    '#00796B'  // teal
+    '#bcc8cf',
+    '#9eabb2',
+    '#d4c5ab',
+    '#87949b',
+    '#b4a991',
+    '#6f7d84'
   ];
 
   // Determine the default selected sleeve (largest by weight)
@@ -1056,15 +1037,27 @@ function renderPortfolioDonutVisualization(
             data-sleeve-id="${escapeHtml(
               sleeve.id
             )}"
-            class="portfolio-donut-segment"
-            d="${path}"
-            fill="${color}"
-            opacity="${
-              isSelected ? 1 : 0.7
+            class="portfolio-donut-segment ${
+              isSelected
+                ? 'is-active'
+                : 'is-inactive'
             }"
-            stroke="white"
-            stroke-width="2"
-            style="cursor: pointer; transition: opacity 0.2s;"
+            d="${path}"
+            fill="none"
+            stroke="${
+              isSelected
+                ? '#ffbf00'
+                : color
+            }"
+            data-base-stroke="${color}"
+            role="button"
+            tabindex="0"
+            aria-label="${escapeHtml(
+              `${sleeve.label}, ${sleeve.weightPercent} percent of portfolio`
+            )}"
+            aria-pressed="${
+              isSelected ? 'true' : 'false'
+            }"
           />
         `;
       }
@@ -1088,48 +1081,87 @@ function renderPortfolioDonutVisualization(
         ${arcs}
       </g>
 
-      <!-- Center content will be inserted here -->
       <g id="donutCenter">
         <circle
           cx="${center}"
           cy="${center}"
-          r="${innerRadius - 8}"
-          fill="white"
+          r="82"
+          fill="#080f14"
+          stroke="#2f353c"
+          stroke-width="1"
         />
         <text
           id="donutCenterLabel"
           x="${center}"
-          y="${center - 15}"
+          y="${center - 26}"
           text-anchor="middle"
-          font-size="18"
+          font-size="12"
           font-weight="700"
-          fill="#333"
+          letter-spacing="1.4"
+          fill="#dbe7ee"
         />
         <text
           id="donutCenterPercent"
           x="${center}"
-          y="${center + 5}"
+          y="${center + 12}"
           text-anchor="middle"
-          font-size="14"
+          font-size="34"
           font-weight="700"
-          fill="#666"
+          fill="#ffe2ab"
         />
         <text
           id="donutCenterRole"
           x="${center}"
-          y="${center + 25}"
+          y="${center + 39}"
           text-anchor="middle"
-          font-size="12"
-          fill="#999"
+          font-size="11"
+          fill="#bfc8cc"
         />
       </g>
     </svg>
+
+    <div
+      class="portfolio-sleeve-instruction"
+    >
+      Tap sleeve to explore
+    </div>
+
+    <div
+      class="portfolio-sleeve-selectors"
+      aria-label="Portfolio sleeves"
+    >
+      ${sleeves
+        .map(
+          (sleeve) => `
+            <button
+              class="portfolio-sleeve-selector"
+              type="button"
+              data-sleeve-id="${escapeHtml(
+                sleeve.id
+              )}"
+              aria-pressed="${
+                sleeve.id === activeSleeveId
+                  ? 'true'
+                  : 'false'
+              }"
+            >
+              <span>${escapeHtml(
+                sleeve.label
+              )}</span>
+              <strong>${escapeHtml(
+                sleeve.weightPercent
+              )}%</strong>
+            </button>
+          `
+        )
+        .join('')}
+    </div>
   `;
 }
 
 
 /**
- * Render the four detail callouts for the selected sleeve.
+ * Render one cohesive detail panel for the selected sleeve.
  */
 function renderSleeveDetailCallouts(
   sleeve
@@ -1144,63 +1176,44 @@ function renderSleeveDetailCallouts(
   return `
     <div
       id="portfolioSleeveDetails"
-      style="
-        display: grid;
-        grid-template-columns: repeat(
-          auto-fit,
-          minmax(200px, 1fr)
-        );
-        gap: 16px;
-        margin-top: 20px;
-      "
+      class="portfolio-sleeve-details"
     >
+      <div class="portfolio-sleeve-details-header">
+        <strong>
+          ${escapeHtml(sleeve.label)}
+        </strong>
+
+        <span>
+          ${escapeHtml(
+            sleeve.weightPercent
+          )}%
+        </span>
+      </div>
+
+      <div
+        class="portfolio-sleeve-details-body"
+      >
       ${
         guidance.job
           ? `
-            <div
-              class="summary-item"
-              style="
-                padding: 12px;
-                border-left: 4px solid #2E7D32;
-              "
-            >
-              <strong>
-                Its job
-              </strong>
-              <div
-                style="margin-top: 6px"
-              >
-                ${escapeHtml(
-                  guidance.job
-                )}
-              </div>
+            <div class="portfolio-sleeve-detail-group">
+              <strong>Its job</strong>
+              <div>${escapeHtml(
+                guidance.job
+              )}</div>
             </div>
           `
           : ''
       }
 
       ${
-        guidance
-          .returnContribution
+        guidance.returnContribution
           ? `
-            <div
-              class="summary-item"
-              style="
-                padding: 12px;
-                border-left: 4px solid #1565C0;
-              "
-            >
-              <strong>
-                Return contribution
-              </strong>
-              <div
-                style="margin-top: 6px"
-              >
-                ${escapeHtml(
-                  guidance
-                    .returnContribution
-                )}
-              </div>
+            <div class="portfolio-sleeve-detail-group">
+              <strong>Return contribution</strong>
+              <div>${escapeHtml(
+                guidance.returnContribution
+              )}</div>
             </div>
           `
           : ''
@@ -1211,31 +1224,18 @@ function renderSleeveDetailCallouts(
       )}
 
       ${
-        guidance
-          .whatBelongs
+        guidance.whatBelongs
           ? `
-            <div
-              class="summary-item"
-              style="
-                padding: 12px;
-                border-left: 4px solid #6A1B9A;
-              "
-            >
-              <strong>
-                Sleeve mandate
-              </strong>
-              <div
-                style="margin-top: 6px"
-              >
-                ${escapeHtml(
-                  guidance
-                    .whatBelongs
-                )}
-              </div>
+            <div class="portfolio-sleeve-detail-group">
+              <strong>Sleeve mandate</strong>
+              <div>${escapeHtml(
+                guidance.whatBelongs
+              )}</div>
             </div>
           `
           : ''
       }
+      </div>
     </div>
   `;
 }
@@ -1262,22 +1262,9 @@ function renderAssetCategoriesCallout(
   }
 
   return `
-    <div
-      class="summary-item"
-      style="
-        padding: 12px;
-        border-left: 4px solid #F57C00;
-      "
-    >
-      <strong>
-        What can belong here
-      </strong>
-      <div
-        style="
-          margin-top: 6px;
-          font-size: 0.9em;
-        "
-      >
+    <div class="portfolio-sleeve-detail-group">
+      <strong>What can belong here</strong>
+      <div>
         ${categories
           .map(
             (category) =>
@@ -2016,6 +2003,227 @@ export function renderPortfolioSystemFit(
             id="portfolioVisualizationSection"
           >
 
+            <style>
+              #portfolioVisualizationSection {
+                box-sizing: border-box;
+                overflow: hidden;
+                padding: clamp(24px, 5vw, 48px);
+                border: 1px solid #2f353c;
+                border-radius: 20px;
+                background: #0e141a;
+                color: #dde3eb;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-donut-segment {
+                cursor: pointer;
+                stroke-linecap: butt;
+                transform-box: fill-box;
+                transform-origin: center;
+                transition:
+                  opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                  stroke-width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                  stroke 0.3s ease;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-donut-segment.is-active {
+                opacity: 1;
+                stroke-width: 32;
+                filter: drop-shadow(
+                  0 0 12px rgba(188, 200, 207, 0.4)
+                );
+                transform: scale(1.04);
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-donut-segment.is-inactive {
+                opacity: 0.4;
+                stroke-width: 16;
+                filter: none;
+                transform: scale(1);
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-donut-segment:focus-visible {
+                outline: none;
+                opacity: 1;
+                filter: drop-shadow(
+                  0 0 8px rgba(255, 226, 171, 0.8)
+                );
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-instruction {
+                margin-top: -12px;
+                color: #9eabb2;
+                font-size: 0.78rem;
+                letter-spacing: 0.08em;
+                text-align: center;
+                text-transform: uppercase;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-selectors {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 20px;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-selector {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 11px;
+                border: 1px solid #424a4e;
+                border-radius: 999px;
+                background: #161c22;
+                color: #bfc8cc;
+                font: inherit;
+                font-size: 0.78rem;
+                cursor: pointer;
+                transition:
+                  border-color 0.2s ease,
+                  background 0.2s ease,
+                  color 0.2s ease;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-selector strong {
+                color: inherit;
+                font-variant-numeric: tabular-nums;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-selector[aria-pressed="true"] {
+                border-color: #9c8f78;
+                background: #2f353c;
+                color: #ffe2ab;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-selector:focus-visible {
+                outline: 2px solid #ffbf00;
+                outline-offset: 2px;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-details {
+                overflow: hidden;
+                border: 1px solid #424a4e;
+                border-radius: 16px;
+                background: #161c22;
+                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-details-header {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 20px;
+                padding: 20px 24px;
+                border-bottom: 1px solid #2f353c;
+                background: #1a2026;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-details-header strong {
+                color: #dde3eb;
+                font-size: 1.2rem;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-details-header span {
+                color: #ffe2ab;
+                font-size: 1.25rem;
+                font-weight: 700;
+                font-variant-numeric: tabular-nums;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-details-body {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                padding: 4px 24px;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-detail-group {
+                padding: 20px 0;
+                border-bottom: 1px solid #2f353c;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-detail-group:nth-child(odd) {
+                padding-right: 24px;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-detail-group:nth-child(even) {
+                padding-left: 24px;
+                border-left: 1px solid #2f353c;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-detail-group:nth-last-child(-n + 2) {
+                border-bottom: 0;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-detail-group strong {
+                display: block;
+                margin-bottom: 8px;
+                color: #d4c5ab;
+                font-size: 0.7rem;
+                letter-spacing: 0.09em;
+                text-transform: uppercase;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-detail-group div {
+                color: #bfc8cc;
+                font-size: 0.92rem;
+                line-height: 1.55;
+              }
+
+              @media (max-width: 640px) {
+                #portfolioVisualizationSection {
+                  padding: 24px 16px;
+                  border-radius: 16px;
+                }
+
+                #portfolioVisualizationSection
+                .portfolio-sleeve-details-body {
+                  display: block;
+                  padding: 4px 18px;
+                }
+
+                #portfolioVisualizationSection
+                .portfolio-sleeve-detail-group:nth-child(n) {
+                  padding: 18px 0;
+                  border-right: 0;
+                  border-bottom: 1px solid #2f353c;
+                  border-left: 0;
+                }
+
+                #portfolioVisualizationSection
+                .portfolio-sleeve-detail-group:last-child {
+                  border-bottom: 0;
+                }
+
+                #portfolioVisualizationSection
+                .portfolio-sleeve-details-header {
+                  padding: 18px;
+                }
+              }
+            </style>
+
             <div
               style="
                 display: flex;
@@ -2751,29 +2959,88 @@ export function renderPortfolioSystemFit(
             'data-sleeve-id'
           );
 
-        if (
+        const isActive =
           sleeveId ===
-          activeSleeveId
-        ) {
-          arc.style.opacity = '1';
-          arc.style.filter =
-            'drop-shadow(0 0 4px rgba(0,0,0,0.2))';
-        } else {
-          arc.style.opacity = '0.7';
-          arc.style.filter = 'none';
-        }
+          activeSleeveId;
+
+        arc.classList.toggle(
+          'is-active',
+          isActive
+        );
+
+        arc.classList.toggle(
+          'is-inactive',
+          !isActive
+        );
+
+        arc.setAttribute(
+          'aria-pressed',
+          String(isActive)
+        );
+
+        arc.setAttribute(
+          'stroke',
+          isActive
+            ? '#ffbf00'
+            : arc.getAttribute(
+                'data-base-stroke'
+              )
+        );
+      }
+    );
+
+    const selectors =
+      donutContainer.querySelectorAll(
+        '.portfolio-sleeve-selector'
+      );
+
+    selectors.forEach(
+      (selector) => {
+        selector.setAttribute(
+          'aria-pressed',
+          String(
+            selector.getAttribute(
+              'data-sleeve-id'
+            ) === activeSleeveId
+          )
+        );
       }
     );
   }
 
+  function showSleeve(
+    sleeveId
+  ) {
+    updateDonutCenter(
+      sleeveId
+    );
+
+    updateSleeveDetails(
+      sleeveId
+    );
+
+    updateArcStyling(
+      sleeveId
+    );
+  }
+
+  function selectSleeve(
+    sleeveId
+  ) {
+    if (!sleeveId) {
+      return;
+    }
+
+    selectedSleeveId =
+      sleeveId;
+
+    showSleeve(
+      sleeveId
+    );
+  }
+
   // Initialize display
-  updateDonutCenter(
-    selectedSleeveId
-  );
-  updateSleeveDetails(
-    selectedSleeveId
-  );
-  updateArcStyling(
+  showSleeve(
     selectedSleeveId
   );
 
@@ -2794,33 +3061,11 @@ export function renderPortfolioSystemFit(
             );
 
           if (sleeveId) {
-            selectedSleeveId =
-              sleeveId;
-
-            updateDonutCenter(
-              sleeveId
-            );
-
-            updateSleeveDetails(
-              sleeveId
-            );
-
-            updateArcStyling(
+            selectSleeve(
               sleeveId
             );
           }
         }
-      );
-
-      // Add keyboard support
-      segment.setAttribute(
-        'role',
-        'button'
-      );
-
-      segment.setAttribute(
-        'tabindex',
-        '0'
       );
 
       segment.addEventListener(
@@ -2840,18 +3085,7 @@ export function renderPortfolioSystemFit(
               );
 
             if (sleeveId) {
-              selectedSleeveId =
-                sleeveId;
-
-              updateDonutCenter(
-                sleeveId
-              );
-
-              updateSleeveDetails(
-                sleeveId
-              );
-
-              updateArcStyling(
+              selectSleeve(
                 sleeveId
               );
             }
@@ -2863,16 +3097,15 @@ export function renderPortfolioSystemFit(
       segment.addEventListener(
         'mouseenter',
         () => {
-          const currentOpacity =
-            segment.style
-              .opacity;
+          const sleeveId =
+            segment.getAttribute(
+              'data-sleeve-id'
+            );
 
-          if (
-            currentOpacity !==
-            '1'
-          ) {
-            segment.style
-              .opacity = '0.85';
+          if (sleeveId) {
+            showSleeve(
+              sleeveId
+            );
           }
         }
       );
@@ -2880,21 +3113,54 @@ export function renderPortfolioSystemFit(
       segment.addEventListener(
         'mouseleave',
         () => {
+          showSleeve(
+            selectedSleeveId
+          );
+        }
+      );
+    }
+  );
+
+  const sleeveSelectors =
+    donutContainer.querySelectorAll(
+      '.portfolio-sleeve-selector'
+    );
+
+  sleeveSelectors.forEach(
+    (selector) => {
+      selector.addEventListener(
+        'click',
+        () => {
+          selectSleeve(
+            selector.getAttribute(
+              'data-sleeve-id'
+            )
+          );
+        }
+      );
+
+      selector.addEventListener(
+        'mouseenter',
+        () => {
           const sleeveId =
-            segment.getAttribute(
+            selector.getAttribute(
               'data-sleeve-id'
             );
 
-          if (
-            sleeveId !==
-            selectedSleeveId
-          ) {
-            segment.style
-              .opacity = '0.7';
-          } else {
-            segment.style
-              .opacity = '1';
+          if (sleeveId) {
+            showSleeve(
+              sleeveId
+            );
           }
+        }
+      );
+
+      selector.addEventListener(
+        'mouseleave',
+        () => {
+          showSleeve(
+            selectedSleeveId
+          );
         }
       );
     }
