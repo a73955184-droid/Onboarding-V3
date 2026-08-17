@@ -1244,116 +1244,6 @@ function renderSleeveDetailPanel(
 }
 
 
-function renderSleeveOverviewCard(
-  sleeve
-) {
-  const guidance =
-    sleeve
-      ?.guidance ??
-    {};
-
-  return `
-    <article class="system-card">
-
-      <h2>
-        ${escapeHtml(
-          sleeve
-            ?.label ??
-          ''
-        )}
-
-        ${
-          typeof sleeve
-            ?.weightPercent ===
-          'number'
-            ? ` · ${
-                sleeve
-                  .weightPercent
-              }%`
-            : ''
-        }
-      </h2>
-
-      ${
-        guidance
-          ?.job
-          ? `
-            <div class="summary-item">
-
-              <strong>
-                Its job
-              </strong>
-
-              <div>
-                ${escapeHtml(
-                  guidance.job
-                )}
-              </div>
-
-            </div>
-          `
-          : ''
-      }
-
-      ${
-        guidance
-          ?.returnContribution
-          ? `
-            <div
-              class="summary-item"
-              style="margin-top: 12px"
-            >
-
-              <strong>
-                Return contribution
-              </strong>
-
-              <div>
-                ${escapeHtml(
-                  guidance
-                    .returnContribution
-                )}
-              </div>
-
-            </div>
-          `
-          : ''
-      }
-
-      ${renderAssetCategories(
-        sleeve
-      )}
-
-      ${
-        guidance
-          ?.whatBelongs
-          ? `
-            <div
-              class="summary-item"
-              style="margin-top: 12px"
-            >
-
-              <strong>
-                Sleeve mandate
-              </strong>
-
-              <div>
-                ${escapeHtml(
-                  guidance
-                    .whatBelongs
-                )}
-              </div>
-
-            </div>
-          `
-          : ''
-      }
-
-    </article>
-  `;
-}
-
-
 function renderMarketSignals(
   sleeve
 ) {
@@ -2200,26 +2090,6 @@ export function renderPortfolioSystemFit(
           </section>
 
 
-          <!-- ==================================================
-               PHILOSOPHY IMPLEMENTATION
-               ================================================== -->
-
-          <section
-            style="margin-top: 24px"
-          >
-
-            <span class="pill">
-              YOUR BOUNDED PORTFOLIO SYSTEM
-            </span>
-
-            <div
-              class="system-grid"
-              id="boundedSleeveOverviewCards"
-            ></div>
-
-          </section>
-
-
           <section
             class="card panel"
             style="margin-top: 24px"
@@ -2750,19 +2620,6 @@ export function renderPortfolioSystemFit(
         reveal
           .profileAccountability
       );
-
-
-  root
-    .querySelector(
-      '#boundedSleeveOverviewCards'
-    )
-    .innerHTML =
-      guidance
-        .sleeves
-        .map(
-          renderSleeveOverviewCard
-        )
-        .join('');
 
 
   /*
