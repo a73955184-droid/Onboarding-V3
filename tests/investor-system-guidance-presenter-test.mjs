@@ -1137,11 +1137,55 @@ function assertCommonContract(
     'Portfolio Interaction row should contain delivery copy'
   );
 
-  assert.equal(
+  assert.deepEqual(
     behaviorAccountability
       .recommendedSystemDelivery,
-    null,
-    'Portfolio Decision-Making delivery should remain unimplemented'
+    decisionJob
+      .recommendedSystemDelivery,
+    'Portfolio Decision-Making accountability should expose its own delivery'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .recommendedSystemDelivery
+      .archetypeId,
+    'TO',
+    'Decision delivery should consume the resolved archetype'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .recommendedSystemDelivery
+      .variantId,
+    guidance.resolved.variantId,
+    'Decision delivery should consume the resolved variant'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .recommendedSystemDelivery
+      .transitionOptionId,
+    decisionJob
+      .portfolioDecisionMaking
+      .primaryTransitionOptionId,
+    'Decision delivery should reuse the selected transition evidence'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .recommendedSystemDelivery
+      .decisionStyleOptionId,
+    decisionJob
+      .portfolioDecisionMaking
+      .primaryDecisionStyleOptionId,
+    'Decision delivery should reuse the selected decision-style evidence'
+  );
+
+  assert.ok(
+    behaviorAccountability
+      .recommendedSystemDelivery
+      .systemDelivery,
+    'Portfolio Decision-Making row should contain delivery copy'
   );
 
   assert.ok(
@@ -1709,6 +1753,14 @@ function assertCommonContract(
       .recommendedSystemDelivery,
     null,
     'Missing evolution evidence should not invent recommended-system delivery'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .recommendedSystemDelivery,
+    null,
+    'Missing decision evidence should not invent recommended-system delivery'
   );
 }
 

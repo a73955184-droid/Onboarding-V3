@@ -746,3 +746,361 @@ export function getPortfolioInteractionDelivery({
     systemDelivery
   };
 }
+
+
+export const ARCHETYPE_DECISION_SUPPORT = Object.freeze({
+  ES: Object.freeze({
+    archetypeId: 'ES',
+    portfolioFamily:
+      'Effortless Portfolio',
+    decisionSupport:
+      'Use a small number of broad portfolio roles so decisions can be judged against whether they materially improve the simple long-term structure rather than against every new investment possibility.'
+  }),
+
+  GD: Object.freeze({
+    archetypeId: 'GD',
+    portfolioFamily:
+      'Global Diversified Portfolio',
+    decisionSupport:
+      'Judge decisions by whether they improve diversification, reduce an important concentration, or add a genuinely distinct source of return or risk behavior.'
+  }),
+
+  FT: Object.freeze({
+    archetypeId: 'FT',
+    portfolioFamily:
+      'Systematic Improvement Portfolio',
+    decisionSupport:
+      'Require proposed changes to solve a defined portfolio limitation and evaluate them against explicit improvement criteria before allowing them to alter the durable core.'
+  }),
+
+  BFO: Object.freeze({
+    archetypeId: 'BFO',
+    portfolioFamily:
+      'Balanced Multi-Purpose Portfolio',
+    decisionSupport:
+      'Evaluate decisions against the specific portfolio job they affect, so a change must improve growth, stability, income, liquidity, diversification, or another defined role rather than simply appear attractive on its own.'
+  }),
+
+  GA: Object.freeze({
+    archetypeId: 'GA',
+    portfolioFamily:
+      'Growth & Alternatives Portfolio',
+    decisionSupport:
+      'Compare new opportunities against the portfolio’s dominant growth objective and require non-core ideas to contribute a sufficiently distinct return or diversification role before they justify additional complexity.'
+  }),
+
+  TO: Object.freeze({
+    archetypeId: 'TO',
+    portfolioFamily:
+      'Opportunity Portfolio',
+    decisionSupport:
+      'Separate permanent portfolio decisions from tactical or opportunity decisions so short-term views are evaluated inside explicit boundaries instead of redefining the long-term portfolio.'
+  }),
+
+  IP: Object.freeze({
+    archetypeId: 'IP',
+    portfolioFamily:
+      'Income Preservation Portfolio',
+    decisionSupport:
+      'Evaluate decisions against liquidity, income reliability, resilience, purchasing-power protection, and measured growth so changes are judged by whether they strengthen the portfolio’s ability to support real-world needs.'
+  })
+});
+
+
+export const VARIANT_DECISION_SUPPORT = Object.freeze({
+  essential: Object.freeze({
+    variantId: 'essential',
+    decisionSupport:
+      'Keep decision rules broad and easy to inspect, with fewer portfolio roles and a higher threshold for introducing additional decisions or complexity.'
+  }),
+
+  intentional: Object.freeze({
+    variantId: 'intentional',
+    decisionSupport:
+      'Use clearer role separation so proposed changes can be compared against the specific part of the portfolio they would improve, replace, overlap with, or leave unchanged.'
+  }),
+
+  engaged: Object.freeze({
+    variantId: 'engaged',
+    decisionSupport:
+      'Use more granular portfolio roles and explicitly bounded research or opportunity capacity so higher-frequency decisions have a defined place without overriding the long-term system.'
+  })
+});
+
+
+const DECISION_STYLE_IDS = Object.freeze([
+  'start',
+  'pick',
+  'fit',
+  'sell',
+  'enough'
+]);
+
+
+const TRANSITION_OPTION_IDS = Object.freeze([
+  'what_to_do',
+  'doing_right',
+  'missing',
+  'change',
+  'compare'
+]);
+
+
+const EXACT_DECISION_DELIVERY = Object.freeze({
+  'ES|essential|start': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'broadGrowthCore',
+      'stability',
+      'liquidity'
+    ]),
+    copy:
+      'This system starts with a small number of broad portfolio roles, giving the investor a clear foundation to establish before considering additional investment choices or complexity.'
+  }),
+
+  'GD|intentional|fit': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'usEquity',
+      'developedInternational',
+      'emergingMarkets'
+    ]),
+    copy:
+      'This system separates major sources of diversification so a new idea can be evaluated by whether it reduces an existing concentration, adds a genuinely distinct exposure, or simply duplicates something the portfolio already has.'
+  }),
+
+  'FT|intentional|fit': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'durableCore',
+      'qualityImprovement',
+      'smallValueImprovement'
+    ]),
+    copy:
+      'This system keeps the durable core separate from its defined improvement sleeves, so a new idea must solve a specific portfolio limitation or add an explicit improvement before it earns a place in the system.'
+  }),
+
+  'BFO|intentional|pick': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'growth',
+      'income',
+      'stability',
+      'diversifiers',
+      'liquidity'
+    ]),
+    copy:
+      'This system separates growth, income, stability, diversification, and liquidity into distinct jobs, so investment choices can be compared according to the role they need to perform rather than treated as interchangeable opportunities.'
+  }),
+
+  'TO|engaged|sell': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'permanentCore',
+      'tacticalAllocation',
+      'thematicOpportunities'
+    ]),
+    copy:
+      'This system separates the permanent core from tactical and opportunity roles, so a decision to reduce, replace, or exit an active position can be made without automatically changing the long-term portfolio foundation.'
+  }),
+
+  'GA|engaged|enough': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'globalGrowthCore',
+      'alternativeStrategy',
+      'opportunityCapacity'
+    ]),
+    copy:
+      'This system separates the main growth foundation from higher-attention alternative and opportunity roles, making it clearer what evidence matters to a non-core decision and when additional research is unlikely to justify changing the portfolio.'
+  }),
+
+  'IP|intentional|sell': Object.freeze({
+    requiredSleeveIds: Object.freeze([
+      'immediateLiquidity',
+      'shortDurationIncome',
+      'coreFixedIncome',
+      'measuredGrowth'
+    ]),
+    copy:
+      'This system separates liquidity, income, resilience, and measured-growth roles, so reducing or replacing an investment depends on whether it still performs the real-world portfolio job it was intended to support.'
+  })
+});
+
+
+const TRANSITION_REFINEMENTS = Object.freeze({
+  what_to_do:
+    'It also makes clear which portfolio job needs a decision first.',
+  doing_right:
+    'The current structure can remain unchanged when its original rationale still holds.',
+  missing:
+    'That helps distinguish a genuine portfolio gap from another available investment.',
+  change:
+    'No change is required when nothing decision-relevant has materially changed.',
+  compare:
+    'The existing roles make the tradeoffs between reasonable paths visible.'
+});
+
+
+function getDecisionRefinement(
+  decisionStyleOptionId,
+  transitionOptionId
+) {
+  const usefulPairings = {
+    start: [
+      'what_to_do',
+      'missing'
+    ],
+    pick: [
+      'doing_right',
+      'compare'
+    ],
+    fit: [
+      'missing',
+      'compare'
+    ],
+    sell: [
+      'doing_right',
+      'change'
+    ],
+    enough: [
+      'change',
+      'compare'
+    ]
+  };
+
+  if (
+    !usefulPairings[
+      decisionStyleOptionId
+    ].includes(
+      transitionOptionId
+    )
+  ) {
+    return '';
+  }
+
+  return (
+    ' ' +
+    TRANSITION_REFINEMENTS[
+      transitionOptionId
+    ]
+  );
+}
+
+
+function buildDecisionDelivery({
+  archetypeSupport,
+  variantId,
+  transitionOptionId,
+  decisionStyleOptionId,
+  sleeves
+}) {
+  const portfolioName =
+    `${capitalize(variantId)} ${
+      archetypeSupport.portfolioFamily
+    }`;
+
+  const roleDescription =
+    describeRoles(sleeves);
+
+  const refinement =
+    getDecisionRefinement(
+      decisionStyleOptionId,
+      transitionOptionId
+    );
+
+  if (decisionStyleOptionId === 'start') {
+    return `This ${portfolioName} establishes ${roleDescription} as clearly defined portfolio jobs, so the first decision can build a coherent foundation before additional complexity is considered.${refinement}`;
+  }
+
+  if (decisionStyleOptionId === 'pick') {
+    return `This ${portfolioName} gives ${roleDescription} defined purposes, so alternatives can be compared according to the portfolio job they need to perform instead of only on their own appeal.${refinement}`;
+  }
+
+  if (decisionStyleOptionId === 'fit') {
+    return `This ${portfolioName} makes ${roleDescription} explicit, so a new idea can be tested for where it belongs, what it overlaps with, and whether it adds enough to justify changing the current system.${refinement}`;
+  }
+
+  if (decisionStyleOptionId === 'sell') {
+    return `This ${portfolioName} ties ${roleDescription} to defined jobs, so reducing, replacing, or exiting a position depends on whether its role has materially changed. Leaving it unchanged remains valid when that role still holds.${refinement}`;
+  }
+
+  return `This ${portfolioName} defines what ${roleDescription} are meant to accomplish, making it clearer what evidence could change a decision and when further research is unlikely to add value. If the relevant evidence has not changed, the portfolio can remain unchanged.${refinement}`;
+}
+
+
+export function getPortfolioDecisionMakingDelivery({
+  archetypeId,
+  variantId,
+  transitionOptionId,
+  decisionStyleOptionId,
+  portfolioSystem
+} = {}) {
+  const archetypeSupport =
+    ARCHETYPE_DECISION_SUPPORT[
+      archetypeId
+    ];
+
+  const variantSupport =
+    VARIANT_DECISION_SUPPORT[
+      variantId
+    ];
+
+  const sleeves =
+    portfolioSystem?.sleeves;
+
+  if (
+    !archetypeSupport ||
+    !variantSupport ||
+    !TRANSITION_OPTION_IDS.includes(
+      transitionOptionId
+    ) ||
+    !DECISION_STYLE_IDS.includes(
+      decisionStyleOptionId
+    ) ||
+    !portfolioSystem ||
+    !Array.isArray(sleeves) ||
+    sleeves.length === 0 ||
+    sleeves.some(
+      (sleeve) =>
+        !sleeve?.id ||
+        !(
+          sleeve?.role?.label ??
+          sleeve?.label
+        )
+    )
+  ) {
+    return null;
+  }
+
+  const exactDelivery =
+    EXACT_DECISION_DELIVERY[
+      `${archetypeId}|${variantId}|${decisionStyleOptionId}`
+    ];
+
+  const systemDelivery =
+    exactDelivery &&
+    exactDelivery.requiredSleeveIds.every(
+      (sleeveId) =>
+        sleeves.some(
+          (sleeve) =>
+            sleeve.id === sleeveId
+        )
+    )
+      ? exactDelivery.copy
+      : buildDecisionDelivery({
+          archetypeSupport,
+          variantId,
+          transitionOptionId,
+          decisionStyleOptionId,
+          sleeves
+        });
+
+  return {
+    archetypeId,
+    variantId,
+    transitionOptionId,
+    decisionStyleOptionId,
+    portfolioFamily:
+      archetypeSupport.portfolioFamily,
+    philosophySupport:
+      archetypeSupport.decisionSupport,
+    variantSupport:
+      variantSupport.decisionSupport,
+    systemDelivery
+  };
+}

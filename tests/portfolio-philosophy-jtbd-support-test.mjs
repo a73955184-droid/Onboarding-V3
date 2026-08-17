@@ -2,10 +2,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import {
+  ARCHETYPE_DECISION_SUPPORT,
   ARCHETYPE_EVOLUTION_SUPPORT,
   ARCHETYPE_INTERACTION_SUPPORT,
+  VARIANT_DECISION_SUPPORT,
   VARIANT_EVOLUTION_SUPPORT,
   VARIANT_INTERACTION_SUPPORT,
+  getPortfolioDecisionMakingDelivery,
   getPortfolioEvolutionDelivery,
   getPortfolioInteractionDelivery
 } from '../src/domain/investor-system-guidance/portfolio-philosophy-jtbd-support.js';
@@ -59,6 +62,23 @@ const EXACT_INTERACTION_COPY = {
     'This system keeps the main growth foundation relatively stable while giving alternatives, differentiated return sources, and bounded opportunity capacity their own higher-attention roles. That allows deeper research without turning the entire portfolio into a research project.',
   'IP|essential|occasional':
     'This system concentrates attention on liquidity, dependable income, and resilience while keeping the portfolio structure broad and relatively low-maintenance, allowing occasional review without constant monitoring.'
+};
+
+const EXACT_DECISION_COPY = {
+  'ES|essential|start':
+    'This system starts with a small number of broad portfolio roles, giving the investor a clear foundation to establish before considering additional investment choices or complexity.',
+  'GD|intentional|fit':
+    'This system separates major sources of diversification so a new idea can be evaluated by whether it reduces an existing concentration, adds a genuinely distinct exposure, or simply duplicates something the portfolio already has.',
+  'FT|intentional|fit':
+    'This system keeps the durable core separate from its defined improvement sleeves, so a new idea must solve a specific portfolio limitation or add an explicit improvement before it earns a place in the system.',
+  'BFO|intentional|pick':
+    'This system separates growth, income, stability, diversification, and liquidity into distinct jobs, so investment choices can be compared according to the role they need to perform rather than treated as interchangeable opportunities.',
+  'TO|engaged|sell':
+    'This system separates the permanent core from tactical and opportunity roles, so a decision to reduce, replace, or exit an active position can be made without automatically changing the long-term portfolio foundation.',
+  'GA|engaged|enough':
+    'This system separates the main growth foundation from higher-attention alternative and opportunity roles, making it clearer what evidence matters to a non-core decision and when additional research is unlikely to justify changing the portfolio.',
+  'IP|intentional|sell':
+    'This system separates liquidity, income, resilience, and measured-growth roles, so reducing or replacing an investment depends on whether it still performs the real-world portfolio job it was intended to support.'
 };
 
 
@@ -436,6 +456,208 @@ for (const invalidInput of [
     getPortfolioInteractionDelivery(invalidInput),
     null,
     'Incomplete interaction inputs should remain null-safe'
+  );
+}
+
+
+let decisionCombinationCount = 0;
+
+for (const archetypeId of ARCHETYPE_IDS) {
+  for (const variantId of VARIANT_IDS) {
+    const portfolioSystem =
+      getConstituentPortfolio(
+        archetypeId,
+        variantId
+      );
+
+    for (const decisionStyleOptionId of [
+      'start',
+      'pick',
+      'fit',
+      'sell',
+      'enough'
+    ]) {
+      const result =
+        getPortfolioDecisionMakingDelivery({
+          archetypeId,
+          variantId,
+          transitionOptionId:
+            'doing_right',
+          decisionStyleOptionId,
+          portfolioSystem
+        });
+
+      decisionCombinationCount += 1;
+
+      assert.ok(
+        result,
+        `Expected decision delivery for ${archetypeId} ${variantId} ${decisionStyleOptionId}`
+      );
+      assert.equal(result.archetypeId, archetypeId);
+      assert.equal(result.variantId, variantId);
+      assert.equal(result.transitionOptionId, 'doing_right');
+      assert.equal(result.decisionStyleOptionId, decisionStyleOptionId);
+      assert.equal(
+        result.portfolioFamily,
+        ARCHETYPE_DECISION_SUPPORT[archetypeId].portfolioFamily
+      );
+      assert.equal(
+        result.philosophySupport,
+        ARCHETYPE_DECISION_SUPPORT[archetypeId].decisionSupport
+      );
+      assert.equal(
+        result.variantSupport,
+        VARIANT_DECISION_SUPPORT[variantId].decisionSupport
+      );
+      assert.ok(
+        typeof result.systemDelivery === 'string' &&
+          result.systemDelivery.trim().length > 0,
+        `Expected non-empty decision delivery for ${archetypeId} ${variantId} ${decisionStyleOptionId}`
+      );
+    }
+  }
+}
+
+assert.equal(
+  decisionCombinationCount,
+  105,
+  'Expected the complete 7 x 3 x 5 decision delivery matrix'
+);
+
+
+for (const [key, expectedCopy] of Object.entries(EXACT_DECISION_COPY)) {
+  const [
+    archetypeId,
+    variantId,
+    decisionStyleOptionId
+  ] = key.split('|');
+
+  const result =
+    getPortfolioDecisionMakingDelivery({
+      archetypeId,
+      variantId,
+      transitionOptionId:
+        'compare',
+      decisionStyleOptionId,
+      portfolioSystem:
+        getConstituentPortfolio(
+          archetypeId,
+          variantId
+        )
+    });
+
+  assert.equal(
+    result.systemDelivery,
+    expectedCopy,
+    `Exact decision copy mismatch for ${key}`
+  );
+}
+
+
+const transitionResults = [
+  'what_to_do',
+  'doing_right',
+  'missing',
+  'change',
+  'compare'
+].map(
+  (transitionOptionId) =>
+    getPortfolioDecisionMakingDelivery({
+      archetypeId: 'GD',
+      variantId: 'essential',
+      transitionOptionId,
+      decisionStyleOptionId: 'sell',
+      portfolioSystem:
+        getConstituentPortfolio(
+          'GD',
+          'essential'
+        )
+    })
+);
+
+assert.ok(
+  transitionResults.every(Boolean),
+  'All five transition refinements should be accepted'
+);
+
+assert.ok(
+  transitionResults.every(
+    (result) =>
+      /unchanged|no change/i.test(
+        result.systemDelivery
+      )
+  ),
+  'Decision delivery should preserve no action as a valid outcome'
+);
+
+
+for (const decisionStyleOptionId of [
+  'start',
+  'pick',
+  'fit',
+  'sell',
+  'enough'
+]) {
+  const result =
+    getPortfolioDecisionMakingDelivery({
+      archetypeId: 'TO',
+      variantId: 'engaged',
+      transitionOptionId:
+        'doing_right',
+      decisionStyleOptionId,
+      portfolioSystem:
+        structureWithoutSpecialSleeves
+    });
+
+  assert.doesNotMatch(
+    result.systemDelivery,
+    /tactical sleeve|opportunity capacity|research capacity|improvement sleeve|income role|liquidity role/i,
+    'Decision delivery must not invent a structural mechanism'
+  );
+}
+
+
+for (const invalidInput of [
+  {},
+  {
+    archetypeId: 'UNKNOWN',
+    variantId: 'essential',
+    transitionOptionId: 'doing_right',
+    decisionStyleOptionId: 'sell',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'UNKNOWN',
+    transitionOptionId: 'doing_right',
+    decisionStyleOptionId: 'sell',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'essential',
+    transitionOptionId: 'UNKNOWN',
+    decisionStyleOptionId: 'sell',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'essential',
+    transitionOptionId: 'doing_right',
+    decisionStyleOptionId: 'UNKNOWN',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'essential',
+    transitionOptionId: 'doing_right',
+    decisionStyleOptionId: 'sell'
+  }
+]) {
+  assert.equal(
+    getPortfolioDecisionMakingDelivery(invalidInput),
+    null,
+    'Incomplete decision inputs should remain null-safe'
   );
 }
 

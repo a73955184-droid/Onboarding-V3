@@ -54,6 +54,7 @@ import {
 } from './portfolio-decision-making-guidance.js';
 
 import {
+  getPortfolioDecisionMakingDelivery,
   getPortfolioEvolutionDelivery,
   getPortfolioInteractionDelivery
 } from './portfolio-philosophy-jtbd-support.js';
@@ -850,7 +851,8 @@ function buildEffortJob({
 function buildDecisionJob({
   behavior,
   behaviorGuidance,
-  portfolioDecisionMakingGuidance
+  portfolioDecisionMakingGuidance,
+  recommendedSystemDelivery
 }) {
   return {
     id:
@@ -914,6 +916,10 @@ function buildDecisionJob({
 
     portfolioDecisionMaking:
       portfolioDecisionMakingGuidance ??
+      null,
+
+    recommendedSystemDelivery:
+      recommendedSystemDelivery ??
       null
   };
 }
@@ -1314,6 +1320,8 @@ function buildProfileAccountability({
           behaviorSystemResponse,
 
         recommendedSystemDelivery:
+          behavior
+            ?.recommendedSystemDelivery ??
           null,
 
         profileType:
@@ -1932,6 +1940,31 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const recommendedDecisionMakingDelivery =
+    getPortfolioDecisionMakingDelivery({
+      archetypeId,
+      variantId,
+      transitionOptionId:
+        portfolioDecisionMakingGuidance
+          ?.primaryTransitionOptionId ??
+        null,
+      decisionStyleOptionId:
+        portfolioDecisionMakingGuidance
+          ?.primaryDecisionStyleOptionId ??
+        null,
+      portfolioSystem: {
+        name:
+          presentation
+            ?.diagnostics
+            ?.recommendation
+            ?.systemName ??
+          null,
+        structure,
+        sleeves
+      }
+    });
+
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -1963,7 +1996,9 @@ export function presentInvestorSystemGuidance(
       buildDecisionJob({
         behavior,
         behaviorGuidance,
-        portfolioDecisionMakingGuidance
+        portfolioDecisionMakingGuidance,
+        recommendedSystemDelivery:
+          recommendedDecisionMakingDelivery
       })
   };
 
