@@ -726,6 +726,14 @@ function assertCommonContract(
   );
 
   assert.equal(
+    guidance.investorJobs
+      .organize
+      .job,
+    'Help me identify where my existing portfolio can genuinely be improved and whether the potential benefit is worth the additional research, effort, or complexity before changing a system that already works.',
+    'Established + effort should use the exact Portfolio Evolution JTBD'
+  );
+
+  assert.equal(
     guidance.behavior
       .decisionFraming,
     'Improve with a stopping rule.',
@@ -852,6 +860,8 @@ function assertCommonContract(
 
 
   const {
+    fitResult,
+    fitPresentation,
     guidance
   } =
     buildGuidance(
@@ -869,6 +879,165 @@ function assertCommonContract(
     guidance.resolved.behaviorId,
     'opportunity_chaser',
     'Expected Opportunity Chaser'
+  );
+
+  const organizationJob =
+    guidance.investorJobs
+      .organize;
+
+  const stageAccountability =
+    guidance
+      .recommendationReveal
+      .profileAccountability
+      .items
+      .find(
+        (item) =>
+          item.id === 'stage'
+      );
+
+  assert.equal(
+    organizationJob.job,
+    'Help me understand where a new idea belongs, what it would change or overlap with in my existing portfolio, and whether it adds a useful role without disrupting what already works.',
+    'Collected + experiment should use the exact Portfolio Evolution JTBD'
+  );
+
+  assert.equal(
+    guidance.resolved.stageId,
+    fitResult.jobs.stage.profileId,
+    'Portfolio Evolution guidance must not change Stage resolution'
+  );
+
+  assert.equal(
+    guidance.resolved.styleId,
+    fitResult.jobs.style.profileId,
+    'Portfolio Evolution guidance must not change Style resolution'
+  );
+
+  assert.equal(
+    guidance.resolved.behaviorId,
+    fitResult.jobs.behavior.profileId,
+    'Portfolio Evolution guidance must not change Behavior resolution'
+  );
+
+  assert.equal(
+    guidance.resolved.archetypeId,
+    fitResult
+      .recommendation
+      .archetypeId,
+    'Portfolio Evolution guidance must not change archetype resolution'
+  );
+
+  assert.equal(
+    guidance.resolved.variantId,
+    fitResult
+      .recommendation
+      .variantId,
+    'Portfolio Evolution guidance must not change variant resolution'
+  );
+
+  assert.deepEqual(
+    organizationJob.resolvedProfile,
+    {
+      id:
+        fitPresentation
+          .jobs
+          .stage
+          .profileId,
+      label:
+        fitPresentation
+          .jobs
+          .stage
+          .title,
+      summary:
+        fitPresentation
+          .jobs
+          .stage
+          .description,
+      portfolioRequirement:
+        fitPresentation
+          .jobs
+          .stage
+          .portfolioRequirement,
+      systemFit:
+        fitPresentation
+          .jobs
+          .stage
+          .systemFit
+    },
+    'Resolved Stage profile should remain unchanged'
+  );
+
+  assert.equal(
+    organizationJob.systemResponse,
+    fitPresentation
+      .jobs
+      .stage
+      .systemFit,
+    'Stage system response should remain unchanged'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .focus
+      .job,
+    'Keep me engaged only when an opportunity or change meets clear standards.',
+    'Style JTBD should remain unchanged'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .job,
+    'Help me set limits for new ideas so I do not react to every opportunity.',
+    'Behavior JTBD should remain unchanged'
+  );
+
+  assert.deepEqual(
+    stageAccountability
+      .whatYouToldUs
+      .map(
+        (answer) => ({
+          questionId:
+            answer.questionId,
+          optionId:
+            answer.optionId,
+          answerText:
+            answer.answerText
+        })
+      ),
+    fitPresentation
+      .evidence
+      .selectedAnswers
+      .filter(
+        (answer) =>
+          answer.questionId ===
+            'setup' ||
+          answer.questionId ===
+            'evolution'
+      ),
+    'Selected setup/evolution evidence should remain unchanged'
+  );
+
+  assert.equal(
+    guidance.sleeves.length,
+    fitResult.sleeves.length,
+    'Portfolio Evolution guidance must not change sleeve count'
+  );
+
+  assert.deepEqual(
+    guidance.sleeves.map(
+      (sleeve) => ({
+        id: sleeve.id,
+        weight: sleeve.weight
+      })
+    ),
+    fitResult.sleeves.map(
+      (sleeve) => ({
+        id: sleeve.id,
+        weight: sleeve.weight
+      })
+    ),
+    'Portfolio Evolution guidance must not change sleeve IDs or weights'
   );
 
   assert.equal(
@@ -1130,9 +1299,10 @@ function assertCommonContract(
     );
 
 
-  presentInvestorSystemGuidance(
-    fitPresentation
-  );
+  const guidance =
+    presentInvestorSystemGuidance(
+      fitPresentation
+    );
 
 
   const after =
@@ -1145,6 +1315,23 @@ function assertCommonContract(
     after,
     before,
     'Investor-system guidance presenter must not mutate the existing fit presentation'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .portfolioEvolution
+      .userJTBD,
+    null,
+    'Missing evolution evidence should remain fallback-safe'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .job,
+    'Give me an understandable starting structure where I know what each part is for.',
+    'Missing evolution evidence should use the existing Stage JTBD fallback'
   );
 }
 
@@ -1204,6 +1391,87 @@ function assertCommonContract(
         'does not require'
       ),
     'User-led explanation should distinguish decision support from automatic action'
+  );
+}
+
+
+/*
+ * ============================================================
+ * CASE 7
+ *
+ * Product regression: ETFs/stocks + understand.
+ * ============================================================
+ */
+
+{
+  const assessmentResult = {
+    archetypeId: 'GD',
+
+    stageId:
+      'portfolio_organizer',
+
+    styleId:
+      'steady_steward',
+
+    modifierId:
+      'validation_seeker',
+
+    normalizedAnswers: {
+      setup:
+        'etfs_stocks',
+
+      transition:
+        'confidence',
+
+      decisionStyle:
+        'compare',
+
+      marketPsychology:
+        'balance',
+
+      evolution:
+        'understand',
+
+      tradeoff:
+        'occasional',
+
+      age:
+        '10plus',
+
+      goals: [
+        'organize'
+      ]
+    }
+  };
+
+  const {
+    fitResult,
+    guidance
+  } =
+    buildGuidance(
+      assessmentResult
+    );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .job,
+    'Help me understand how my current investments fit together, what job each one performs, and whether anything is missing, overlapping, or no longer serving a clear purpose.',
+    'ETFs/stocks + understand should use the exact Portfolio Evolution JTBD'
+  );
+
+  assert.equal(
+    guidance.resolved.stageId,
+    fitResult.jobs.stage.profileId,
+    'Dynamic JTBD should preserve the fixture Stage'
+  );
+
+  assert.equal(
+    guidance.resolved.variantId,
+    fitResult
+      .recommendation
+      .variantId,
+    'Dynamic JTBD should preserve the fixture variant'
   );
 }
 

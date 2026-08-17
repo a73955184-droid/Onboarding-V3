@@ -42,6 +42,10 @@ import {
 } from './effort-return-guidance.js';
 
 import {
+  getPortfolioEvolutionGuidance
+} from './portfolio-evolution-guidance.js';
+
+import {
   getSleeveBoundaries
 } from './sleeve-boundary-guidance.js';
 
@@ -684,7 +688,8 @@ function getEvidenceForDimension(
  */
 
 function buildOrganizationJob({
-  stage
+  stage,
+  portfolioEvolutionGuidance
 }) {
   return {
     id:
@@ -697,6 +702,8 @@ function buildOrganizationJob({
       'How should I organize my investments from where I am today?',
 
     job:
+      portfolioEvolutionGuidance
+        ?.userJTBD ??
       PROFILE_USER_JTBD[
         stage?.profileId
       ] ??
@@ -735,7 +742,11 @@ function buildOrganizationJob({
         stage
           ?.systemFit ??
         null
-    }
+    },
+
+    portfolioEvolution:
+      portfolioEvolutionGuidance ??
+      null
   };
 }
 
@@ -1088,15 +1099,10 @@ function buildComplexityExplanation({
  */
 
 function buildProfileAccountability({
-  presentation,
+  selectedAnswers,
   investorJobs,
   behaviorGuidance
 }) {
-  const selectedAnswers =
-    extractSelectedAnswers(
-      presentation
-    );
-
   const stage =
     investorJobs
       ?.organize ??
@@ -1705,6 +1711,12 @@ export function presentInvestorSystemGuidance(
     );
 
 
+  const selectedAnswers =
+    extractSelectedAnswers(
+      presentation
+    );
+
+
   /*
    * Guidance resolution.
    */
@@ -1730,6 +1742,32 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const portfolioEvolutionGuidance =
+    getPortfolioEvolutionGuidance({
+      setupOptionIds:
+        selectedAnswers
+          .filter(
+            (answer) =>
+              answer?.questionId ===
+              'setup'
+          )
+          .map(
+            (answer) =>
+              answer.optionId
+          ),
+
+      evolutionOptionId:
+        selectedAnswers.find(
+          (answer) =>
+            answer?.questionId ===
+            'evolution'
+        )?.optionId ?? null,
+
+      resolvedStageId:
+        stageId
+    });
+
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -1743,7 +1781,8 @@ export function presentInvestorSystemGuidance(
   const investorJobs = {
     organize:
       buildOrganizationJob({
-        stage
+        stage,
+        portfolioEvolutionGuidance
       }),
 
     focus:
@@ -1816,7 +1855,7 @@ export function presentInvestorSystemGuidance(
 
   const profileAccountability =
     buildProfileAccountability({
-      presentation,
+      selectedAnswers,
       investorJobs,
       behaviorGuidance
     });
