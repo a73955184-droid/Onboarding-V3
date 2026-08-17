@@ -54,7 +54,8 @@ import {
 } from './portfolio-decision-making-guidance.js';
 
 import {
-  getPortfolioEvolutionDelivery
+  getPortfolioEvolutionDelivery,
+  getPortfolioInteractionDelivery
 } from './portfolio-philosophy-jtbd-support.js';
 
 import {
@@ -777,7 +778,8 @@ function buildOrganizationJob({
 function buildEffortJob({
   style,
   effortGuidance,
-  portfolioInteractionGuidance
+  portfolioInteractionGuidance,
+  recommendedSystemDelivery
 }) {
   return {
     id:
@@ -836,6 +838,10 @@ function buildEffortJob({
 
     portfolioInteraction:
       portfolioInteractionGuidance ??
+      null,
+
+    recommendedSystemDelivery:
+      recommendedSystemDelivery ??
       null
   };
 }
@@ -1272,6 +1278,8 @@ function buildProfileAccountability({
           null,
 
         recommendedSystemDelivery:
+          style
+            ?.recommendedSystemDelivery ??
           null,
 
         profileType:
@@ -1899,6 +1907,31 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const recommendedInteractionDelivery =
+    getPortfolioInteractionDelivery({
+      archetypeId,
+      variantId,
+      tradeoffOptionId:
+        portfolioInteractionGuidance
+          ?.tradeoffOptionId ??
+        null,
+      marketPsychologyOptionId:
+        portfolioInteractionGuidance
+          ?.marketPsychologyOptionId ??
+        null,
+      portfolioSystem: {
+        name:
+          presentation
+            ?.diagnostics
+            ?.recommendation
+            ?.systemName ??
+          null,
+        structure,
+        sleeves
+      }
+    });
+
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -1921,7 +1954,9 @@ export function presentInvestorSystemGuidance(
       buildEffortJob({
         style,
         effortGuidance,
-        portfolioInteractionGuidance
+        portfolioInteractionGuidance,
+        recommendedSystemDelivery:
+          recommendedInteractionDelivery
       }),
 
     decide:

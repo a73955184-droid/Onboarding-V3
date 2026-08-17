@@ -1090,11 +1090,51 @@ function assertCommonContract(
     'Portfolio Evolution row should contain delivery copy'
   );
 
-  assert.equal(
+  assert.deepEqual(
     styleAccountability
       .recommendedSystemDelivery,
-    null,
-    'Portfolio Interaction delivery should remain unimplemented'
+    interactionJob
+      .recommendedSystemDelivery,
+    'Portfolio Interaction accountability should expose its own delivery'
+  );
+
+  assert.equal(
+    styleAccountability
+      .recommendedSystemDelivery
+      .archetypeId,
+    'TO',
+    'Interaction delivery should consume the resolved archetype'
+  );
+
+  assert.equal(
+    styleAccountability
+      .recommendedSystemDelivery
+      .variantId,
+    guidance.resolved.variantId,
+    'Interaction delivery should consume the resolved variant'
+  );
+
+  assert.equal(
+    styleAccountability
+      .recommendedSystemDelivery
+      .tradeoffOptionId,
+    'active',
+    'Interaction delivery should reuse the existing tradeoff evidence'
+  );
+
+  assert.equal(
+    styleAccountability
+      .recommendedSystemDelivery
+      .marketPsychologyOptionId,
+    'idea',
+    'Interaction delivery should reuse the existing attention trigger'
+  );
+
+  assert.ok(
+    styleAccountability
+      .recommendedSystemDelivery
+      .systemDelivery,
+    'Portfolio Interaction row should contain delivery copy'
   );
 
   assert.equal(

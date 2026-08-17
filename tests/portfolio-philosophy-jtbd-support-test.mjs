@@ -3,8 +3,11 @@ import { readFileSync } from 'node:fs';
 
 import {
   ARCHETYPE_EVOLUTION_SUPPORT,
+  ARCHETYPE_INTERACTION_SUPPORT,
   VARIANT_EVOLUTION_SUPPORT,
-  getPortfolioEvolutionDelivery
+  VARIANT_INTERACTION_SUPPORT,
+  getPortfolioEvolutionDelivery,
+  getPortfolioInteractionDelivery
 } from '../src/domain/investor-system-guidance/portfolio-philosophy-jtbd-support.js';
 
 import {
@@ -41,6 +44,21 @@ const EXACT_EXPERIMENT_COPY = {
   FT: 'This system keeps the durable core dominant and isolates improvement in one bounded sleeve. New ideas therefore have to serve a defined improvement purpose instead of changing the portfolio foundation directly.',
   BFO: 'This system separates growth, stability, and liquidity into distinct jobs. A future change can therefore be evaluated against the specific portfolio role it would affect instead of being treated as a change to the whole portfolio.',
   TO: 'This system protects a large permanent core and gives selected opportunities their own bounded capacity. New ideas can be explored without allowing short-term views to redefine the long-term portfolio.'
+};
+
+const EXACT_INTERACTION_COPY = {
+  'ES|essential|tell_me':
+    'This system uses a small number of broad, low-effort portfolio roles, so most of the portfolio can remain in place without regular research or intervention.',
+  'FT|intentional|explore':
+    'This system keeps the durable core and stability roles relatively low-maintenance while concentrating additional research on the portfolio’s defined improvement sleeves. That gives exploration a specific place without increasing effort across the whole portfolio.',
+  'BFO|intentional|periodic':
+    'This system separates growth, income, stability, diversification, and liquidity into distinct roles with different review needs, so attention can be directed through a planned review rhythm instead of treating the entire portfolio the same way.',
+  'TO|engaged|active':
+    'This system protects the permanent core while separating tactical, thematic, and opportunity roles that are meant to receive more active attention. That keeps higher-effort research concentrated in the parts designed for it.',
+  'GA|engaged|explore':
+    'This system keeps the main growth foundation relatively stable while giving alternatives, differentiated return sources, and bounded opportunity capacity their own higher-attention roles. That allows deeper research without turning the entire portfolio into a research project.',
+  'IP|essential|occasional':
+    'This system concentrates attention on liquidity, dependable income, and resilience while keeping the portfolio structure broad and relatively low-maintenance, allowing occasional review without constant monitoring.'
 };
 
 
@@ -210,6 +228,216 @@ assert.match(
   /Research Capacity/,
   'Delivery may identify a research capacity that actually exists'
 );
+
+
+let interactionCombinationCount = 0;
+
+for (const archetypeId of ARCHETYPE_IDS) {
+  for (const variantId of VARIANT_IDS) {
+    const portfolioSystem =
+      getConstituentPortfolio(
+        archetypeId,
+        variantId
+      );
+
+    for (const tradeoffOptionId of [
+      'tell_me',
+      'occasional',
+      'periodic',
+      'explore',
+      'active'
+    ]) {
+      const result =
+        getPortfolioInteractionDelivery({
+          archetypeId,
+          variantId,
+          tradeoffOptionId,
+          marketPsychologyOptionId:
+            'rarely',
+          portfolioSystem
+        });
+
+      interactionCombinationCount += 1;
+
+      assert.ok(
+        result,
+        `Expected interaction delivery for ${archetypeId} ${variantId} ${tradeoffOptionId}`
+      );
+      assert.equal(result.archetypeId, archetypeId);
+      assert.equal(result.variantId, variantId);
+      assert.equal(result.tradeoffOptionId, tradeoffOptionId);
+      assert.equal(result.marketPsychologyOptionId, 'rarely');
+      assert.equal(
+        result.portfolioFamily,
+        ARCHETYPE_INTERACTION_SUPPORT[archetypeId].portfolioFamily
+      );
+      assert.equal(
+        result.philosophySupport,
+        ARCHETYPE_INTERACTION_SUPPORT[archetypeId].interactionSupport
+      );
+      assert.equal(
+        result.variantSupport,
+        VARIANT_INTERACTION_SUPPORT[variantId].interactionSupport
+      );
+      assert.ok(
+        typeof result.systemDelivery === 'string' &&
+          result.systemDelivery.trim().length > 0,
+        `Expected non-empty interaction delivery for ${archetypeId} ${variantId} ${tradeoffOptionId}`
+      );
+    }
+  }
+}
+
+assert.equal(
+  interactionCombinationCount,
+  105,
+  'Expected the complete 7 x 3 x 5 interaction delivery matrix'
+);
+
+
+for (const [key, expectedCopy] of Object.entries(EXACT_INTERACTION_COPY)) {
+  const [
+    archetypeId,
+    variantId,
+    tradeoffOptionId
+  ] = key.split('|');
+
+  const result =
+    getPortfolioInteractionDelivery({
+      archetypeId,
+      variantId,
+      tradeoffOptionId,
+      marketPsychologyOptionId:
+        'market',
+      portfolioSystem:
+        getConstituentPortfolio(
+          archetypeId,
+          variantId
+        )
+    });
+
+  assert.equal(
+    result.systemDelivery,
+    expectedCopy,
+    `Exact interaction copy mismatch for ${key}`
+  );
+}
+
+
+const psychologyResults = [
+  'balance',
+  'market',
+  'holding',
+  'idea',
+  'rarely'
+].map(
+  (marketPsychologyOptionId) =>
+    getPortfolioInteractionDelivery({
+      archetypeId: 'GD',
+      variantId: 'intentional',
+      tradeoffOptionId: 'active',
+      marketPsychologyOptionId,
+      portfolioSystem:
+        getConstituentPortfolio(
+          'GD',
+          'intentional'
+        )
+    })
+);
+
+assert.ok(
+  psychologyResults.every(Boolean),
+  'All five market-psychology refinements should be accepted'
+);
+
+
+const structureWithoutSpecialSleeves = {
+  name: 'Synthetic Stable Portfolio',
+  sleeves: [
+    {
+      id: 'core',
+      label: 'Core',
+      effort: 'low',
+      reviewCadence: 'annual'
+    },
+    {
+      id: 'reserve',
+      label: 'Reserve',
+      effort: 'very-low',
+      reviewCadence: 'as-needs-change'
+    }
+  ]
+};
+
+for (const tradeoffOptionId of [
+  'tell_me',
+  'occasional',
+  'periodic',
+  'explore',
+  'active'
+]) {
+  const result =
+    getPortfolioInteractionDelivery({
+      archetypeId: 'FT',
+      variantId: 'intentional',
+      tradeoffOptionId,
+      marketPsychologyOptionId:
+        'rarely',
+      portfolioSystem:
+        structureWithoutSpecialSleeves
+    });
+
+  assert.doesNotMatch(
+    result.systemDelivery,
+    /research sleeve|opportunity sleeve|tactical sleeve|improvement sleeve/i,
+    'Interaction delivery must not invent a specialized sleeve'
+  );
+}
+
+
+for (const invalidInput of [
+  {},
+  {
+    archetypeId: 'UNKNOWN',
+    variantId: 'essential',
+    tradeoffOptionId: 'tell_me',
+    marketPsychologyOptionId: 'rarely',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'UNKNOWN',
+    tradeoffOptionId: 'tell_me',
+    marketPsychologyOptionId: 'rarely',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'essential',
+    tradeoffOptionId: 'UNKNOWN',
+    marketPsychologyOptionId: 'rarely',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'essential',
+    tradeoffOptionId: 'tell_me',
+    marketPsychologyOptionId: 'UNKNOWN',
+    portfolioSystem: structureWithoutSpecialSleeves
+  },
+  {
+    archetypeId: 'ES',
+    variantId: 'essential',
+    tradeoffOptionId: 'tell_me',
+    marketPsychologyOptionId: 'rarely'
+  }
+]) {
+  assert.equal(
+    getPortfolioInteractionDelivery(invalidInput),
+    null,
+    'Incomplete interaction inputs should remain null-safe'
+  );
+}
 
 
 for (const invalidInput of [
