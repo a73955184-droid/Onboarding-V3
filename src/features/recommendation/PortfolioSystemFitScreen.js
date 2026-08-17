@@ -246,7 +246,7 @@ function renderProfileAccountability(
         <table
           style="
             width: 100%;
-            min-width: 1220px;
+            min-width: 900px;
             border-collapse: collapse;
             table-layout: fixed;
           "
@@ -258,22 +258,10 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 16%;
+                  width: 30%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 14px 14px 0;
-                  border-bottom: 1px solid rgba(0,0,0,0.12);
-                "
-              >
-                Guidance indication
-              </th>
-
-              <th
-                style="
-                  width: 24%;
-                  text-align: left;
-                  vertical-align: top;
-                  padding: 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
@@ -282,7 +270,7 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 20%;
+                  width: 34%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px;
@@ -294,26 +282,14 @@ function renderProfileAccountability(
 
               <th
                 style="
-                  width: 20%;
-                  text-align: left;
-                  vertical-align: top;
-                  padding: 14px;
-                  border-bottom: 1px solid rgba(0,0,0,0.12);
-                "
-              >
-                How your recommended system helps
-              </th>
-
-              <th
-                style="
-                  width: 20%;
+                  width: 36%;
                   text-align: left;
                   vertical-align: top;
                   padding: 14px 0 14px 14px;
                   border-bottom: 1px solid rgba(0,0,0,0.12);
                 "
               >
-                HOW YOUR RECOMMENDED SYSTEM DELIVERS IT
+                How your recommended system delivers it
               </th>
 
             </tr>
@@ -336,23 +312,6 @@ function renderProfileAccountability(
                       "
                     >
 
-                      <strong>
-                        ${escapeHtml(
-                          item.guidanceIndication
-                        )}
-                      </strong>
-
-                    </td>
-
-
-                    <td
-                      style="
-                        vertical-align: top;
-                        padding: 18px 14px;
-                        border-bottom: 1px solid rgba(0,0,0,0.08);
-                      "
-                    >
-
                       ${renderEvidenceAnswers(
                         item.whatYouToldUs
                       )}
@@ -368,24 +327,8 @@ function renderProfileAccountability(
                       "
                     >
 
-                      <strong>
-                        ${escapeHtml(
-                          item.userJTBD
-                        )}
-                      </strong>
-
-                    </td>
-
-
-                    <td
-                      style="
-                        vertical-align: top;
-                        padding: 18px 14px;
-                        border-bottom: 1px solid rgba(0,0,0,0.08);
-                      "
-                    >
-
                       ${escapeHtml(
+                        item.systemJTBD ??
                         item.systemResponse
                       )}
 

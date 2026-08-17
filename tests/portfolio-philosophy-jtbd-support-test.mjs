@@ -710,10 +710,70 @@ const screenSource = readFileSync(
   'utf8'
 );
 
+const accountabilitySource =
+  screenSource.slice(
+    screenSource.indexOf(
+      'function renderProfileAccountability'
+    ),
+    screenSource.indexOf(
+      'function renderComplexityReason'
+    )
+  );
+
+assert.equal(
+  (
+    accountabilitySource.match(
+      /<th\b/g
+    ) ?? []
+  ).length,
+  3,
+  'Accountability table should render exactly three headers'
+);
+
+assert.equal(
+  (
+    accountabilitySource.match(
+      /<td\b/g
+    ) ?? []
+  ).length,
+  3,
+  'Each accountability row should render exactly three cells'
+);
+
 assert.match(
-  screenSource,
-  /HOW YOUR RECOMMENDED SYSTEM DELIVERS IT/,
-  'Accountability table should include the exact additive header'
+  accountabilitySource,
+  /Your quiz response/,
+  'Quiz-response header should remain visible'
+);
+
+assert.match(
+  accountabilitySource,
+  /Investing system JTBD/,
+  'Investing-system JTBD header should remain visible'
+);
+
+assert.match(
+  accountabilitySource,
+  /How your recommended system delivers it/,
+  'Delivery header should use the exact requested capitalization'
+);
+
+assert.doesNotMatch(
+  accountabilitySource,
+  /How your recommended system helps|HOW YOUR RECOMMENDED SYSTEM DELIVERS IT/,
+  'Removed or uppercase header copy should not remain in the table'
+);
+
+assert.doesNotMatch(
+  accountabilitySource,
+  /text-transform\s*:\s*uppercase/i,
+  'Delivery header should not be forced to uppercase'
+);
+
+assert.doesNotMatch(
+  accountabilitySource,
+  /item\.userJTBD|item\.guidanceIndication/,
+  'User-JTBD and guidance-label cells should not remain visible'
 );
 
 assert.match(
