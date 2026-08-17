@@ -524,6 +524,14 @@ function assertCommonContract(
     'Expected Instruction Seeker'
   );
 
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .job,
+    'Help me turn uncertainty about what to do next into one understandable first decision, with a clear reason for why that step makes sense.',
+    'What-to-do + start should use the exact Portfolio Decision-Making JTBD'
+  );
+
 
   /*
    * This known case currently resolves Essential.
@@ -727,6 +735,14 @@ function assertCommonContract(
 
   assert.equal(
     guidance.investorJobs
+      .decide
+      .job,
+    'Help me compare the decision-relevant tradeoffs, identify what additional information could actually change the choice, and stop researching when further comparison adds little value.',
+    'Compare + enough should use the exact Portfolio Decision-Making JTBD'
+  );
+
+  assert.equal(
+    guidance.investorJobs
       .organize
       .job,
     'Help me identify where my existing portfolio can genuinely be improved and whether the potential benefit is worth the additional research, effort, or complexity before changing a system that already works.',
@@ -889,6 +905,10 @@ function assertCommonContract(
     guidance.investorJobs
       .focus;
 
+  const decisionJob =
+    guidance.investorJobs
+      .decide;
+
   const stageAccountability =
     guidance
       .recommendationReveal
@@ -907,6 +927,16 @@ function assertCommonContract(
       .find(
         (item) =>
           item.id === 'style'
+      );
+
+  const behaviorAccountability =
+    guidance
+      .recommendationReveal
+      .profileAccountability
+      .items
+      .find(
+        (item) =>
+          item.id === 'behavior'
       );
 
   assert.equal(
@@ -1071,11 +1101,87 @@ function assertCommonContract(
   );
 
   assert.equal(
-    guidance.investorJobs
-      .decide
-      .job,
-    'Help me set limits for new ideas so I do not react to every opportunity.',
-    'Behavior JTBD should remain unchanged'
+    decisionJob.job,
+    'Help me determine whether a new idea fills a genuine portfolio gap, duplicates something I already have, or adds complexity without improving the overall system.',
+    'Missing + fit should use the exact Portfolio Decision-Making JTBD'
+  );
+
+  assert.deepEqual(
+    decisionJob.resolvedProfile,
+    {
+      id:
+        fitPresentation
+          .jobs
+          .behavior
+          .profileId,
+      label:
+        fitPresentation
+          .jobs
+          .behavior
+          .title,
+      summary:
+        fitPresentation
+          .jobs
+          .behavior
+          .description,
+      portfolioRequirement:
+        fitPresentation
+          .jobs
+          .behavior
+          .portfolioRequirement,
+      systemFit:
+        fitPresentation
+          .jobs
+          .behavior
+          .systemFit
+    },
+    'Resolved Behavior profile should remain unchanged'
+  );
+
+  assert.equal(
+    decisionJob.systemResponse,
+    'Route new ideas through the portfolio system before they are allowed to change the core allocation.',
+    'Behavior system response should remain unchanged'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .guidanceIndication,
+    'Portfolio decision-making guidance',
+    'Behavior guidance indication should remain unchanged'
+  );
+
+  assert.equal(
+    behaviorAccountability
+      .systemResponse,
+    decisionJob.systemResponse,
+    'Behavior accountability system response should remain unchanged'
+  );
+
+  assert.deepEqual(
+    behaviorAccountability
+      .whatYouToldUs
+      .map(
+        (answer) => ({
+          questionId:
+            answer.questionId,
+          optionId:
+            answer.optionId,
+          answerText:
+            answer.answerText
+        })
+      ),
+    fitPresentation
+      .evidence
+      .selectedAnswers
+      .filter(
+        (answer) =>
+          answer.questionId ===
+            'transition' ||
+          answer.questionId ===
+            'decisionStyle'
+      ),
+    'Selected transition/decisionStyle evidence should remain unchanged'
   );
 
   assert.deepEqual(
@@ -1122,7 +1228,9 @@ function assertCommonContract(
         reviewCadence:
           sleeve
             .operatingProfile
-            .reviewCadence
+            .reviewCadence,
+        assetCategories:
+          sleeve.assetCategories
       })
     ),
     fitResult.sleeves.map(
@@ -1131,10 +1239,12 @@ function assertCommonContract(
         weight: sleeve.weight,
         effort: sleeve.effort,
         reviewCadence:
-          sleeve.reviewCadence
+          sleeve.reviewCadence,
+        assetCategories:
+          sleeve.assetCategories
       })
     ),
-    'Interaction guidance must not change sleeve IDs, weights, effort, or review cadence'
+    'Decision guidance must not change sleeve order, weights, asset categories, effort, or review cadence'
   );
 
   assert.equal(
@@ -1283,6 +1393,14 @@ function assertCommonContract(
     guidance.resolved.behaviorId,
     'confidence_builder',
     'Expected Confidence Builder'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .job,
+    'Help me distinguish a meaningful break in the reason for owning something from ordinary volatility so I can decide whether to sell, reduce, or leave it alone.',
+    'Change + sell should use the exact Portfolio Decision-Making JTBD'
   );
 
   assert.ok(
@@ -1506,6 +1624,23 @@ function assertCommonContract(
     'Keep routine investing simple and tell me when something actually deserves my attention.',
     'Missing marketPsychology evidence should use the existing Style JTBD fallback'
   );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .portfolioDecisionMaking
+      .userJTBD,
+    null,
+    'Missing Behavior evidence should remain fallback-safe'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .job,
+    'When I face an investment choice or something changes, help me understand what to do next.',
+    'Missing Behavior evidence should use the existing Behavior JTBD fallback'
+  );
 }
 
 
@@ -1728,6 +1863,182 @@ for (
       .job,
     'Show me why a recommendation fits my portfolio before I act.',
     'Behavior JTBD should remain unchanged'
+  );
+}
+
+
+/*
+ * ============================================================
+ * CASE 9
+ *
+ * Decision-making product case: doing_right + fit.
+ * ============================================================
+ */
+
+{
+  const assessmentResult = {
+    archetypeId: 'FT',
+    stageId:
+      'intentional_optimizer',
+    styleId:
+      'systematic_improver',
+    modifierId:
+      'validation_seeker',
+    normalizedAnswers: {
+      setup:
+        'established',
+      transition:
+        'doing_right',
+      decisionStyle:
+        'fit',
+      marketPsychology:
+        'holding',
+      evolution:
+        'effort',
+      tradeoff:
+        'periodic',
+      age:
+        '10plus',
+      goals: [
+        'choose'
+      ]
+    }
+  };
+
+  const {
+    fitResult,
+    guidance
+  } =
+    buildGuidance(
+      assessmentResult
+    );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .job,
+    'Help me validate whether a new idea improves a defined portfolio job and fits with what I already own before I decide to add it.',
+    'Doing-right + fit should use the exact Portfolio Decision-Making JTBD'
+  );
+
+  assert.equal(
+    guidance.resolved.behaviorId,
+    fitResult.jobs.behavior.profileId,
+    'Dynamic decision JTBD should preserve Behavior resolution'
+  );
+}
+
+
+/*
+ * ============================================================
+ * CASE 10
+ *
+ * Multi-select precedence must not alter displayed evidence.
+ * ============================================================
+ */
+
+{
+  const assessmentResult = {
+    archetypeId: 'FT',
+    stageId:
+      'intentional_optimizer',
+    styleId:
+      'systematic_improver',
+    modifierId:
+      'validation_seeker',
+    normalizedAnswers: {
+      setup:
+        'established',
+      transition: [
+        'what_to_do',
+        'change'
+      ],
+      decisionStyle: [
+        'start',
+        'fit'
+      ],
+      marketPsychology:
+        'holding',
+      evolution:
+        'effort',
+      tradeoff:
+        'periodic',
+      age:
+        '10plus',
+      goals: [
+        'choose'
+      ]
+    }
+  };
+
+  const {
+    fitPresentation,
+    guidance
+  } =
+    buildGuidance(
+      assessmentResult
+    );
+
+  const decisionJob =
+    guidance.investorJobs
+      .decide;
+
+  const behaviorAccountability =
+    guidance
+      .recommendationReveal
+      .profileAccountability
+      .items
+      .find(
+        (item) =>
+          item.id === 'behavior'
+      );
+
+  assert.equal(
+    decisionJob
+      .portfolioDecisionMaking
+      .primaryTransitionOptionId,
+    'change',
+    'Presenter should apply transition explanatory precedence'
+  );
+
+  assert.equal(
+    decisionJob
+      .portfolioDecisionMaking
+      .primaryDecisionStyleOptionId,
+    'fit',
+    'Presenter should apply decision-style explanatory precedence'
+  );
+
+  assert.equal(
+    decisionJob.job,
+    'Help me determine whether a new idea changes the portfolio in a useful way before allowing it to alter an existing structure that may already be doing its job.',
+    'Multi-select evidence should resolve the curated change + fit JTBD'
+  );
+
+  assert.deepEqual(
+    behaviorAccountability
+      .whatYouToldUs
+      .map(
+        (answer) => ({
+          questionId:
+            answer.questionId,
+          optionId:
+            answer.optionId,
+          answerText:
+            answer.answerText
+        })
+      ),
+    fitPresentation
+      .evidence
+      .selectedAnswers
+      .filter(
+        (answer) =>
+          answer.questionId ===
+            'transition' ||
+          answer.questionId ===
+            'decisionStyle'
+      ),
+    'Explanatory precedence must preserve all displayed Behavior evidence and its order'
   );
 }
 

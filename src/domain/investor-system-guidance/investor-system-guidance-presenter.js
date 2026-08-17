@@ -50,6 +50,10 @@ import {
 } from './portfolio-interaction-guidance.js';
 
 import {
+  getPortfolioDecisionMakingGuidance
+} from './portfolio-decision-making-guidance.js';
+
+import {
   getSleeveBoundaries
 } from './sleeve-boundary-guidance.js';
 
@@ -824,7 +828,8 @@ function buildEffortJob({
 
 function buildDecisionJob({
   behavior,
-  behaviorGuidance
+  behaviorGuidance,
+  portfolioDecisionMakingGuidance
 }) {
   return {
     id:
@@ -839,6 +844,8 @@ function buildDecisionJob({
       'When something makes me want to act, how should I decide what to do?',
 
     job:
+      portfolioDecisionMakingGuidance
+        ?.userJTBD ??
       PROFILE_USER_JTBD[
         behavior?.profileId
       ] ??
@@ -882,7 +889,11 @@ function buildDecisionJob({
         behavior
           ?.systemFit ??
         null
-    }
+    },
+
+    portfolioDecisionMaking:
+      portfolioDecisionMakingGuidance ??
+      null
   };
 }
 
@@ -1800,6 +1811,37 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const portfolioDecisionMakingGuidance =
+    getPortfolioDecisionMakingGuidance({
+      transitionOptionIds:
+        selectedAnswers
+          .filter(
+            (answer) =>
+              answer?.questionId ===
+              'transition'
+          )
+          .map(
+            (answer) =>
+              answer.optionId
+          ),
+
+      decisionStyleOptionIds:
+        selectedAnswers
+          .filter(
+            (answer) =>
+              answer?.questionId ===
+              'decisionStyle'
+          )
+          .map(
+            (answer) =>
+              answer.optionId
+          ),
+
+      resolvedBehaviorId:
+        behavior?.profileId ?? null
+    });
+
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -1827,7 +1869,8 @@ export function presentInvestorSystemGuidance(
     decide:
       buildDecisionJob({
         behavior,
-        behaviorGuidance
+        behaviorGuidance,
+        portfolioDecisionMakingGuidance
       })
   };
 
