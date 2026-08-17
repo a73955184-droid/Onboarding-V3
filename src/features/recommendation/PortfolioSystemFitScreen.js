@@ -809,6 +809,493 @@ function renderAssetCategories(
 }
 
 
+/*
+ * ============================================================
+ * Portfolio System Visualization (Donut)
+ * ============================================================
+ */
+
+/**
+ * Calculate proportional angles for each sleeve arc.
+ * Returns array of { sleeve, startAngle, endAngle, angleSpan }
+ */
+function calculateSleeveAngles(
+  sleeves = []
+) {
+  if (
+    !Array.isArray(sleeves) ||
+    sleeves.length === 0
+  ) {
+    return [];
+  }
+
+  // Sum the percentages
+  const total = sleeves.reduce(
+    (sum, sleeve) =>
+      sum +
+      (typeof sleeve
+        .weightPercent ===
+      'number'
+        ? sleeve
+            .weightPercent
+        : 0),
+    0
+  );
+
+  if (total === 0) {
+    return [];
+  }
+
+  // Calculate angles
+  let currentAngle = -90; // Start at top
+
+  return sleeves.map(
+    (sleeve) => {
+      const percentage =
+        (typeof sleeve
+          .weightPercent ===
+        'number'
+          ? sleeve
+              .weightPercent
+          : 0) / total;
+
+      const angleSpan =
+        percentage * 360;
+
+      const startAngle =
+        currentAngle;
+
+      const endAngle =
+        currentAngle +
+        angleSpan;
+
+      currentAngle = endAngle;
+
+      return {
+        sleeve,
+        startAngle,
+        endAngle,
+        angleSpan
+      };
+    }
+  );
+}
+
+
+/**
+ * Convert angle to radians and calculate SVG arc endpoint.
+ */
+function polarToCartesian(
+  centerX,
+  centerY,
+  radius,
+  angleInDegrees
+) {
+  const angleInRadians =
+    ((angleInDegrees - 90) *
+      Math.PI) /
+    180.0;
+
+  return {
+    x:
+      centerX +
+      radius *
+        Math.cos(
+          angleInRadians
+        ),
+    y:
+      centerY +
+      radius *
+        Math.sin(
+          angleInRadians
+        )
+  };
+}
+
+
+/**
+ * Generate SVG arc path for a sleeve segment.
+ */
+function createArcPath(
+  centerX,
+  centerY,
+  outerRadius,
+  innerRadius,
+  startAngle,
+  endAngle
+) {
+  const angleSpan = endAngle - startAngle;
+  const largeArc =
+    angleSpan > 180 ? 1 : 0;
+
+  // Outer arc
+  const outerStart =
+    polarToCartesian(
+      centerX,
+      centerY,
+      outerRadius,
+      startAngle
+    );
+
+  const outerEnd =
+    polarToCartesian(
+      centerX,
+      centerY,
+      outerRadius,
+      endAngle
+    );
+
+  // Inner arc
+  const innerEnd =
+    polarToCartesian(
+      centerX,
+      centerY,
+      innerRadius,
+      endAngle
+    );
+
+  const innerStart =
+    polarToCartesian(
+      centerX,
+      centerY,
+      innerRadius,
+      startAngle
+    );
+
+  const path = [
+    `M ${outerStart.x} ${outerStart.y}`,
+    `A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
+    `L ${innerEnd.x} ${innerEnd.y}`,
+    `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x} ${innerStart.y}`,
+    'Z'
+  ].join(' ');
+
+  return path;
+}
+
+
+/**
+ * Render the proportional donut visualization with interactive segments.
+ */
+function renderPortfolioDonutVisualization(
+  sleeves = [],
+  selectedSleeveId = null
+) {
+  if (
+    !Array.isArray(sleeves) ||
+    sleeves.length === 0
+  ) {
+    return '';
+  }
+
+  const sleeveAngles =
+    calculateSleeveAngles(sleeves);
+
+  if (sleeveAngles.length === 0) {
+    return '';
+  }
+
+  // SVG dimensions
+  const svgSize = 400;
+  const center = svgSize / 2;
+  const outerRadius = 80;
+  const innerRadius = 50;
+
+  // Color palette - restrained set for sleeve differentiation
+  const colors = [
+    '#2E7D32', // green
+    '#1565C0', // blue
+    '#F57C00', // orange
+    '#6A1B9A', // purple
+    '#C62828', // red
+    '#00796B'  // teal
+  ];
+
+  // Determine the default selected sleeve (largest by weight)
+  let activeSleeveId = selectedSleeveId;
+  if (!activeSleeveId) {
+    const largest = sleeves.reduce(
+      (max, sleeve) =>
+        (sleeve.weightPercent ??
+          0) >
+        (max.weightPercent ?? 0)
+          ? sleeve
+          : max,
+      sleeves[0] ?? {}
+    );
+    activeSleeveId = largest.id;
+  }
+
+  const arcs = sleeveAngles
+    .map(
+      (angleData, index) => {
+        const {
+          sleeve,
+          startAngle,
+          endAngle
+        } = angleData;
+
+        const isSelected =
+          sleeve.id ===
+          activeSleeveId;
+
+        const color =
+          colors[index % colors.length];
+
+        const path = createArcPath(
+          center,
+          center,
+          outerRadius,
+          innerRadius,
+          startAngle,
+          endAngle
+        );
+
+        return `
+          <path
+            data-sleeve-id="${escapeHtml(
+              sleeve.id
+            )}"
+            class="portfolio-donut-segment"
+            d="${path}"
+            fill="${color}"
+            opacity="${
+              isSelected ? 1 : 0.7
+            }"
+            stroke="white"
+            stroke-width="2"
+            style="cursor: pointer; transition: opacity 0.2s;"
+          />
+        `;
+      }
+    )
+    .join('');
+
+  return `
+    <svg
+      id="portfolioDonutSvg"
+      width="${svgSize}"
+      height="${svgSize}"
+      viewBox="0 0 ${svgSize} ${svgSize}"
+      style="
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+      "
+    >
+      <g id="sleeveArcs">
+        ${arcs}
+      </g>
+
+      <!-- Center content will be inserted here -->
+      <g id="donutCenter">
+        <circle
+          cx="${center}"
+          cy="${center}"
+          r="${innerRadius - 8}"
+          fill="white"
+        />
+        <text
+          id="donutCenterLabel"
+          x="${center}"
+          y="${center - 15}"
+          text-anchor="middle"
+          font-size="18"
+          font-weight="700"
+          fill="#333"
+        />
+        <text
+          id="donutCenterPercent"
+          x="${center}"
+          y="${center + 5}"
+          text-anchor="middle"
+          font-size="14"
+          font-weight="700"
+          fill="#666"
+        />
+        <text
+          id="donutCenterRole"
+          x="${center}"
+          y="${center + 25}"
+          text-anchor="middle"
+          font-size="12"
+          fill="#999"
+        />
+      </g>
+    </svg>
+  `;
+}
+
+
+/**
+ * Render the four detail callouts for the selected sleeve.
+ */
+function renderSleeveDetailCallouts(
+  sleeve
+) {
+  if (!sleeve) {
+    return '';
+  }
+
+  const guidance =
+    sleeve.guidance ?? {};
+
+  return `
+    <div
+      id="portfolioSleeveDetails"
+      style="
+        display: grid;
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(200px, 1fr)
+        );
+        gap: 16px;
+        margin-top: 20px;
+      "
+    >
+      ${
+        guidance.job
+          ? `
+            <div
+              class="summary-item"
+              style="
+                padding: 12px;
+                border-left: 4px solid #2E7D32;
+              "
+            >
+              <strong>
+                Its job
+              </strong>
+              <div
+                style="margin-top: 6px"
+              >
+                ${escapeHtml(
+                  guidance.job
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        guidance
+          .returnContribution
+          ? `
+            <div
+              class="summary-item"
+              style="
+                padding: 12px;
+                border-left: 4px solid #1565C0;
+              "
+            >
+              <strong>
+                Return contribution
+              </strong>
+              <div
+                style="margin-top: 6px"
+              >
+                ${escapeHtml(
+                  guidance
+                    .returnContribution
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+
+      ${renderAssetCategoriesCallout(
+        sleeve
+      )}
+
+      ${
+        guidance
+          .whatBelongs
+          ? `
+            <div
+              class="summary-item"
+              style="
+                padding: 12px;
+                border-left: 4px solid #6A1B9A;
+              "
+            >
+              <strong>
+                Sleeve mandate
+              </strong>
+              <div
+                style="margin-top: 6px"
+              >
+                ${escapeHtml(
+                  guidance
+                    .whatBelongs
+                )}
+              </div>
+            </div>
+          `
+          : ''
+      }
+    </div>
+  `;
+}
+
+
+/**
+ * Render asset categories as a detail callout.
+ */
+function renderAssetCategoriesCallout(
+  sleeve
+) {
+  const categories =
+    sleeve
+      .assetCategories ??
+    [];
+
+  if (
+    !Array.isArray(
+      categories
+    ) ||
+    categories.length === 0
+  ) {
+    return '';
+  }
+
+  return `
+    <div
+      class="summary-item"
+      style="
+        padding: 12px;
+        border-left: 4px solid #F57C00;
+      "
+    >
+      <strong>
+        What can belong here
+      </strong>
+      <div
+        style="
+          margin-top: 6px;
+          font-size: 0.9em;
+        "
+      >
+        ${categories
+          .map(
+            (category) =>
+              escapeHtml(
+                category.label ??
+                category
+                  .displayName ??
+                category.id ??
+                category
+              )
+          )
+          .join(' · ')}
+      </div>
+    </div>
+  `;
+}
+
+
 function renderSleeveOverviewCard(
   sleeve
 ) {
@@ -1521,6 +2008,46 @@ export function renderPortfolioSystemFit(
 
 
           <!-- ==================================================
+               PORTFOLIO SYSTEM VISUALIZATION
+               ================================================== -->
+
+          <section
+            style="margin-top: 24px"
+            id="portfolioVisualizationSection"
+          >
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+              "
+            >
+
+              <div
+                id="portfolioDonutContainer"
+                style="
+                  width: 100%;
+                  max-width: 500px;
+                  margin: 0 auto;
+                "
+              ></div>
+
+              <div
+                id="portfolioDetailsContainer"
+                style="
+                  width: 100%;
+                  max-width: 800px;
+                "
+              ></div>
+
+            </div>
+
+          </section>
+
+
+          <!-- ==================================================
                PHILOSOPHY IMPLEMENTATION
                ================================================== -->
 
@@ -2083,6 +2610,295 @@ export function renderPortfolioSystemFit(
           renderSleeveOverviewCard
         )
         .join('');
+
+
+  /*
+   * ==========================================================
+   * PORTFOLIO SYSTEM VISUALIZATION
+   * ==========================================================
+   */
+
+  // Track selected sleeve in visualization
+  let selectedSleeveId =
+    guidance.sleeves.length > 0
+      ? (
+          guidance
+            .sleeves
+            .reduce(
+              (max, sleeve) =>
+                (sleeve
+                  .weightPercent ??
+                  0) >
+                (max
+                  .weightPercent ??
+                  0)
+                  ? sleeve
+                  : max
+            )
+        )?.id
+      : null;
+
+  // Render the donut
+  const donutContainer =
+    root.querySelector(
+      '#portfolioDonutContainer'
+    );
+
+  const donutHtml =
+    renderPortfolioDonutVisualization(
+      guidance.sleeves,
+      selectedSleeveId
+    );
+
+  donutContainer.innerHTML =
+    donutHtml;
+
+  // Function to update the center text
+  function updateDonutCenter(
+    sleeveId
+  ) {
+    const sleeve =
+      guidance
+        .sleeves
+        .find(
+          (s) =>
+            s.id === sleeveId
+        );
+
+    if (!sleeve) {
+      return;
+    }
+
+    const label = root.querySelector(
+      '#donutCenterLabel'
+    );
+
+    const percent = root.querySelector(
+      '#donutCenterPercent'
+    );
+
+    const role = root.querySelector(
+      '#donutCenterRole'
+    );
+
+    if (label) {
+      label.textContent =
+        sleeve.label ?? '';
+    }
+
+    if (percent) {
+      percent.textContent =
+        typeof sleeve
+          .weightPercent ===
+        'number'
+          ? `${
+              sleeve
+                .weightPercent
+            }%`
+          : '';
+    }
+
+    if (role) {
+      role.textContent =
+        sleeve
+          .role
+          ?.label ?? '';
+    }
+  }
+
+  // Function to update details
+  function updateSleeveDetails(
+    sleeveId
+  ) {
+    const sleeve =
+      guidance
+        .sleeves
+        .find(
+          (s) =>
+            s.id === sleeveId
+        );
+
+    const detailsContainer =
+      root.querySelector(
+        '#portfolioDetailsContainer'
+      );
+
+    if (!sleeve) {
+      detailsContainer.innerHTML =
+        '';
+      return;
+    }
+
+    detailsContainer.innerHTML =
+      renderSleeveDetailCallouts(
+        sleeve
+      );
+  }
+
+  // Function to update arc styling
+  function updateArcStyling(
+    activeSleeveId
+  ) {
+    const arcs =
+      donutContainer.querySelectorAll(
+        '.portfolio-donut-segment'
+      );
+
+    arcs.forEach(
+      (arc) => {
+        const sleeveId =
+          arc.getAttribute(
+            'data-sleeve-id'
+          );
+
+        if (
+          sleeveId ===
+          activeSleeveId
+        ) {
+          arc.style.opacity = '1';
+          arc.style.filter =
+            'drop-shadow(0 0 4px rgba(0,0,0,0.2))';
+        } else {
+          arc.style.opacity = '0.7';
+          arc.style.filter = 'none';
+        }
+      }
+    );
+  }
+
+  // Initialize display
+  updateDonutCenter(
+    selectedSleeveId
+  );
+  updateSleeveDetails(
+    selectedSleeveId
+  );
+  updateArcStyling(
+    selectedSleeveId
+  );
+
+  // Add click handlers to arc segments
+  const segments =
+    donutContainer.querySelectorAll(
+      '.portfolio-donut-segment'
+    );
+
+  segments.forEach(
+    (segment) => {
+      segment.addEventListener(
+        'click',
+        () => {
+          const sleeveId =
+            segment.getAttribute(
+              'data-sleeve-id'
+            );
+
+          if (sleeveId) {
+            selectedSleeveId =
+              sleeveId;
+
+            updateDonutCenter(
+              sleeveId
+            );
+
+            updateSleeveDetails(
+              sleeveId
+            );
+
+            updateArcStyling(
+              sleeveId
+            );
+          }
+        }
+      );
+
+      // Add keyboard support
+      segment.setAttribute(
+        'role',
+        'button'
+      );
+
+      segment.setAttribute(
+        'tabindex',
+        '0'
+      );
+
+      segment.addEventListener(
+        'keydown',
+        (event) => {
+          if (
+            event.key ===
+              'Enter' ||
+            event.key === ' '
+          ) {
+            event
+              .preventDefault();
+
+            const sleeveId =
+              segment.getAttribute(
+                'data-sleeve-id'
+              );
+
+            if (sleeveId) {
+              selectedSleeveId =
+                sleeveId;
+
+              updateDonutCenter(
+                sleeveId
+              );
+
+              updateSleeveDetails(
+                sleeveId
+              );
+
+              updateArcStyling(
+                sleeveId
+              );
+            }
+          }
+        }
+      );
+
+      // Add hover preview
+      segment.addEventListener(
+        'mouseenter',
+        () => {
+          const currentOpacity =
+            segment.style
+              .opacity;
+
+          if (
+            currentOpacity !==
+            '1'
+          ) {
+            segment.style
+              .opacity = '0.85';
+          }
+        }
+      );
+
+      segment.addEventListener(
+        'mouseleave',
+        () => {
+          const sleeveId =
+            segment.getAttribute(
+              'data-sleeve-id'
+            );
+
+          if (
+            sleeveId !==
+            selectedSleeveId
+          ) {
+            segment.style
+              .opacity = '0.7';
+          } else {
+            segment.style
+              .opacity = '1';
+          }
+        }
+      );
+    }
+  );
 
 
   /*
