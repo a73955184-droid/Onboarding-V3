@@ -885,6 +885,10 @@ function assertCommonContract(
     guidance.investorJobs
       .organize;
 
+  const interactionJob =
+    guidance.investorJobs
+      .focus;
+
   const stageAccountability =
     guidance
       .recommendationReveal
@@ -893,6 +897,16 @@ function assertCommonContract(
       .find(
         (item) =>
           item.id === 'stage'
+      );
+
+  const styleAccountability =
+    guidance
+      .recommendationReveal
+      .profileAccountability
+      .items
+      .find(
+        (item) =>
+          item.id === 'style'
       );
 
   assert.equal(
@@ -977,11 +991,83 @@ function assertCommonContract(
   );
 
   assert.equal(
-    guidance.investorJobs
-      .focus
-      .job,
-    'Keep me engaged only when an opportunity or change meets clear standards.',
-    'Style JTBD should remain unchanged'
+    interactionJob.job,
+    'Help me actively explore new investment ideas while keeping that research effort contained so opportunity-seeking does not take over the entire portfolio.',
+    'Active + idea should use the exact Portfolio Interaction JTBD'
+  );
+
+  assert.deepEqual(
+    interactionJob.resolvedProfile,
+    {
+      id:
+        fitPresentation
+          .jobs
+          .style
+          .profileId,
+      label:
+        fitPresentation
+          .jobs
+          .style
+          .title,
+      summary:
+        fitPresentation
+          .jobs
+          .style
+          .description,
+      portfolioRequirement:
+        fitPresentation
+          .jobs
+          .style
+          .portfolioRequirement,
+      systemFit:
+        fitPresentation
+          .jobs
+          .style
+          .systemFit
+    },
+    'Resolved Style profile should remain unchanged'
+  );
+
+  assert.equal(
+    interactionJob.systemResponse,
+    fitPresentation
+      .jobs
+      .style
+      .systemFit,
+    'Style system response should remain unchanged'
+  );
+
+  assert.equal(
+    styleAccountability
+      .guidanceIndication,
+    'Portfolio interaction guidance',
+    'Style guidance indication should remain unchanged'
+  );
+
+  assert.deepEqual(
+    styleAccountability
+      .whatYouToldUs
+      .map(
+        (answer) => ({
+          questionId:
+            answer.questionId,
+          optionId:
+            answer.optionId,
+          answerText:
+            answer.answerText
+        })
+      ),
+    fitPresentation
+      .evidence
+      .selectedAnswers
+      .filter(
+        (answer) =>
+          answer.questionId ===
+            'tradeoff' ||
+          answer.questionId ===
+            'marketPsychology'
+      ),
+    'Selected tradeoff/marketPsychology evidence should remain unchanged'
   );
 
   assert.equal(
@@ -1028,16 +1114,27 @@ function assertCommonContract(
     guidance.sleeves.map(
       (sleeve) => ({
         id: sleeve.id,
-        weight: sleeve.weight
+        weight: sleeve.weight,
+        effort:
+          sleeve
+            .operatingProfile
+            .effort,
+        reviewCadence:
+          sleeve
+            .operatingProfile
+            .reviewCadence
       })
     ),
     fitResult.sleeves.map(
       (sleeve) => ({
         id: sleeve.id,
-        weight: sleeve.weight
+        weight: sleeve.weight,
+        effort: sleeve.effort,
+        reviewCadence:
+          sleeve.reviewCadence
       })
     ),
-    'Portfolio Evolution guidance must not change sleeve IDs or weights'
+    'Interaction guidance must not change sleeve IDs, weights, effort, or review cadence'
   );
 
   assert.equal(
@@ -1392,6 +1489,23 @@ function assertCommonContract(
       ),
     'User-led explanation should distinguish decision support from automatic action'
   );
+
+  assert.equal(
+    guidance.investorJobs
+      .focus
+      .portfolioInteraction
+      .userJTBD,
+    null,
+    'Missing marketPsychology evidence should remain fallback-safe'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .focus
+      .job,
+    'Keep routine investing simple and tell me when something actually deserves my attention.',
+    'Missing marketPsychology evidence should use the existing Style JTBD fallback'
+  );
 }
 
 
@@ -1472,6 +1586,148 @@ function assertCommonContract(
       .recommendation
       .variantId,
     'Dynamic JTBD should preserve the fixture variant'
+  );
+}
+
+
+/*
+ * ============================================================
+ * CASE 8
+ *
+ * Exact Portfolio Interaction product cases.
+ * ============================================================
+ */
+
+const interactionProductCases = [
+  {
+    tradeoffOptionId:
+      'explore',
+    marketPsychologyOptionId:
+      'idea',
+    resolvedStyleId:
+      'bounded_explorer',
+    expectedUserJTBD:
+      'Help me create a bounded research area for new investment ideas so I can explore them without increasing the effort required across the rest of my portfolio.'
+  },
+  {
+    tradeoffOptionId:
+      'periodic',
+    marketPsychologyOptionId:
+      'market',
+    resolvedStyleId:
+      'systematic_improver',
+    expectedUserJTBD:
+      'Help me keep most portfolio attention inside a planned review rhythm while making room for the limited market events that genuinely deserve attention sooner.'
+  },
+  {
+    tradeoffOptionId:
+      'occasional',
+    marketPsychologyOptionId:
+      'rarely',
+    resolvedStyleId:
+      'steady_steward',
+    expectedUserJTBD:
+      'Help me keep routine portfolio interaction light and make the few situations that genuinely deserve a check-in easy to recognize.'
+  },
+  {
+    tradeoffOptionId:
+      'active',
+    marketPsychologyOptionId:
+      'holding',
+    resolvedStyleId:
+      'active_navigator',
+    expectedUserJTBD:
+      'Help me actively follow holdings while matching the depth of attention to the role and importance of each part of the portfolio.'
+  }
+];
+
+
+for (
+  const productCase
+  of interactionProductCases
+) {
+  const assessmentResult = {
+    archetypeId: 'FT',
+
+    stageId:
+      'intentional_optimizer',
+
+    styleId:
+      productCase
+        .resolvedStyleId,
+
+    modifierId:
+      'validation_seeker',
+
+    normalizedAnswers: {
+      setup:
+        'established',
+
+      transition:
+        'confidence',
+
+      decisionStyle:
+        'compare',
+
+      marketPsychology:
+        productCase
+          .marketPsychologyOptionId,
+
+      evolution:
+        'effort',
+
+      tradeoff:
+        productCase
+          .tradeoffOptionId,
+
+      age:
+        '10plus',
+
+      goals: [
+        'choose'
+      ]
+    }
+  };
+
+  const {
+    fitResult,
+    guidance
+  } =
+    buildGuidance(
+      assessmentResult
+    );
+
+  assert.equal(
+    guidance.investorJobs
+      .focus
+      .job,
+    productCase.expectedUserJTBD,
+    productCase.tradeoffOptionId +
+      ' + ' +
+      productCase.marketPsychologyOptionId +
+      ': exact presenter JTBD mismatch'
+  );
+
+  assert.equal(
+    guidance.resolved.styleId,
+    fitResult.jobs.style.profileId,
+    'Dynamic interaction JTBD should preserve Style resolution'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .job,
+    'Help me identify where my existing portfolio can genuinely be improved and whether the potential benefit is worth the additional research, effort, or complexity before changing a system that already works.',
+    'Portfolio Evolution JTBD should remain unchanged'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .decide
+      .job,
+    'Show me why a recommendation fits my portfolio before I act.',
+    'Behavior JTBD should remain unchanged'
   );
 }
 

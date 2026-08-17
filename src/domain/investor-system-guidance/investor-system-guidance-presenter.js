@@ -46,6 +46,10 @@ import {
 } from './portfolio-evolution-guidance.js';
 
 import {
+  getPortfolioInteractionGuidance
+} from './portfolio-interaction-guidance.js';
+
+import {
   getSleeveBoundaries
 } from './sleeve-boundary-guidance.js';
 
@@ -753,7 +757,8 @@ function buildOrganizationJob({
 
 function buildEffortJob({
   style,
-  effortGuidance
+  effortGuidance,
+  portfolioInteractionGuidance
 }) {
   return {
     id:
@@ -766,6 +771,8 @@ function buildEffortJob({
       'Where is my investing effort actually worth spending?',
 
     job:
+      portfolioInteractionGuidance
+        ?.userJTBD ??
       PROFILE_USER_JTBD[
         style?.profileId
       ] ??
@@ -806,7 +813,11 @@ function buildEffortJob({
         style
           ?.systemFit ??
         null
-    }
+    },
+
+    portfolioInteraction:
+      portfolioInteractionGuidance ??
+      null
   };
 }
 
@@ -1768,6 +1779,27 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const portfolioInteractionGuidance =
+    getPortfolioInteractionGuidance({
+      tradeoffOptionId:
+        selectedAnswers.find(
+          (answer) =>
+            answer?.questionId ===
+            'tradeoff'
+        )?.optionId ?? null,
+
+      marketPsychologyOptionId:
+        selectedAnswers.find(
+          (answer) =>
+            answer?.questionId ===
+            'marketPsychology'
+        )?.optionId ?? null,
+
+      resolvedStyleId:
+        style?.profileId ?? null
+    });
+
+
   const boundaries =
     getSleeveBoundaries(
       sleeves
@@ -1788,7 +1820,8 @@ export function presentInvestorSystemGuidance(
     focus:
       buildEffortJob({
         style,
-        effortGuidance
+        effortGuidance,
+        portfolioInteractionGuidance
       }),
 
     decide:
