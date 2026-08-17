@@ -721,6 +721,12 @@ function buildOrganizationJob({
       stage?.systemFit ??
       'Use distinct portfolio roles so every important part of the portfolio has a clear purpose.',
 
+    systemJTBD:
+      portfolioEvolutionGuidance
+        ?.systemJTBD ??
+      stage?.systemFit ??
+      'Use distinct portfolio roles so every important part of the portfolio has a clear purpose.',
+
     resolvedProfile: {
       id:
         stage?.profileId ??
@@ -1200,7 +1206,16 @@ function buildProfileAccountability({
           stage?.job ??
           null,
 
+        systemJTBD:
+          stage
+            ?.systemJTBD ??
+          stage
+            ?.systemResponse ??
+          null,
+
         systemResponse:
+          stage
+            ?.systemJTBD ??
           stage
             ?.systemResponse ??
           null,

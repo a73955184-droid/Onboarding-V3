@@ -750,6 +750,14 @@ function assertCommonContract(
   );
 
   assert.equal(
+    guidance.investorJobs
+      .organize
+      .systemJTBD,
+    'Help the portfolio improve selectively by showing what could be improved, what benefit the change adds, and whether that benefit is worth the additional research, effort, or complexity.',
+    'Established + effort should use the exact Portfolio System JTBD'
+  );
+
+  assert.equal(
     guidance.behavior
       .decisionFraming,
     'Improve with a stopping rule.',
@@ -1018,6 +1026,31 @@ function assertCommonContract(
       .stage
       .systemFit,
     'Stage system response should remain unchanged'
+  );
+
+  assert.equal(
+    organizationJob.systemJTBD,
+    'Help the portfolio evolve without disrupting what already works by showing where a new idea fits, what it overlaps with, what useful role it adds, and what would change if it were included.',
+    'Collected + experiment should expose the exact Portfolio System JTBD'
+  );
+
+  assert.equal(
+    stageAccountability.systemJTBD,
+    organizationJob.systemJTBD,
+    'Portfolio Evolution accountability should expose the dynamic system JTBD'
+  );
+
+  assert.equal(
+    stageAccountability.systemResponse,
+    organizationJob.systemJTBD,
+    'Existing Stage system column should display the dynamic system JTBD'
+  );
+
+  assert.equal(
+    stageAccountability
+      .guidanceIndication,
+    'Portfolio evolution guidance',
+    'Stage guidance indication should remain unchanged'
   );
 
   assert.equal(
@@ -1548,6 +1581,25 @@ function assertCommonContract(
     'Give me an understandable starting structure where I know what each part is for.',
     'Missing evolution evidence should use the existing Stage JTBD fallback'
   );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .portfolioEvolution
+      .systemJTBD,
+    null,
+    'Missing evolution evidence should not guess a system JTBD'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .systemJTBD,
+    guidance.investorJobs
+      .organize
+      .systemResponse,
+    'Missing evolution evidence should retain the existing Stage system-response fallback'
+  );
 }
 
 
@@ -1707,6 +1759,14 @@ function assertCommonContract(
       .job,
     'Help me understand how my current investments fit together, what job each one performs, and whether anything is missing, overlapping, or no longer serving a clear purpose.',
     'ETFs/stocks + understand should use the exact Portfolio Evolution JTBD'
+  );
+
+  assert.equal(
+    guidance.investorJobs
+      .organize
+      .systemJTBD,
+    'Help the portfolio organize its current investments into clear roles so it becomes visible what belongs, what overlaps, and what may still be missing.',
+    'ETFs/stocks + understand should use the exact Portfolio System JTBD'
   );
 
   assert.equal(
