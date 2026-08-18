@@ -618,6 +618,208 @@ export function renderInvestingSystemJobs(
 }
 
 
+function renderRecommendationEvidenceItem(
+  evidence
+) {
+  return `
+    <article
+      class="recommendation-explainability-card recommendation-evidence-card"
+    >
+      <h3>
+        ${escapeHtml(
+          evidence?.answerText
+        )}
+      </h3>
+
+      <div
+        class="recommendation-signal-label"
+      >
+        ${escapeHtml(
+          evidence?.signalLabel
+        )}
+      </div>
+
+      <p>
+        ${escapeHtml(
+          evidence?.tiltExplanation
+        )}
+      </p>
+    </article>
+  `;
+}
+
+
+function renderCapabilityNeed(
+  capability
+) {
+  return `
+    <article
+      class="recommendation-explainability-card"
+    >
+      <h3>
+        ${escapeHtml(
+          capability?.label
+        )}
+      </h3>
+
+      <p>
+        ${escapeHtml(
+          capability?.copy
+        )}
+      </p>
+    </article>
+  `;
+}
+
+
+function renderCapabilityFulfillment(
+  capability
+) {
+  return `
+    <article
+      class="recommendation-explainability-card recommendation-fulfillment-card"
+    >
+      <h3>
+        ${escapeHtml(
+          capability?.label
+        )}
+      </h3>
+
+      <p>
+        ${escapeHtml(
+          capability
+            ?.fulfillment
+            ?.copy
+        )}
+      </p>
+    </article>
+  `;
+}
+
+
+export function renderRecommendationExplainability(
+  explainability
+) {
+  const strongestEvidence =
+    explainability
+      ?.strongestEvidence ?? [];
+
+  const capabilities =
+    explainability
+      ?.capabilities ?? [];
+
+  if (
+    !Array.isArray(strongestEvidence) ||
+    strongestEvidence.length === 0 ||
+    !Array.isArray(capabilities) ||
+    capabilities.length === 0
+  ) {
+    return '';
+  }
+
+  return `
+    <section
+      class="recommendation-explainability"
+      aria-labelledby="recommendationExplainabilityTitle"
+    >
+      <span class="pill">
+        WHY THIS SYSTEM FITS YOUR ANSWERS
+      </span>
+
+      <h2
+        id="recommendationExplainabilityTitle"
+      >
+        Why this system rose to the top
+      </h2>
+
+      <p class="lead">
+        ${escapeHtml(
+          explainability?.summary
+        )}
+      </p>
+
+      <div
+        class="recommendation-evidence-grid"
+      >
+        ${strongestEvidence
+          .map(
+            renderRecommendationEvidenceItem
+          )
+          .join('')}
+      </div>
+
+      <div
+        class="recommendation-explainability-subsection"
+      >
+        <h2>
+          What your answers say your system needs
+        </h2>
+
+        <p>
+          Each selected response identifies a system capability separately from the archetype scoring above.
+        </p>
+
+        <div
+          class="recommendation-capability-grid"
+        >
+          ${capabilities
+            .map(
+              renderCapabilityNeed
+            )
+            .join('')}
+        </div>
+      </div>
+
+      <div
+        class="recommendation-explainability-subsection"
+      >
+        <h2>
+          How your recommended system provides that
+        </h2>
+
+        <p>
+          These explanations use your actual final portfolio system, not whichever archetype an individual response favored most.
+        </p>
+
+        <div
+          class="recommendation-fulfillment-list"
+        >
+          ${capabilities
+            .map(
+              renderCapabilityFulfillment
+            )
+            .join('')}
+        </div>
+      </div>
+
+      ${explainability?.variantExplanation?.copy
+        ? `
+          <div
+            class="recommendation-variant-note"
+          >
+            <strong>
+              Why the ${escapeHtml(
+                explainability
+                  .variantExplanation
+                  .label
+              )} version
+            </strong>
+
+            <p>
+              ${escapeHtml(
+                explainability
+                  .variantExplanation
+                  .copy
+              )}
+            </p>
+          </div>
+        `
+        : ''}
+    </section>
+  `;
+}
+
+
 /*
  * ============================================================
  * Effort model
@@ -2089,6 +2291,11 @@ export function renderPortfolioSystemFit(
               id="investingSystemJobs"
             ></div>
 
+
+            <div
+              id="recommendationExplainability"
+            ></div>
+
           </section>
 
 
@@ -2868,6 +3075,21 @@ export function renderPortfolioSystemFit(
         renderInvestingSystemJobs(
           reveal
             ?.investingSystemJobs
+        );
+  }
+
+
+  const recommendationExplainabilityContainer =
+    root.querySelector(
+      '#recommendationExplainability'
+    );
+
+  if (recommendationExplainabilityContainer) {
+    recommendationExplainabilityContainer
+      .innerHTML =
+        renderRecommendationExplainability(
+          reveal
+            ?.recommendationExplainability
         );
   }
 

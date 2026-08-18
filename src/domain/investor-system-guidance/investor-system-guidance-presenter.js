@@ -1456,7 +1456,8 @@ function buildRecommendationReveal({
   variantId,
   philosophy,
   profileAccountability,
-  investingSystemJobs
+  investingSystemJobs,
+  recommendationExplainability
 }) {
   const recommendation =
     presentation
@@ -1611,7 +1612,9 @@ function buildRecommendationReveal({
 
     profileAccountability,
 
-    investingSystemJobs
+    investingSystemJobs,
+
+    recommendationExplainability
   };
 }
 
@@ -2211,6 +2214,12 @@ export function presentInvestorSystemGuidance(
     );
 
 
+  const recommendationExplainability =
+    presentation
+      ?.explainability ??
+    null;
+
+
   /*
    * Recommendation reveal.
    */
@@ -2222,7 +2231,8 @@ export function presentInvestorSystemGuidance(
       variantId,
       philosophy,
       profileAccountability,
-      investingSystemJobs
+      investingSystemJobs,
+      recommendationExplainability
     });
 
 

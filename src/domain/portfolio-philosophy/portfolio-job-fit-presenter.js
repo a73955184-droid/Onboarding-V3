@@ -924,6 +924,16 @@ export function presentPortfolioJobFit(
 
 
     /*
+     * Preserve the resolver's complete explainability projection.
+     * No scoring or interpretation happens in this presenter.
+     */
+    explainability:
+      fitResult
+        ?.explainability ??
+      null,
+
+
+    /*
      * Section 2
      *
      * Existing canonical Stage / Style / Behavior JTBD.

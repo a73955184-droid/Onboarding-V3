@@ -95,3 +95,87 @@
   padding-top: 14px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+.recommendation-explainability {
+  margin-top: 36px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.recommendation-explainability > h2,
+.recommendation-explainability-subsection > h2 {
+  margin-top: 12px;
+}
+
+.recommendation-evidence-grid,
+.recommendation-capability-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.recommendation-explainability-card {
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.recommendation-explainability-card h3 {
+  margin: 0;
+  color: #fff5dc;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.recommendation-explainability-card p {
+  margin: 10px 0 0;
+  line-height: 1.6;
+}
+
+.recommendation-signal-label {
+  margin-top: 8px;
+  color: #ffd65a;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.recommendation-explainability-subsection {
+  margin-top: 34px;
+}
+
+.recommendation-fulfillment-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.recommendation-fulfillment-card {
+  border-left: 3px solid #ffd600;
+}
+
+.recommendation-variant-note {
+  margin-top: 24px;
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(255, 214, 0, 0.08);
+}
+
+.recommendation-variant-note p {
+  margin: 8px 0 0;
+}
+
+@media (max-width: 720px) {
+  .recommendation-evidence-grid,
+  .recommendation-capability-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendation-explainability {
+    margin-top: 28px;
+    padding-top: 26px;
+  }
+}

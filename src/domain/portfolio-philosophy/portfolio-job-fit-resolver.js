@@ -19,6 +19,10 @@ import {
   SYSTEM_ROLES
 } from '../portfolio-philosophy/philosophy-constants.js';
 
+import {
+  resolveRecommendationExplainability
+} from '../recommendation-explainability-resolver.js';
+
 
 /*
  * ============================================================
@@ -1097,6 +1101,18 @@ export function resolvePortfolioJobFit(
 
 
   /*
+   * Read-only response -> capability -> final-system explanation.
+   * This consumes the result above and never participates in resolving it.
+   */
+
+  const explainability =
+    resolveRecommendationExplainability(
+      assessmentResult,
+      portfolioSystem
+    );
+
+
+  /*
    * Merge existing constituent data with philosophy metadata.
    */
 
@@ -1349,6 +1365,14 @@ export function resolvePortfolioJobFit(
      */
 
     evidence: evidenceResult,
+
+
+    /*
+     * Ranked response evidence and capability fulfillment for the
+     * already-resolved recommendation.
+     */
+
+    explainability,
 
 
     /*
