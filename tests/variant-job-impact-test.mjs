@@ -215,43 +215,129 @@ for (const [
     'Variant-impact presentation must not change sleeves'
   );
 
-  const renderedText =
+  const accountabilityItems =
+    guidance
+      .recommendationReveal
+      .profileAccountability
+      .items;
+
+  const variantSynthesis =
+    archetypeId === 'BFO' &&
+    guidance.resolved.variantId ===
+      'intentional'
+      ? 'More differentiated capital jobs give those needs a clearer structure without turning the portfolio into an actively managed system.'
+      : guidance
+          .complexity
+          .variantRationale;
+
+  const renderedHtml =
     renderVariantJobImpact(
-      guidance
-        .recommendationReveal
-        .variantJobImpact
-    )
+      {
+        variantJobImpact:
+          guidance
+            .recommendationReveal
+            .variantJobImpact,
+        variantDisplayName:
+          guidance
+            .recommendationReveal
+            .variantDisplayName,
+        archetypeDisplayName:
+          guidance
+            .recommendationReveal
+            .archetypeDisplayName,
+        accountabilityItems,
+        variantSynthesis
+      }
+    );
+
+  const renderedText =
+    renderedHtml
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
 
-  assert.match(
+  assert.ok(
+    renderedText.includes(
+      `How ${guidance.recommendationReveal.variantDisplayName} changes your ${guidance.recommendationReveal.archetypeDisplayName}`
+    ),
+    `${archetypeId} should render the personalized heading`
+  );
+
+  assert.equal(
+    (
+      renderedHtml.match(
+        /class="summary-item"/g
+      ) ?? []
+    ).length,
+    1,
+    'Variant explanation should use one shared container'
+  );
+
+  assert.equal(
+    (
+      renderedHtml.match(
+        /<strong>/g
+      ) ?? []
+    ).length,
+    4,
+    'Heading plus exactly three personalized sentences should be bold'
+  );
+
+  const sentencePositions =
+    accountabilityItems.map(
+      (item) =>
+        renderedText.indexOf(
+          item.userJTBD
+        )
+    );
+
+  assert.ok(
+    sentencePositions.every(
+      (position) =>
+        position >= 0
+    ) &&
+      sentencePositions.every(
+        (position, index) =>
+          index === 0 ||
+          position >
+            sentencePositions[
+              index - 1
+            ]
+      ),
+    'Stage, Style, and Behavior sentences should render once in order'
+  );
+
+  assert.ok(
+    renderedText.includes(
+      variantSynthesis
+    ),
+    `${archetypeId} should render one variant synthesis`
+  );
+
+  if (archetypeId === 'BFO') {
+    assert.equal(
+      guidance.resolved.variantId,
+      'intentional',
+      'BFO fixture should exercise the required Intentional synthesis'
+    );
+    assert.ok(
+      renderedText.includes(
+        'More differentiated capital jobs give those needs a clearer structure without turning the portfolio into an actively managed system.'
+      ),
+      'BFO + Intentional should retain its approved synthesis'
+    );
+  }
+
+  assert.doesNotMatch(
     renderedText,
-    /How this version changes the system/
+    /Portfolio evolution|Portfolio interaction|Portfolio decision making|Main reason for the higher variant/,
+    'Separate dimension labels should not remain visible'
   );
-  assert.ok(
-    renderedText.includes(
-      `Portfolio evolution ${expectedImpact.evolution.level}`
-    ),
-    `${archetypeId} should render its evolution level`
-  );
-  assert.ok(
-    renderedText.includes(
-      `Portfolio interaction ${expectedImpact.interaction.level}`
-    ),
-    `${archetypeId} should render its interaction level`
-  );
-  assert.ok(
-    renderedText.includes(
-      `Portfolio decision making ${expectedImpact.decisionMaking.level}`
-    ),
-    `${archetypeId} should render its decision-making level`
-  );
-  assert.ok(
-    renderedText.includes(
-      `Main reason for the higher variant ${expectedImpact.mainReason}`
-    ),
-    `${archetypeId} should render its exact main reason`
+
+  assert.doesNotMatch(
+    renderedText,
+    /(?:^|\s)(?:Low|Medium|High|Medium–High|Very High)(?:\s|$)/,
+    'Raw matrix levels should not remain visible'
   );
 
   assert.doesNotMatch(
@@ -263,14 +349,16 @@ for (const [
 
 
 assert.equal(
-  renderVariantJobImpact(null),
+  renderVariantJobImpact(),
   '',
   'Missing impact data should not render a block'
 );
 
 assert.equal(
   renderVariantJobImpact({
-    archetypeId: 'FT'
+    variantJobImpact: {
+      archetypeId: 'FT'
+    }
   }),
   '',
   'Incomplete impact data should not render undefined values'

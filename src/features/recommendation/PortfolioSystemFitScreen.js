@@ -1189,37 +1189,48 @@ function renderPortfolioDonutVisualization(
 
 
 export function renderVariantJobImpact(
-  variantJobImpact
+  {
+    variantJobImpact,
+    variantDisplayName,
+    archetypeDisplayName,
+    accountabilityItems,
+    variantSynthesis
+  } = {}
 ) {
   const archetypeId =
     variantJobImpact
       ?.archetypeId;
 
-  const evolutionLevel =
-    variantJobImpact
-      ?.evolution
-      ?.level;
+  const sentenceById =
+    Object.fromEntries(
+      (
+        Array.isArray(
+          accountabilityItems
+        )
+          ? accountabilityItems
+          : []
+      ).map(
+        (item) => [
+          item?.id,
+          item?.userJTBD
+        ]
+      )
+    );
 
-  const interactionLevel =
-    variantJobImpact
-      ?.interaction
-      ?.level;
-
-  const decisionMakingLevel =
-    variantJobImpact
-      ?.decisionMaking
-      ?.level;
-
-  const mainReason =
-    variantJobImpact
-      ?.mainReason;
+  const sentences = [
+    sentenceById.stage,
+    sentenceById.style,
+    sentenceById.behavior
+  ];
 
   if (
     !archetypeId ||
-    !evolutionLevel ||
-    !interactionLevel ||
-    !decisionMakingLevel ||
-    !mainReason
+    !variantDisplayName ||
+    !archetypeDisplayName ||
+    sentences.some(
+      (sentence) =>
+        !sentence
+    )
   ) {
     return '';
   }
@@ -1231,63 +1242,38 @@ export function renderVariantJobImpact(
     >
 
       <strong>
-        How this version changes the system
+        How ${escapeHtml(
+          variantDisplayName
+        )} changes your ${escapeHtml(
+          archetypeDisplayName
+        )}
       </strong>
 
-      <p style="margin-top: 10px">
-        The variant changes how much structure, involvement, and decision capacity this portfolio philosophy is designed to accommodate.
-      </p>
+      ${sentences
+        .map(
+          (sentence) => `
+            <div style="margin-top: 12px">
+              <strong>
+                ${escapeHtml(
+                  sentence
+                )}
+              </strong>
+            </div>
+          `
+        )
+        .join('')}
 
-      <div
-        class="summary-list"
-        style="margin-top: 16px"
-      >
-
-        <div class="summary-item">
-          <strong>
-            Portfolio evolution
-          </strong>
-          <div>
-            ${escapeHtml(
-              evolutionLevel
-            )}
-          </div>
-        </div>
-
-        <div class="summary-item">
-          <strong>
-            Portfolio interaction
-          </strong>
-          <div>
-            ${escapeHtml(
-              interactionLevel
-            )}
-          </div>
-        </div>
-
-        <div class="summary-item">
-          <strong>
-            Portfolio decision making
-          </strong>
-          <div>
-            ${escapeHtml(
-              decisionMakingLevel
-            )}
-          </div>
-        </div>
-
-        <div class="summary-item">
-          <strong>
-            Main reason for the higher variant
-          </strong>
-          <div>
-            ${escapeHtml(
-              mainReason
-            )}
-          </div>
-        </div>
-
-      </div>
+      ${
+        variantSynthesis
+          ? `
+            <p style="margin-top: 14px">
+              ${escapeHtml(
+                variantSynthesis
+              )}
+            </p>
+          `
+          : ''
+      }
 
     </div>
   `;
@@ -2722,8 +2708,36 @@ export function renderPortfolioSystemFit(
     )
     .innerHTML =
       renderVariantJobImpact(
-        reveal
-          ?.variantJobImpact
+        {
+          variantJobImpact:
+            reveal
+              ?.variantJobImpact,
+          variantDisplayName:
+            reveal
+              ?.variantDisplayName,
+          archetypeDisplayName:
+            reveal
+              ?.archetypeDisplayName,
+          accountabilityItems:
+            reveal
+              ?.profileAccountability
+              ?.items,
+          variantSynthesis:
+            reveal
+              ?.archetypeId ===
+                'BFO' &&
+            reveal
+              ?.variantId ===
+                'intentional'
+              ? 'More differentiated capital jobs give those needs a clearer structure without turning the portfolio into an actively managed system.'
+              : guidance
+                  ?.complexity
+                  ?.variantRationale ??
+                guidance
+                  ?.complexity
+                  ?.whyThisVersion ??
+                null
+        }
       );
 
 
