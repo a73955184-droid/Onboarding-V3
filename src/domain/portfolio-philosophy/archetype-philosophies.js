@@ -25,6 +25,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'low-unnecessary-intervention'
     ],
 
+    variantJobImpact: {
+      evolution: {
+        level: 'Low'
+      },
+
+      interaction: {
+        level: 'High'
+      },
+
+      decisionMaking: {
+        level: 'Medium'
+      },
+
+      mainReason:
+        'Accommodate involvement without losing simplicity'
+    },
+
     sourceIds: [
       'FIDELITY_SIMPLE_DIVERSIFIED',
       'FIDELITY_DIVERSIFICATION'
@@ -55,6 +72,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'regional-diversification',
       'multiple-return-sources'
     ],
+
+    variantJobImpact: {
+      evolution: {
+        level: 'Medium'
+      },
+
+      interaction: {
+        level: 'High'
+      },
+
+      decisionMaking: {
+        level: 'Medium–High'
+      },
+
+      mainReason:
+        'More deliberate diversification'
+    },
 
     sourceIds: [
       'FIDELITY_DIVERSIFICATION'
@@ -87,6 +121,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'explicit-improvement-purpose'
     ],
 
+    variantJobImpact: {
+      evolution: {
+        level: 'Medium'
+      },
+
+      interaction: {
+        level: 'High'
+      },
+
+      decisionMaking: {
+        level: 'High'
+      },
+
+      mainReason:
+        'Research/evaluate systematic improvements'
+    },
+
     sourceIds: [
       'BLACKROCK_CORE_SATELLITE',
       'MSCI_FACTOR_INVESTING'
@@ -117,6 +168,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'capital-by-purpose',
       'role-separation'
     ],
+
+    variantJobImpact: {
+      evolution: {
+        level: 'High'
+      },
+
+      interaction: {
+        level: 'High'
+      },
+
+      decisionMaking: {
+        level: 'Medium'
+      },
+
+      mainReason:
+        'More differentiated capital jobs'
+    },
 
     sourceIds: [
       'JPM_GOALS_BASED'
@@ -149,6 +217,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'bounded-non-core-exposure'
     ],
 
+    variantJobImpact: {
+      evolution: {
+        level: 'Medium'
+      },
+
+      interaction: {
+        level: 'High'
+      },
+
+      decisionMaking: {
+        level: 'High'
+      },
+
+      mainReason:
+        'Research differentiated return sources'
+    },
+
     sourceIds: [
       'BLACKROCK_CORE_SATELLITE',
       'FIDELITY_ALTERNATIVES'
@@ -179,6 +264,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'tactical-allocation',
       'bounded-opportunity-capital'
     ],
+
+    variantJobImpact: {
+      evolution: {
+        level: 'Medium'
+      },
+
+      interaction: {
+        level: 'High'
+      },
+
+      decisionMaking: {
+        level: 'Very High'
+      },
+
+      mainReason:
+        'Accommodate bounded active judgment'
+    },
 
     sourceIds: [
       'BLACKROCK_CORE_SATELLITE',
@@ -212,6 +314,23 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
       'inflation-protection',
       'measured-growth'
     ],
+
+    variantJobImpact: {
+      evolution: {
+        level: 'High'
+      },
+
+      interaction: {
+        level: 'Medium'
+      },
+
+      decisionMaking: {
+        level: 'High'
+      },
+
+      mainReason:
+        'Coordinate real-world capital needs'
+    },
 
     sourceIds: [
       'CFA_PORTFOLIO_PLANNING',

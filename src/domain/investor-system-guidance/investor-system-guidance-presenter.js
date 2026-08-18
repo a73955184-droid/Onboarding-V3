@@ -67,6 +67,11 @@ import {
   getQuestionLabel
 } from '../investor-jobs.js';
 
+import {
+  PROFILE_EVIDENCE_QUESTION_IDS,
+  getGroupedEvidenceForDimension
+} from './profile-evidence-presentation.js';
+
 
 /*
  * ============================================================
@@ -183,24 +188,6 @@ const PROFILE_USER_JTBD = Object.freeze({
  *
  * We use the actual selected answer text.
  */
-
-const PROFILE_EVIDENCE_QUESTION_IDS = Object.freeze({
-  stage: Object.freeze([
-    'setup',
-    'evolution'
-  ]),
-
-  style: Object.freeze([
-    'tradeoff',
-    'marketPsychology'
-  ]),
-
-  behavior: Object.freeze([
-    'transition',
-    'decisionStyle'
-  ])
-});
-
 
 /*
  * ============================================================
@@ -1001,6 +988,17 @@ function buildPhilosophyExplanation({
       null
     );
 
+  const variantJobImpact =
+    firstDefined(
+      philosophy
+        ?.variantJobImpact,
+
+      archetype
+        ?.variantJobImpact,
+
+      null
+    );
+
   return {
     archetypeId,
 
@@ -1028,6 +1026,10 @@ function buildPhilosophyExplanation({
               null
           }
         : null,
+
+    variantJobImpact:
+      variantJobImpact ??
+      null,
 
     whyItMatters:
       'The portfolio philosophy defines how the different portfolio jobs are expected to work together. It is the organizing logic behind the sleeves, not simply a label for an allocation.',
@@ -1187,6 +1189,25 @@ function buildProfileAccountability({
     );
 
 
+  const stageEvidenceGrouped =
+    getGroupedEvidenceForDimension(
+      selectedAnswers,
+      'stage'
+    );
+
+  const styleEvidenceGrouped =
+    getGroupedEvidenceForDimension(
+      selectedAnswers,
+      'style'
+    );
+
+  const behaviorEvidenceGrouped =
+    getGroupedEvidenceForDimension(
+      selectedAnswers,
+      'behavior'
+    );
+
+
   const behaviorSystemResponse =
     behaviorGuidance
       ?.systemPromise ??
@@ -1223,6 +1244,9 @@ function buildProfileAccountability({
 
         whatYouToldUs:
           stageEvidence,
+
+        whatYouToldUsGrouped:
+          stageEvidenceGrouped,
 
         userJTBD:
           stage?.job ??
@@ -1274,6 +1298,9 @@ function buildProfileAccountability({
         whatYouToldUs:
           styleEvidence,
 
+        whatYouToldUsGrouped:
+          styleEvidenceGrouped,
+
         userJTBD:
           style?.job ??
           null,
@@ -1311,6 +1338,9 @@ function buildProfileAccountability({
 
         whatYouToldUs:
           behaviorEvidence,
+
+        whatYouToldUsGrouped:
+          behaviorEvidenceGrouped,
 
         userJTBD:
           behavior?.job ??
@@ -1445,8 +1475,18 @@ function buildRecommendationReveal({
                   ?.meaning ??
                 null
             }
-          : null
+          : null,
+
+      variantJobImpact:
+        philosophy
+          ?.variantJobImpact ??
+        null
     },
+
+    variantJobImpact:
+      philosophy
+        ?.variantJobImpact ??
+      null,
 
     /*
      * Also expose at the recommendation level so the hero

@@ -607,15 +607,23 @@ function presentPhilosophy(
       ?.philosophy
       ?.variant;
 
+  const archetypeId =
+    fitResult
+      ?.recommendation
+      ?.archetypeId ??
+    archetype
+      ?.archetypeId ??
+    null;
+
+  const variantJobImpact =
+    archetype
+      ?.variantJobImpact ??
+    null;
+
   return {
     archetype: {
       id:
-        fitResult
-          ?.recommendation
-          ?.archetypeId ??
-        archetype
-          ?.archetypeId ??
-        null,
+        archetypeId,
 
       title:
         archetype
@@ -649,6 +657,39 @@ function presentPhilosophy(
         archetype
           ?.governingPrinciples ??
         [],
+
+      variantJobImpact:
+        archetypeId &&
+        variantJobImpact
+          ? {
+              archetypeId,
+              evolution: {
+                level:
+                  variantJobImpact
+                    ?.evolution
+                    ?.level ??
+                  null
+              },
+              interaction: {
+                level:
+                  variantJobImpact
+                    ?.interaction
+                    ?.level ??
+                  null
+              },
+              decisionMaking: {
+                level:
+                  variantJobImpact
+                    ?.decisionMaking
+                    ?.level ??
+                  null
+              },
+              mainReason:
+                variantJobImpact
+                  ?.mainReason ??
+                null
+            }
+          : null,
 
       sources:
         (

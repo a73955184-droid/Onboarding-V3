@@ -20,6 +20,10 @@ import {
   presentInvestorSystemGuidance
 } from '../../domain/investor-system-guidance/investor-system-guidance-presenter.js';
 
+import {
+  groupSelectedAnswerEvidence
+} from '../../domain/investor-system-guidance/profile-evidence-presentation.js';
+
 
 /*
  * ============================================================
@@ -149,9 +153,21 @@ function renderEvidenceAnswers(
     `;
   }
 
-  return evidence
+  const groupedEvidence =
+    evidence.every(
+      (item) =>
+        Array.isArray(
+          item?.responses
+        )
+    )
+      ? evidence
+      : groupSelectedAnswerEvidence(
+          evidence
+        );
+
+  return groupedEvidence
     .map(
-      (answer) => `
+      (group) => `
         <div
           style="
             margin-bottom: 8px;
@@ -159,11 +175,11 @@ function renderEvidenceAnswers(
           "
         >
           ${
-            answer.questionLabel
+            group.questionLabel
               ? `
                 <strong>
                   ${escapeHtml(
-                    answer.questionLabel
+                    group.questionLabel
                   )}:
                 </strong>
                 <br>
@@ -171,9 +187,17 @@ function renderEvidenceAnswers(
               : ''
           }
 
-          ${escapeHtml(
-            answer.answerText
-          )}
+          ${group.responses
+            .map(
+              (response) => `
+                <div>
+                  ${escapeHtml(
+                    response.answerText
+                  )}
+                </div>
+              `
+            )
+            .join('')}
         </div>
       `
     )
@@ -342,6 +366,8 @@ function renderProfileAccountability(
                     >
 
                       ${renderEvidenceAnswers(
+                        item
+                          .whatYouToldUsGrouped ??
                         item.whatYouToldUs
                       )}
 
@@ -1162,6 +1188,112 @@ function renderPortfolioDonutVisualization(
 }
 
 
+export function renderVariantJobImpact(
+  variantJobImpact
+) {
+  const archetypeId =
+    variantJobImpact
+      ?.archetypeId;
+
+  const evolutionLevel =
+    variantJobImpact
+      ?.evolution
+      ?.level;
+
+  const interactionLevel =
+    variantJobImpact
+      ?.interaction
+      ?.level;
+
+  const decisionMakingLevel =
+    variantJobImpact
+      ?.decisionMaking
+      ?.level;
+
+  const mainReason =
+    variantJobImpact
+      ?.mainReason;
+
+  if (
+    !archetypeId ||
+    !evolutionLevel ||
+    !interactionLevel ||
+    !decisionMakingLevel ||
+    !mainReason
+  ) {
+    return '';
+  }
+
+  return `
+    <div
+      class="summary-item"
+      style="margin-top: 22px"
+    >
+
+      <strong>
+        How this version changes the system
+      </strong>
+
+      <p style="margin-top: 10px">
+        The variant changes how much structure, involvement, and decision capacity this portfolio philosophy is designed to accommodate.
+      </p>
+
+      <div
+        class="summary-list"
+        style="margin-top: 16px"
+      >
+
+        <div class="summary-item">
+          <strong>
+            Portfolio evolution
+          </strong>
+          <div>
+            ${escapeHtml(
+              evolutionLevel
+            )}
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <strong>
+            Portfolio interaction
+          </strong>
+          <div>
+            ${escapeHtml(
+              interactionLevel
+            )}
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <strong>
+            Portfolio decision making
+          </strong>
+          <div>
+            ${escapeHtml(
+              decisionMakingLevel
+            )}
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <strong>
+            Main reason for the higher variant
+          </strong>
+          <div>
+            ${escapeHtml(
+              mainReason
+            )}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
 /**
  * Render one cohesive detail panel for the selected sleeve.
  */
@@ -1806,6 +1938,11 @@ export function renderPortfolioSystemFit(
               ></div>
 
             </div>
+
+
+            <div
+              id="heroVariantJobImpact"
+            ></div>
 
 
             <!--
@@ -2577,6 +2714,17 @@ export function renderPortfolioSystemFit(
       investorProblem
         ?.meaning ??
       '';
+
+
+  root
+    .querySelector(
+      '#heroVariantJobImpact'
+    )
+    .innerHTML =
+      renderVariantJobImpact(
+        reveal
+          ?.variantJobImpact
+      );
 
 
   /*

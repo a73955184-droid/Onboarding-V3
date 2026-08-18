@@ -12,6 +12,10 @@ import {
   QUESTIONS
 } from '../../content/questions.js';
 
+import {
+  getGroupedEvidenceFromAnswers
+} from '../../domain/investor-system-guidance/profile-evidence-presentation.js';
+
 
 const STAGE_VIEW = {
   foundation_builder: {
@@ -122,168 +126,26 @@ const MODIFIER_VIEW = {
 };
 
 
-const EVIDENCE_MAP = {
-  stage: [
-    'setup',
-    'evolution'
-  ],
-
-  style: [
-    'tradeoff',
-    'marketPsychology'
-  ],
-
-  modifier: [
-    'transition',
-    'decisionStyle'
-  ]
-};
-
-
-const QUESTION_LABELS = {
-  setup:
-    'How you invest today',
-
-  transition:
-    'What sends you searching',
-
-  decisionStyle:
-    'How you make a choice',
-
-  marketPsychology:
-    'What gets your attention',
-
-  evolution:
-    'What feels incomplete',
-
-  tradeoff:
-    'How involved you want to be'
-};
-
-
-const QUESTION_BY_KEY =
-  Object.fromEntries(
-    QUESTIONS.map(
-      (question) => [
-        question.screenKey,
-        question
-      ]
-    )
-  );
-
-
-function getAnswerIds(
-  state,
-  key
-) {
-  const answer =
-    state.answers?.[key];
-
-  if (Array.isArray(answer)) {
-    return answer.filter(
-      (value) =>
-        typeof value === 'string'
-    );
-  }
-
-  if (
-    typeof answer === 'string'
-  ) {
-    return [answer];
-  }
-
-  if (
-    answer &&
-    typeof answer === 'object'
-  ) {
-    if (
-      Array.isArray(
-        answer.selectedOptionIds
-      )
-    ) {
-      return answer
-        .selectedOptionIds
-        .filter(
-          (value) =>
-            typeof value ===
-            'string'
-        );
-    }
-
-    if (
-      typeof answer.optionId ===
-      'string'
-    ) {
-      return [
-        answer.optionId
-      ];
-    }
-  }
-
-  return [];
-}
-
-
-function getAnswerLabels(
-  state,
-  key
-) {
-  const selectedIds =
-    getAnswerIds(
-      state,
-      key
-    );
-
-  const question =
-    QUESTION_BY_KEY[key];
-
-  if (!question) {
-    return [];
-  }
-
-  const labelById =
-    Object.fromEntries(
-      question.options.map(
-        (option) => [
-          option.id,
-          option.label
-        ]
-      )
-    );
-
-  return selectedIds
-    .map(
-      (optionId) =>
-        labelById[optionId]
-    )
-    .filter(Boolean);
-}
-
-
 function evidence(
   state,
-  keys
+  dimension
 ) {
-  return keys
-    .map((key) => ({
-      key,
-      labels:
-        getAnswerLabels(
-          state,
-          key
-        )
-    }))
-    .filter(
-      ({ labels }) =>
-        labels.length > 0
-    )
+  return getGroupedEvidenceFromAnswers(
+    state.answers,
+    dimension
+  )
     .map(
-      ({ key, labels }) => `
+      (group) => `
         <strong>
-          ${QUESTION_LABELS[key]}:
+          ${group.questionLabel}:
         </strong>
 
-        ${labels.join(' · ')}
+        ${group.responses
+          .map(
+            (response) =>
+              response.answerText
+          )
+          .join(' · ')}
       `
     )
     .join('<br>');
@@ -608,7 +470,7 @@ export function renderInvestorProfile(
     .innerHTML =
       evidence(
         state,
-        EVIDENCE_MAP.stage
+        'stage'
       );
 
   root
@@ -618,7 +480,7 @@ export function renderInvestorProfile(
     .innerHTML =
       evidence(
         state,
-        EVIDENCE_MAP.style
+        'style'
       );
 
   root
@@ -628,7 +490,7 @@ export function renderInvestorProfile(
     .innerHTML =
       evidence(
         state,
-        EVIDENCE_MAP.modifier
+        'behavior'
       );
 
   root
