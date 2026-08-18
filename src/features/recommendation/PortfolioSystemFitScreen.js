@@ -2172,14 +2172,6 @@ export function renderPortfolioSystemFit(
             style="margin-top: 12px"
           >
 
-            <span>
-              HOW THIS PHILOSOPHY ORGANIZES YOUR SYSTEM
-            </span>
-
-            <span>
-              What this philosophy requires from the portfolio
-            </span>
-
             <p
               id="philosophyWhy"
               style="margin: 0"
