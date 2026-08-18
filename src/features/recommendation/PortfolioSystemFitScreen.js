@@ -423,6 +423,258 @@ function renderProfileAccountability(
 }
 
 
+function renderTraceabilityGroups(
+  groups,
+  renderResponse
+) {
+  if (
+    !Array.isArray(groups) ||
+    typeof renderResponse !==
+      'function'
+  ) {
+    return '';
+  }
+
+  return groups
+    .map(
+      (group) => `
+        <div
+          class="traceability-question-group"
+        >
+          ${
+            group?.questionLabel
+              ? `
+                <strong
+                  class="traceability-question-label"
+                >
+                  ${escapeHtml(
+                    group.questionLabel
+                  )}
+                </strong>
+              `
+              : ''
+          }
+
+          ${(
+            Array.isArray(
+              group?.responses
+            )
+              ? group.responses
+              : []
+          )
+            .map(renderResponse)
+            .join('')}
+        </div>
+      `
+    )
+    .join('');
+}
+
+
+function renderNeedAndConsequence(
+  groups
+) {
+  return renderTraceabilityGroups(
+    groups,
+    (response) => `
+      <div
+        class="traceability-response-block"
+      >
+        <div>
+          <strong>
+            Investor need
+          </strong>
+
+          <div>
+            ${escapeHtml(
+              response?.investorNeed
+            )}
+          </div>
+        </div>
+
+        <div
+          class="traceability-consequence"
+        >
+          <strong>
+            ${escapeHtml(
+              response
+                ?.portfolioConsequence
+                ?.label
+            )}
+          </strong>
+
+          <div>
+            ${escapeHtml(
+              response
+                ?.portfolioConsequence
+                ?.copy
+            )}
+          </div>
+        </div>
+      </div>
+    `
+  );
+}
+
+
+function renderSystemCapabilities(
+  groups
+) {
+  return renderTraceabilityGroups(
+    groups,
+    (response) => `
+      <div
+        class="traceability-response-block"
+      >
+        <strong>
+          ${escapeHtml(
+            response
+              ?.systemCapability
+              ?.label
+          )}
+        </strong>
+
+        <div>
+          ${escapeHtml(
+            response
+              ?.systemCapability
+              ?.copy
+          )}
+        </div>
+      </div>
+    `
+  );
+}
+
+
+function renderInvestingSystemJobRow(
+  item
+) {
+  return `
+    <tr>
+      <td>
+        <strong>
+          ${escapeHtml(
+            item?.guidanceIndication
+          )}
+        </strong>
+      </td>
+
+      <td>
+        ${renderEvidenceAnswers(
+          item?.whatYouToldUsGrouped
+        )}
+      </td>
+
+      <td>
+        ${renderNeedAndConsequence(
+          item?.traceabilityGrouped
+        )}
+      </td>
+
+      <td>
+        ${renderSystemCapabilities(
+          item?.traceabilityGrouped
+        )}
+      </td>
+    </tr>
+  `;
+}
+
+
+export function renderInvestingSystemJobs(
+  investingSystemJobs
+) {
+  const items =
+    investingSystemJobs
+      ?.items ?? [];
+
+  if (
+    !Array.isArray(items) ||
+    items.length === 0
+  ) {
+    return '';
+  }
+
+  const defaultColumns = [
+    'Guidance indication',
+    'Your quiz response',
+    'Investor need and portfolio consequence',
+    'System capability'
+  ];
+
+  const columns =
+    Array.isArray(
+      investingSystemJobs
+        ?.columns
+    ) &&
+    investingSystemJobs
+      .columns
+      .length === 4
+      ? investingSystemJobs
+          .columns
+      : defaultColumns;
+
+  return `
+    <section
+      class="investing-system-jobs"
+    >
+      <h2>
+        ${escapeHtml(
+          investingSystemJobs
+            ?.title ??
+          'Investing System Jobs to be done'
+        )}
+      </h2>
+
+      <div
+        class="investing-system-jobs-table-wrap"
+      >
+        <table
+          class="investing-system-jobs-table"
+        >
+          <thead>
+            <tr>
+              <th
+                class="investing-system-jobs-guidance-column"
+              >
+                ${escapeHtml(columns[0])}
+              </th>
+
+              <th
+                class="investing-system-jobs-response-column"
+              >
+                ${escapeHtml(columns[1])}
+              </th>
+
+              <th
+                class="investing-system-jobs-need-column"
+              >
+                ${escapeHtml(columns[2])}
+              </th>
+
+              <th
+                class="investing-system-jobs-capability-column"
+              >
+                ${escapeHtml(columns[3])}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${items
+              .map(
+                renderInvestingSystemJobRow
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `;
+}
+
+
 /*
  * ============================================================
  * Effort model
@@ -1889,6 +2141,11 @@ export function renderPortfolioSystemFit(
               id="profileAccountability"
             ></div>
 
+
+            <div
+              id="investingSystemJobs"
+            ></div>
+
           </section>
 
 
@@ -2655,6 +2912,21 @@ export function renderPortfolioSystemFit(
         reveal
           .profileAccountability
       );
+
+
+  const investingSystemJobsContainer =
+    root.querySelector(
+      '#investingSystemJobs'
+    );
+
+  if (investingSystemJobsContainer) {
+    investingSystemJobsContainer
+      .innerHTML =
+        renderInvestingSystemJobs(
+          reveal
+            ?.investingSystemJobs
+        );
+  }
 
 
   /*

@@ -69,6 +69,7 @@ import {
 
 import {
   PROFILE_EVIDENCE_QUESTION_IDS,
+  buildGroupedTraceability,
   getGroupedEvidenceForDimension
 } from './profile-evidence-presentation.js';
 
@@ -1384,6 +1385,67 @@ function buildProfileAccountability({
 }
 
 
+function buildInvestingSystemJobs(
+  profileAccountability
+) {
+  const items =
+    profileAccountability
+      ?.items ?? [];
+
+  if (!Array.isArray(items)) {
+    return {
+      title:
+        'Investing System Jobs to be done',
+
+      columns: [
+        'Guidance indication',
+        'Your quiz response',
+        'Investor need and portfolio consequence',
+        'System capability'
+      ],
+
+      items: []
+    };
+  }
+
+  return {
+    title:
+      'Investing System Jobs to be done',
+
+    columns: [
+      'Guidance indication',
+      'Your quiz response',
+      'Investor need and portfolio consequence',
+      'System capability'
+    ],
+
+    items:
+      items.map((item) => {
+        const groupedEvidence =
+          item
+            .whatYouToldUsGrouped ??
+          [];
+
+        return {
+          id:
+            item.id,
+
+          guidanceIndication:
+            item.guidanceIndication,
+
+          whatYouToldUsGrouped:
+            groupedEvidence,
+
+          traceabilityGrouped:
+            buildGroupedTraceability(
+              groupedEvidence
+            )
+        };
+      })
+  };
+}
+
+
 /*
  * ============================================================
  * Recommendation reveal
@@ -1395,7 +1457,8 @@ function buildRecommendationReveal({
   archetypeId,
   variantId,
   philosophy,
-  profileAccountability
+  profileAccountability,
+  investingSystemJobs
 }) {
   const recommendation =
     presentation
@@ -1548,7 +1611,9 @@ function buildRecommendationReveal({
           }
         : null,
 
-    profileAccountability
+    profileAccountability,
+
+    investingSystemJobs
   };
 }
 
@@ -2142,6 +2207,12 @@ export function presentInvestorSystemGuidance(
     });
 
 
+  const investingSystemJobs =
+    buildInvestingSystemJobs(
+      profileAccountability
+    );
+
+
   /*
    * Recommendation reveal.
    */
@@ -2152,7 +2223,8 @@ export function presentInvestorSystemGuidance(
       archetypeId,
       variantId,
       philosophy,
-      profileAccountability
+      profileAccountability,
+      investingSystemJobs
     });
 
 

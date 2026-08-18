@@ -18,8 +18,17 @@ import {
 } from '../src/domain/investor-system-guidance/investor-system-guidance-presenter.js';
 
 import {
+  buildGroupedTraceability,
   getGroupedEvidenceFromAnswers
 } from '../src/domain/investor-system-guidance/profile-evidence-presentation.js';
+
+import {
+  getInvestorNeedTraceability
+} from '../src/content/investor-need-traceability-copy.js';
+
+import {
+  renderInvestingSystemJobs
+} from '../src/features/recommendation/PortfolioSystemFitScreen.js';
 
 
 const normalizedAnswers = {
@@ -73,6 +82,173 @@ const guidance =
   presentInvestorSystemGuidance(
     fitPresentation
   );
+
+
+const traceabilityInput = [
+  {
+    questionId: 'setup',
+    questionLabel:
+      'Setup question <unsafe>',
+    responses: [
+      {
+        optionId: 'etfs_stocks',
+        answerText:
+          'ETFs & stocks <selected>'
+      },
+      {
+        optionId: 'collected',
+        answerText:
+          'Collected investments'
+      }
+    ]
+  },
+  {
+    questionId: 'transition',
+    questionLabel:
+      'Transition question',
+    responses: [
+      {
+        optionId: 'unknown-option',
+        answerText:
+          'Must not be substituted'
+      },
+      {
+        optionId: 'change',
+        answerText:
+          'Change response'
+      }
+    ]
+  },
+  {
+    questionId: 'evolution',
+    questionLabel:
+      'Empty question',
+    responses: []
+  }
+];
+
+const traceabilityInputBefore =
+  JSON.stringify(
+    traceabilityInput
+  );
+
+const groupedTraceability =
+  buildGroupedTraceability(
+    traceabilityInput
+  );
+
+for (const invalidInput of [
+  undefined,
+  null,
+  {},
+  'setup'
+]) {
+  assert.deepEqual(
+    buildGroupedTraceability(
+      invalidInput
+    ),
+    [],
+    'Invalid grouped traceability input should return an empty array'
+  );
+}
+
+assert.deepEqual(
+  buildGroupedTraceability([]),
+  [],
+  'Empty grouped traceability input should return an empty array'
+);
+
+assert.equal(
+  JSON.stringify(traceabilityInput),
+  traceabilityInputBefore,
+  'Grouped traceability should not mutate its input'
+);
+
+assert.deepEqual(
+  groupedTraceability.map(
+    (group) =>
+      group.questionId
+  ),
+  [
+    'setup',
+    'transition'
+  ],
+  'Grouped traceability should preserve question order and omit empty groups'
+);
+
+assert.equal(
+  groupedTraceability[0]
+    .questionLabel,
+  'Setup question <unsafe>',
+  'Grouped traceability should preserve the exact question label'
+);
+
+assert.deepEqual(
+  groupedTraceability[0]
+    .responses
+    .map((response) => ({
+      optionId:
+        response.optionId,
+      answerText:
+        response.answerText
+    })),
+  [
+    {
+      optionId: 'etfs_stocks',
+      answerText:
+        'ETFs & stocks <selected>'
+    },
+    {
+      optionId: 'collected',
+      answerText:
+        'Collected investments'
+    }
+  ],
+  'Grouped traceability should preserve independent multi-select responses and their order'
+);
+
+for (const group of groupedTraceability) {
+  for (const response of group.responses) {
+    const expected =
+      getInvestorNeedTraceability(
+        group.questionId,
+        response.optionId
+      );
+
+    assert.equal(
+      response.investorNeed,
+      expected.investorNeed,
+      'Grouped traceability should return the exact investor need'
+    );
+    assert.strictEqual(
+      response.portfolioConsequence,
+      expected.portfolioConsequence,
+      'Grouped traceability should return the exact consequence record'
+    );
+    assert.strictEqual(
+      response.systemCapability,
+      expected.systemCapability,
+      'Grouped traceability should return the exact capability record'
+    );
+  }
+}
+
+assert.deepEqual(
+  buildGroupedTraceability([
+    {
+      questionId: 'setup',
+      questionLabel: 'Setup',
+      responses: [
+        {
+          optionId: 'unknown-option',
+          answerText: 'Unknown'
+        }
+      ]
+    }
+  ]),
+  [],
+  'Unknown mappings should be omitted without inference or substitution'
+);
 
 const accountabilityById =
   Object.fromEntries(
@@ -302,6 +478,182 @@ assert.match(
   /whatYouToldUsGrouped/,
   'PortfolioSystemFitScreen should render the additive grouped evidence'
 );
+
+const profileContainerIndex =
+  portfolioFitSource.indexOf(
+    'id="profileAccountability"'
+  );
+const jobsContainerIndex =
+  portfolioFitSource.indexOf(
+    'id="investingSystemJobs"'
+  );
+const visualizationIndex =
+  portfolioFitSource.indexOf(
+    'id="portfolioVisualizationSection"'
+  );
+
+assert.ok(
+  profileContainerIndex >= 0 &&
+  jobsContainerIndex >
+    profileContainerIndex &&
+  visualizationIndex >
+    jobsContainerIndex,
+  'Investing system jobs should appear after accountability and before visualization'
+);
+
+const investingSystemJobs =
+  guidance
+    .recommendationReveal
+    .investingSystemJobs;
+const investingSystemJobsHtml =
+  renderInvestingSystemJobs(
+    investingSystemJobs
+  );
+
+assert.match(
+  investingSystemJobsHtml,
+  /Investing System Jobs to be done/,
+  'Screen should render the exact investing-system-jobs title'
+);
+assert.equal(
+  (investingSystemJobsHtml.match(/<th\b/g) ?? []).length,
+  4,
+  'Screen should render exactly four columns'
+);
+assert.equal(
+  (investingSystemJobsHtml.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr>/g) ?? []).length,
+  3,
+  'Screen should render exactly three guidance rows'
+);
+
+let selectedResponseCount = 0;
+
+for (const item of investingSystemJobs.items) {
+  assert.ok(
+    investingSystemJobsHtml.includes(
+      item.guidanceIndication
+    ),
+    'Screen should render the accountability guidance indication'
+  );
+
+  for (const group of item.whatYouToldUsGrouped) {
+    for (const response of group.responses) {
+      selectedResponseCount += 1;
+      assert.ok(
+        investingSystemJobsHtml.includes(
+          response.answerText
+        ),
+        'Screen should render each accountability response'
+      );
+    }
+  }
+
+  for (const group of item.traceabilityGrouped) {
+    for (const response of group.responses) {
+      assert.ok(investingSystemJobsHtml.includes(response.investorNeed));
+      assert.ok(investingSystemJobsHtml.includes(response.portfolioConsequence.label));
+      assert.ok(investingSystemJobsHtml.includes(response.portfolioConsequence.copy));
+      assert.ok(investingSystemJobsHtml.includes(response.systemCapability.label));
+      assert.ok(investingSystemJobsHtml.includes(response.systemCapability.copy));
+    }
+  }
+}
+
+assert.equal(
+  (investingSystemJobsHtml.match(/class="traceability-response-block"/g) ?? []).length,
+  selectedResponseCount * 2,
+  'Every selected response should render independently in both traceability columns'
+);
+
+const escapedHtml =
+  renderInvestingSystemJobs({
+    title: '<script>title</script>',
+    columns: [
+      '<b>one</b>',
+      'two & three',
+      'four',
+      'five'
+    ],
+    items: [
+      {
+        guidanceIndication:
+          '<img src=x>',
+        whatYouToldUsGrouped: [
+          {
+            questionLabel:
+              '<unsafe question>',
+            responses: [
+              {
+                answerText:
+                  '<unsafe answer>'
+              }
+            ]
+          }
+        ],
+        traceabilityGrouped: [
+          {
+            questionLabel:
+              '<unsafe question>',
+            responses: [
+              {
+                investorNeed:
+                  '<unsafe need>',
+                portfolioConsequence: {
+                  label: '<unsafe consequence>',
+                  copy: 'copy & more'
+                },
+                systemCapability: {
+                  label: '<unsafe capability>',
+                  copy: 'capability & more'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  });
+
+assert.ok(!escapedHtml.includes('<script>'));
+assert.ok(!escapedHtml.includes('<img src=x>'));
+assert.ok(!escapedHtml.includes('<unsafe'));
+assert.match(escapedHtml, /&lt;script&gt;/);
+assert.match(escapedHtml, /two &amp; three/);
+assert.match(escapedHtml, /copy &amp; more/);
+
+for (const invalidModel of [
+  undefined,
+  null,
+  {},
+  { items: [] }
+]) {
+  assert.equal(
+    renderInvestingSystemJobs(
+      invalidModel
+    ),
+    '',
+    'Missing investing-system-jobs data should render safely as empty output'
+  );
+}
+
+for (const invalidOutput of [
+  'undefined',
+  'null',
+  '[object Object]'
+]) {
+  assert.ok(
+    !investingSystemJobsHtml.includes(
+      invalidOutput
+    ),
+    `Screen output should not contain ${invalidOutput}`
+  );
+}
+
+assert.match(portfolioFitSource, /renderProfileAccountability/);
+assert.match(portfolioFitSource, /renderInvestingSystemJobs/);
+assert.match(portfolioFitSource, /portfolioVisualizationSection/);
+assert.match(portfolioFitSource, /id="backBtn"/);
+assert.match(portfolioFitSource, /id="restartBtn"/);
 
 
 console.log(

@@ -20,3 +20,86 @@
 .investor-jobs-page #assessmentExplanation p{margin:0;color:#dcdcdc;line-height:1.7;}
 
 @media(max-width:820px){.investor-jobs-page .job-grid{grid-template-columns:1fr}}
+
+.investing-system-jobs {
+  margin-top: 28px;
+}
+
+.investing-system-jobs .investing-system-jobs-table-wrap {
+  overflow-x: auto;
+  margin-top: 20px;
+  padding-bottom: 4px;
+}
+
+.investing-system-jobs .investing-system-jobs-table {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.investing-system-jobs .investing-system-jobs-table th,
+.investing-system-jobs .investing-system-jobs-table td {
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.investing-system-jobs .investing-system-jobs-table th {
+  padding: 14px;
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+
+.investing-system-jobs .investing-system-jobs-table td {
+  padding: 18px 14px;
+}
+
+.investing-system-jobs .investing-system-jobs-table th:first-child,
+.investing-system-jobs .investing-system-jobs-table td:first-child {
+  padding-left: 0;
+}
+
+.investing-system-jobs .investing-system-jobs-table th:last-child,
+.investing-system-jobs .investing-system-jobs-table td:last-child {
+  padding-right: 0;
+}
+
+.investing-system-jobs .investing-system-jobs-guidance-column {
+  width: 19%;
+}
+
+.investing-system-jobs .investing-system-jobs-response-column {
+  width: 25%;
+}
+
+.investing-system-jobs .investing-system-jobs-need-column {
+  width: 28%;
+}
+
+.investing-system-jobs .investing-system-jobs-capability-column {
+  width: 28%;
+}
+
+.investing-system-jobs .traceability-question-group +
+.investing-system-jobs .traceability-question-group {
+  margin-top: 18px;
+}
+
+.investing-system-jobs .traceability-question-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.investing-system-jobs .traceability-response-block {
+  padding-bottom: 14px;
+}
+
+.investing-system-jobs .traceability-response-block +
+.investing-system-jobs .traceability-response-block {
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.investing-system-jobs .traceability-consequence {
+  margin-top: 10px;
+}

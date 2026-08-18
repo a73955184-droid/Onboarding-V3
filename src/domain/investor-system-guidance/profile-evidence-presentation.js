@@ -3,6 +3,10 @@ import {
   getQuestionOptionLabel
 } from '../investor-jobs.js';
 
+import {
+  getInvestorNeedTraceability
+} from '../../content/investor-need-traceability-copy.js';
+
 
 export const PROFILE_EVIDENCE_QUESTION_IDS = Object.freeze({
   stage: Object.freeze([
@@ -200,4 +204,63 @@ export function getGroupedEvidenceFromAnswers(
     selectedAnswers,
     questionIds
   );
+}
+
+
+export function buildGroupedTraceability(
+  groupedEvidence = []
+) {
+  if (!Array.isArray(groupedEvidence)) {
+    return [];
+  }
+
+  return groupedEvidence
+    .map((group) => ({
+      questionId:
+        group.questionId,
+
+      questionLabel:
+        group.questionLabel,
+
+      responses:
+        Array.isArray(group.responses)
+          ? group.responses
+              .map((response) => {
+                const traceability =
+                  getInvestorNeedTraceability(
+                    group.questionId,
+                    response.optionId
+                  );
+
+                if (!traceability) {
+                  return null;
+                }
+
+                return {
+                  optionId:
+                    response.optionId,
+
+                  answerText:
+                    response.answerText,
+
+                  investorNeed:
+                    traceability
+                      .investorNeed,
+
+                  portfolioConsequence:
+                    traceability
+                      .portfolioConsequence,
+
+                  systemCapability:
+                    traceability
+                      .systemCapability
+                };
+              })
+              .filter(Boolean)
+          : []
+    }))
+    .filter(
+      (group) =>
+        group.responses.length > 0
+    );
 }

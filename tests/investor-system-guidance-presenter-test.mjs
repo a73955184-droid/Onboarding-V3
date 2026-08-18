@@ -16,6 +16,10 @@ import {
   getVariantComplexityGuidance
 } from '../src/domain/investor-system-guidance/variant-complexity-guidance.js';
 
+import {
+  getInvestorNeedTraceability
+} from '../src/content/investor-need-traceability-copy.js';
+
 
 const EXPECTED_VARIANT_RATIONALES = Object.freeze({
   'ES essential': 'Build the foundation with the fewest moving parts. Growth, resilience, and accessible money are kept in broad, easy-to-understand roles so the investor can establish a coherent system before adding complexity.',
@@ -946,6 +950,148 @@ function assertCommonContract(
         (item) =>
           item.id === 'behavior'
       );
+
+  const accountabilitySnapshot =
+    JSON.stringify(
+      guidance
+        .recommendationReveal
+        .profileAccountability
+    );
+
+  const investingSystemJobs =
+    guidance
+      .recommendationReveal
+      .investingSystemJobs;
+
+  assert.ok(
+    investingSystemJobs,
+    'Recommendation reveal should expose investingSystemJobs'
+  );
+  assert.equal(
+    investingSystemJobs.title,
+    'Investing System Jobs to be done',
+    'Investing-system-jobs title should match exactly'
+  );
+  assert.deepEqual(
+    investingSystemJobs.columns,
+    [
+      'Guidance indication',
+      'Your quiz response',
+      'Investor need and portfolio consequence',
+      'System capability'
+    ],
+    'Investing-system-jobs headers should match exactly'
+  );
+  assert.deepEqual(
+    investingSystemJobs.items.map(
+      (item) => item.id
+    ),
+    [
+      'stage',
+      'style',
+      'behavior'
+    ],
+    'Investing-system-jobs items should preserve accountability order'
+  );
+
+  const expectedQuestionIds = {
+    stage: [
+      'setup',
+      'evolution'
+    ],
+    style: [
+      'tradeoff',
+      'marketPsychology'
+    ],
+    behavior: [
+      'transition',
+      'decisionStyle'
+    ]
+  };
+
+  for (const item of investingSystemJobs.items) {
+    const accountabilityItem =
+      guidance
+        .recommendationReveal
+        .profileAccountability
+        .items
+        .find(
+          (candidate) =>
+            candidate.id === item.id
+        );
+
+    assert.equal(
+      item.guidanceIndication,
+      accountabilityItem.guidanceIndication,
+      `${item.id} should reuse the accountability guidance indication`
+    );
+    assert.deepEqual(
+      item.whatYouToldUsGrouped,
+      accountabilityItem.whatYouToldUsGrouped,
+      `${item.id} should reuse the grouped accountability evidence`
+    );
+    assert.deepEqual(
+      item.traceabilityGrouped.map(
+        (group) => group.questionId
+      ),
+      expectedQuestionIds[item.id],
+      `${item.id} should contain only its approved evidence questions`
+    );
+
+    const evidenceCount =
+      item.whatYouToldUsGrouped
+        .reduce(
+          (count, group) =>
+            count +
+            group.responses.length,
+          0
+        );
+    const traceabilityCount =
+      item.traceabilityGrouped
+        .reduce(
+          (count, group) =>
+            count +
+            group.responses.length,
+          0
+        );
+
+    assert.equal(
+      traceabilityCount,
+      evidenceCount,
+      `${item.id} should preserve every selected response independently`
+    );
+
+    for (const group of item.traceabilityGrouped) {
+      for (const response of group.responses) {
+        const expected =
+          getInvestorNeedTraceability(
+            group.questionId,
+            response.optionId
+          );
+
+        assert.equal(response.investorNeed, expected.investorNeed);
+        assert.strictEqual(response.portfolioConsequence, expected.portfolioConsequence);
+        assert.strictEqual(response.systemCapability, expected.systemCapability);
+      }
+    }
+  }
+
+  assert.ok(
+    !JSON.stringify(investingSystemJobs)
+      .includes('"age"') &&
+    !JSON.stringify(investingSystemJobs)
+      .includes('"goals"'),
+    'Age and goals should remain outside investing-system-jobs evidence'
+  );
+  assert.equal(
+    JSON.stringify(
+      guidance
+        .recommendationReveal
+        .profileAccountability
+    ),
+    accountabilitySnapshot,
+    'Building and reading investingSystemJobs should not change profileAccountability'
+  );
 
   assert.deepEqual(
     [
