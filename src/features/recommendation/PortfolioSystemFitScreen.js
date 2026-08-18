@@ -425,36 +425,6 @@ function renderProfileAccountability(
 
 /*
  * ============================================================
- * Complexity
- * ============================================================
- */
-
-function renderComplexityReason(
-  title,
-  body
-) {
-  if (!body) {
-    return '';
-  }
-
-  return `
-    <div class="summary-item">
-
-      <strong>
-        ${escapeHtml(title)}
-      </strong>
-
-      <div>
-        ${escapeHtml(body)}
-      </div>
-
-    </div>
-  `;
-}
-
-
-/*
- * ============================================================
  * Effort model
  * ============================================================
  */
@@ -2181,40 +2151,6 @@ export function renderPortfolioSystemFit(
 
 
           <!-- ==================================================
-               VARIANT / COMPLEXITY
-               ================================================== -->
-
-          <section
-            class="card panel"
-            style="margin-top: 24px"
-          >
-
-            <span class="pill">
-              WHY THIS VERSION
-            </span>
-
-
-            <h2
-              id="complexityHeading"
-            ></h2>
-
-
-            <p
-              class="lead"
-              id="complexitySummary"
-            ></p>
-
-
-            <div
-              class="summary-list"
-              id="complexityReasons"
-              style="margin-top: 16px"
-            ></div>
-
-          </section>
-
-
-          <!-- ==================================================
                EFFORT MODEL
                ================================================== -->
 
@@ -3083,91 +3019,6 @@ export function renderPortfolioSystemFit(
         .philosophy
         .whyItMatters ??
       '';
-
-
-  /*
-   * ==========================================================
-   * COMPLEXITY
-   * ==========================================================
-   */
-
-  const complexity =
-    guidance
-      .complexity;
-
-
-  const variantLabel =
-    String(
-      complexity
-        ?.variantId ??
-      ''
-    )
-      .replace(
-        /_/g,
-        ' '
-      )
-      .replace(
-        /\b\w/g,
-        (character) =>
-          character.toUpperCase()
-      );
-
-  root
-    .querySelector(
-      '#complexityHeading'
-    )
-    .textContent =
-      variantLabel
-        ? 'Why ' +
-          variantLabel +
-          '?'
-        : 'Why this version?';
-
-
-  root
-    .querySelector(
-      '#complexitySummary'
-    )
-    .textContent =
-      complexity
-        ?.variantRationale ??
-      complexity
-        ?.userFacingSummary ??
-      complexity
-        ?.generalMeaning ??
-      '';
-
-
-  root
-    .querySelector(
-      '#complexityReasons'
-    )
-    .innerHTML =
-      [
-        renderComplexityReason(
-          'Why this version',
-          complexity
-            .whyThisVersion
-        ),
-
-        renderComplexityReason(
-          'What the additional separation gives you',
-          complexity
-            .whatSeparationProvides
-        ),
-
-        renderComplexityReason(
-          'Why not simpler?',
-          complexity
-            .whyNotSimpler
-        ),
-
-        renderComplexityReason(
-          'Why not more complex?',
-          complexity
-            .whyNotMoreComplex
-        )
-      ].join('');
 
 
   /*

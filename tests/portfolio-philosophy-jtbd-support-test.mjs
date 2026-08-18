@@ -716,7 +716,7 @@ const accountabilitySource =
       'function renderProfileAccountability'
     ),
     screenSource.indexOf(
-      'function renderComplexityReason'
+      'function renderEffortDistribution'
     )
   );
 
