@@ -999,6 +999,15 @@ function buildPhilosophyExplanation({
       null
     );
 
+  const variantExplanation =
+    firstDefined(
+      presentation
+        ?.philosophy
+        ?.variantExplanation,
+
+      null
+    );
+
   return {
     archetypeId,
 
@@ -1029,6 +1038,10 @@ function buildPhilosophyExplanation({
 
     variantJobImpact:
       variantJobImpact ??
+      null,
+
+    variantExplanation:
+      variantExplanation ??
       null,
 
     whyItMatters:
@@ -1487,6 +1500,30 @@ function buildRecommendationReveal({
       philosophy
         ?.variantJobImpact ??
       null,
+
+    variantExplanation:
+      philosophy
+        ?.variantExplanation
+        ?.archetypeId ===
+        archetypeId &&
+      philosophy
+        ?.variantExplanation
+        ?.variantId ===
+        variantId &&
+      philosophy
+        ?.variantExplanation
+        ?.copy
+        ? {
+            archetypeId,
+            variantId,
+            portfolioFamily:
+              archetypeDisplayName,
+            copy:
+              philosophy
+                .variantExplanation
+                .copy
+          }
+        : null,
 
     /*
      * Also expose at the recommendation level so the hero

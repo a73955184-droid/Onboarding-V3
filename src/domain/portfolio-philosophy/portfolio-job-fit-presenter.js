@@ -615,10 +615,28 @@ function presentPhilosophy(
       ?.archetypeId ??
     null;
 
+  const variantId =
+    fitResult
+      ?.recommendation
+      ?.variantId ??
+    variant
+      ?.variantId ??
+    null;
+
   const variantJobImpact =
     archetype
       ?.variantJobImpact ??
     null;
+
+  const variantExplanationCopy =
+    archetypeId &&
+    variantId
+      ? archetype
+          ?.variantExplanations
+          ?.[variantId]
+          ?.copy ??
+        null
+      : null;
 
   return {
     archetype: {
@@ -714,14 +732,21 @@ function presentPhilosophy(
         )
     },
 
+    variantExplanation:
+      archetypeId &&
+      variantId &&
+      variantExplanationCopy
+        ? {
+            archetypeId,
+            variantId,
+            copy:
+              variantExplanationCopy
+          }
+        : null,
+
     variant: {
       id:
-        fitResult
-          ?.recommendation
-          ?.variantId ??
-        variant
-          ?.variantId ??
-        null,
+        variantId,
 
       title:
         variant

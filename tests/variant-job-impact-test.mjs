@@ -18,7 +18,7 @@ import {
 } from '../src/domain/investor-system-guidance/investor-system-guidance-presenter.js';
 
 import {
-  renderVariantJobImpact
+  renderVariantExplanation
 } from '../src/features/recommendation/PortfolioSystemFitScreen.js';
 
 
@@ -131,6 +131,11 @@ for (const [
       normalizedAnswers
     });
 
+  const fitResultBefore =
+    structuredClone(
+      fitResult
+    );
+
   const recommendationBefore =
     structuredClone(
       fitResult.recommendation
@@ -215,38 +220,43 @@ for (const [
     'Variant-impact presentation must not change sleeves'
   );
 
-  const accountabilityItems =
+  const resolvedVariantId =
+    guidance.resolved.variantId;
+
+  const expectedExplanation =
+    philosophy
+      .variantExplanations
+      [resolvedVariantId]
+      .copy;
+
+  assert.deepEqual(
     guidance
       .recommendationReveal
-      .profileAccountability
-      .items;
-
-  const variantSynthesis =
-    archetypeId === 'BFO' &&
-    guidance.resolved.variantId ===
-      'intentional'
-      ? 'More differentiated capital jobs give those needs a clearer structure without turning the portfolio into an actively managed system.'
-      : guidance
-          .complexity
-          .variantRationale;
+      .variantExplanation,
+    {
+      archetypeId,
+      variantId:
+        resolvedVariantId,
+      portfolioFamily:
+        guidance
+          .recommendationReveal
+          .archetypeDisplayName,
+      copy:
+        expectedExplanation
+    },
+    'Guidance should expose only the already-resolved explanation'
+  );
 
   const renderedHtml =
-    renderVariantJobImpact(
+    renderVariantExplanation(
       {
-        variantJobImpact:
-          guidance
-            .recommendationReveal
-            .variantJobImpact,
+        ...guidance
+          .recommendationReveal
+          .variantExplanation,
         variantDisplayName:
           guidance
             .recommendationReveal
-            .variantDisplayName,
-        archetypeDisplayName:
-          guidance
-            .recommendationReveal
-            .archetypeDisplayName,
-        accountabilityItems,
-        variantSynthesis
+            .variantDisplayName
       }
     );
 
@@ -258,7 +268,7 @@ for (const [
 
   assert.ok(
     renderedText.includes(
-      `How ${guidance.recommendationReveal.variantDisplayName} changes your ${guidance.recommendationReveal.archetypeDisplayName}`
+      `We recommend an ${guidance.recommendationReveal.variantDisplayName} version of the ${guidance.recommendationReveal.archetypeDisplayName} system — and this is why`
     ),
     `${archetypeId} should render the personalized heading`
   );
@@ -279,58 +289,20 @@ for (const [
         /<strong>/g
       ) ?? []
     ).length,
-    4,
-    'Heading plus exactly three personalized sentences should be bold'
-  );
-
-  const sentencePositions =
-    accountabilityItems.map(
-      (item) =>
-        renderedText.indexOf(
-          item.userJTBD
-        )
-    );
-
-  assert.ok(
-    sentencePositions.every(
-      (position) =>
-        position >= 0
-    ) &&
-      sentencePositions.every(
-        (position, index) =>
-          index === 0 ||
-          position >
-            sentencePositions[
-              index - 1
-            ]
-      ),
-    'Stage, Style, and Behavior sentences should render once in order'
+    1,
+    'Only the heading should be bold'
   );
 
   assert.ok(
     renderedText.includes(
-      variantSynthesis
+      expectedExplanation
     ),
-    `${archetypeId} should render one variant synthesis`
+    `${archetypeId} should render its resolved approved paragraph`
   );
-
-  if (archetypeId === 'BFO') {
-    assert.equal(
-      guidance.resolved.variantId,
-      'intentional',
-      'BFO fixture should exercise the required Intentional synthesis'
-    );
-    assert.ok(
-      renderedText.includes(
-        'More differentiated capital jobs give those needs a clearer structure without turning the portfolio into an actively managed system.'
-      ),
-      'BFO + Intentional should retain its approved synthesis'
-    );
-  }
 
   assert.doesNotMatch(
     renderedText,
-    /Portfolio evolution|Portfolio interaction|Portfolio decision making|Main reason for the higher variant/,
+    /Portfolio evolution|Portfolio interaction|Portfolio decision making|Main reason for the higher variant|Why Essential|Why Intentional|Why Engaged/,
     'Separate dimension labels should not remain visible'
   );
 
@@ -345,20 +317,25 @@ for (const [
     /higher return|better return|more return|outperformance|higher expected return/i,
     'Variant-impact copy must not imply a return promise'
   );
+
+  assert.deepEqual(
+    fitResult,
+    fitResultBefore,
+    'Explanation presentation must not mutate any resolved assessment, portfolio, effort, cadence, or JTBD output'
+  );
 }
 
 
 assert.equal(
-  renderVariantJobImpact(),
+  renderVariantExplanation(),
   '',
-  'Missing impact data should not render a block'
+  'Missing explanation data should not render a block'
 );
 
 assert.equal(
-  renderVariantJobImpact({
-    variantJobImpact: {
-      archetypeId: 'FT'
-    }
+  renderVariantExplanation({
+    archetypeId: 'FT',
+    variantId: 'intentional'
   }),
   '',
   'Incomplete impact data should not render undefined values'
