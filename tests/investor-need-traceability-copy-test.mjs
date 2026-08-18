@@ -67,6 +67,68 @@ const EXPECTED_TRACEABILITY = {
   }
 };
 
+const EXPECTED_CAPABILITIES = {
+  setup: {
+    not_started: ['Portfolio-architecture framework', 'Establish a small set of defined portfolio roles before presenting additional investments or optional exposures.'],
+    simple_start: ['Foundation diagnostic framework', 'Map the existing foundation to portfolio jobs and identify any missing, unclear, or unsupported role.'],
+    etfs_stocks: ['Portfolio role-mapping framework', 'Assign existing investments to portfolio roles and reveal where exposures overlap, leave gaps, or lack a defined purpose.'],
+    collected: ['Portfolio reconciliation framework', 'Review accumulated investments against their intended jobs and classify them as contributing, overlapping, unclear, or no longer needed.'],
+    established: ['Controlled-improvement framework', 'Test whether a proposed change solves a defined limitation and whether its benefit justifies disrupting the existing system.']
+  },
+  transition: {
+    what_to_do: ['Decision-framing framework', 'Convert a broad concern into the specific portfolio question being decided and the next step needed to resolve it.'],
+    doing_right: ['Decision-validation framework', 'Compare the current approach with its original purpose, assumptions, and portfolio role before treating doubt as a reason to change.'],
+    missing: ['Gap-and-redundancy framework', 'Identify whether the portfolio lacks a necessary job or whether a proposed addition duplicates a job already being performed.'],
+    change: ['Change-detection framework', 'Distinguish ordinary market movement from a meaningful reason to review or change something.'],
+    compare: ['Comparison framework', 'Compare options against the portfolio job they are meant to perform and the tradeoffs each introduces.']
+  },
+  decisionStyle: {
+    start: ['Starting-decision framework', 'Present a coherent first step, explain the role it establishes, and limit the number of decisions required to begin.'],
+    pick: ['Role-based selection framework', 'Evaluate investment choices using criteria derived from the required portfolio role, expected contribution, risks, costs, and effort.'],
+    fit: ['Fit-evaluation framework', 'Test where the idea belongs, what it adds, what it overlaps with, and whether it improves the existing portfolio enough to justify inclusion.'],
+    sell: ['Action-decision framework', 'Structure the choice among leave alone, monitor, review, reduce, replace, or exit based on whether the investment still performs its intended role.'],
+    enough: ['Research-stopping framework', 'Identify the remaining information that could change the decision and conclude research when additional evidence is unlikely to alter the result.']
+  },
+  marketPsychology: {
+    balance: ['Balance-attribution framework', 'Connect account-level movement to the portfolio parts that caused it and determine whether any affected role actually requires review.'],
+    market: ['Market-signal filtering framework', 'Route market events to the roles they may affect and suppress information that does not alter a portfolio assumption or decision.'],
+    holding: ['Holding-thesis review framework', 'Test new holding-specific information against the investment’s intended job and original reason for inclusion.'],
+    idea: ['Idea-intake framework', 'Hold new ideas in an evaluation stage until the system identifies their proposed role, contribution, overlap, and decision relevance.'],
+    rarely: ['Decision-relevant alerting framework', 'Notify the investor only when new information crosses a defined threshold or creates a decision that cannot reasonably wait.']
+  },
+  evolution: {
+    understand: ['Portfolio-role definition framework', 'Define what each portfolio part is meant to accomplish and how it contributes to the overall system.'],
+    monitor: ['Role-based monitoring framework', 'Connect each portfolio role to relevant signals, ignorable noise, and the information that could justify review.'],
+    frequency: ['Review-cadence framework', 'Assign planned review intervals and exception triggers according to the purpose and attention needs of each portfolio role.'],
+    effort: ['Effort-allocation framework', 'Show where additional research could improve a meaningful portfolio outcome and where more effort would only increase complexity.'],
+    experiment: ['Bounded-experimentation framework', 'Contain experimental ideas within explicit role, allocation, and review boundaries while protecting the portfolio foundation.']
+  },
+  tradeoff: {
+    tell_me: ['Guided-interaction framework', 'Minimize routine decisions and surface only the limited questions or exceptions that require investor input.'],
+    occasional: ['Exception-management framework', 'Keep the portfolio low-maintenance until a defined role, threshold, or review condition is materially affected.'],
+    periodic: ['Scheduled-review framework', 'Consolidate routine portfolio decisions into repeatable review periods while allowing earlier review only for meaningful exceptions.'],
+    explore: ['Research-boundary framework', 'Identify where deeper research is permitted and keep the remaining portfolio roles on a stable, lower-effort operating rhythm.'],
+    active: ['Structured-engagement framework', 'Support frequent involvement while tying attention and action to defined roles, limits, and decision conditions.']
+  },
+  age: {
+    under3: ['Near-term capital protection framework', 'Separate near-term money, prioritize access and stability, and limit exposure to losses that may not recover before the money is needed.'],
+    '3to5': ['Time-horizon segmentation framework', 'Divide medium-term capital from longer-term growth capital and assign each part an appropriate risk and review policy.'],
+    '5to10': ['Horizon-transition framework', 'Adjust the balance between growth, stability, and access as the expected use date becomes closer.'],
+    '10plus': ['Long-term discipline framework', 'Keep long-term capital governed by its intended horizon and prevent ordinary short-term events from redefining the strategy.'],
+    multiple: ['Goal-and-horizon segmentation framework', 'Assign capital to separate goal-based roles with distinct timelines, risk needs, and review expectations.'],
+    unsure: ['Timeline-uncertainty framework', 'Maintain adaptable roles and accessible capacity until the investor can define the money’s purpose and expected use.']
+  },
+  goals: {
+    start_confident: ['Guided-start framework', 'Present an understandable initial portfolio structure, explain each role, and defer unnecessary choices until the foundation is clear.'],
+    understand: ['Whole-portfolio mapping framework', 'Connect individual investments to portfolio roles and show how those roles combine to support the overall objective.'],
+    monitor: ['Attention-prioritization framework', 'Rank information by its relevance to portfolio roles and show which decision, if any, the information could affect.'],
+    act: ['Action-threshold framework', 'Classify portfolio situations into leave alone, monitor, review, or change states using explicit decision thresholds.'],
+    choose: ['Repeatable-selection framework', 'Apply the same role-based criteria and tradeoff tests whenever comparable investment choices are evaluated.'],
+    explore: ['Exploration-governance framework', 'Require experimental ideas to specify their purpose, allowed size, success criteria, and review or exit conditions.'],
+    income: ['Income-and-capital protection framework', 'Organize capital into dependable-income, access, protection, and longer-term growth roles with different operating rules.']
+  }
+};
+
 const questionIds = QUESTIONS.map(({ screenKey }) => screenKey);
 const catalogueQuestionIds = Object.keys(INVESTOR_NEED_TRACEABILITY_COPY);
 
@@ -105,10 +167,17 @@ for (const question of QUESTIONS) {
     const record = group[option.id];
     const [expectedInvestorNeed, expectedLabel, expectedCopy] =
       EXPECTED_TRACEABILITY[question.screenKey][option.id];
+    const [expectedCapabilityLabel, expectedCapabilityCopy] =
+      EXPECTED_CAPABILITIES[question.screenKey][option.id];
     const resolvedRecord = getInvestorNeedTraceability(question.screenKey, option.id);
     mappedResponseCount += 1;
 
     assert.ok(Object.isFrozen(record), `${question.screenKey}.${option.id} record is frozen`);
+    assert.deepEqual(
+      Object.keys(record).sort(),
+      ['investorNeed', 'portfolioConsequence', 'systemCapability'].sort(),
+      `${question.screenKey}.${option.id} contains exactly the traceability fields`
+    );
     assert.equal(typeof record.investorNeed, 'string', `${question.screenKey}.${option.id} has string copy`);
     assert.notEqual(record.investorNeed.trim(), '', `${question.screenKey}.${option.id} has non-empty copy`);
     assert.equal(record.investorNeed, expectedInvestorNeed, `${question.screenKey}.${option.id} preserves its investor need`);
@@ -127,6 +196,21 @@ for (const question of QUESTIONS) {
     assert.equal(typeof record.portfolioConsequence.copy, 'string', `${question.screenKey}.${option.id} has string consequence copy`);
     assert.notEqual(record.portfolioConsequence.copy.trim(), '', `${question.screenKey}.${option.id} has non-empty consequence copy`);
     assert.equal(record.portfolioConsequence.copy, expectedCopy, `${question.screenKey}.${option.id} has the expected consequence copy`);
+    assert.deepEqual(
+      Object.keys(record.systemCapability).sort(),
+      ['copy', 'label'],
+      `${question.screenKey}.${option.id} capability contains exactly label and copy`
+    );
+    assert.ok(
+      Object.isFrozen(record.systemCapability),
+      `${question.screenKey}.${option.id} capability is frozen`
+    );
+    assert.equal(typeof record.systemCapability.label, 'string', `${question.screenKey}.${option.id} has a string capability label`);
+    assert.notEqual(record.systemCapability.label.trim(), '', `${question.screenKey}.${option.id} has a non-empty capability label`);
+    assert.equal(record.systemCapability.label, expectedCapabilityLabel, `${question.screenKey}.${option.id} has the expected capability label`);
+    assert.equal(typeof record.systemCapability.copy, 'string', `${question.screenKey}.${option.id} has string capability copy`);
+    assert.notEqual(record.systemCapability.copy.trim(), '', `${question.screenKey}.${option.id} has non-empty capability copy`);
+    assert.equal(record.systemCapability.copy, expectedCapabilityCopy, `${question.screenKey}.${option.id} has the expected capability copy`);
     assert.strictEqual(
       resolvedRecord,
       record,
@@ -134,6 +218,8 @@ for (const question of QUESTIONS) {
     );
     assert.equal(resolvedRecord.portfolioConsequence.label, expectedLabel, `${question.screenKey}.${option.id} lookup returns the expected label`);
     assert.equal(resolvedRecord.portfolioConsequence.copy, expectedCopy, `${question.screenKey}.${option.id} lookup returns the expected copy`);
+    assert.equal(resolvedRecord.systemCapability.label, expectedCapabilityLabel, `${question.screenKey}.${option.id} lookup returns the expected capability label`);
+    assert.equal(resolvedRecord.systemCapability.copy, expectedCapabilityCopy, `${question.screenKey}.${option.id} lookup returns the expected capability copy`);
   }
 }
 
