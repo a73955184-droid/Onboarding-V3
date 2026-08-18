@@ -2167,25 +2167,25 @@ export function renderPortfolioSystemFit(
           </section>
 
 
-          <section
-            class="card panel"
-            style="margin-top: 24px"
+          <aside
+            class="confidence-line"
+            style="margin-top: 12px"
           >
 
-            <span class="pill">
+            <span>
               HOW THIS PHILOSOPHY ORGANIZES YOUR SYSTEM
             </span>
 
-            <h2>
+            <span>
               What this philosophy requires from the portfolio
-            </h2>
+            </span>
 
             <p
-              class="lead"
               id="philosophyWhy"
+              style="margin: 0"
             ></p>
 
-          </section>
+          </aside>
 
 
           <!-- ==================================================
