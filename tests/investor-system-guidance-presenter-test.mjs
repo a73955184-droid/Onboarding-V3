@@ -977,7 +977,6 @@ function assertCommonContract(
     [
       'Guidance indication',
       'Your quiz response',
-      'Investor need and portfolio consequence',
       'System capability'
     ],
     'Investing-system-jobs headers should match exactly'

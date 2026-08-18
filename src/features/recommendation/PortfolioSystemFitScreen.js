@@ -471,52 +471,6 @@ function renderTraceabilityGroups(
 }
 
 
-function renderNeedAndConsequence(
-  groups
-) {
-  return renderTraceabilityGroups(
-    groups,
-    (response) => `
-      <div
-        class="traceability-response-block"
-      >
-        <div>
-          <strong>
-            Investor need
-          </strong>
-
-          <div>
-            ${escapeHtml(
-              response?.investorNeed
-            )}
-          </div>
-        </div>
-
-        <div
-          class="traceability-consequence"
-        >
-          <strong>
-            ${escapeHtml(
-              response
-                ?.portfolioConsequence
-                ?.label
-            )}
-          </strong>
-
-          <div>
-            ${escapeHtml(
-              response
-                ?.portfolioConsequence
-                ?.copy
-            )}
-          </div>
-        </div>
-      </div>
-    `
-  );
-}
-
-
 function renderSystemCapabilities(
   groups
 ) {
@@ -567,12 +521,6 @@ function renderInvestingSystemJobRow(
       </td>
 
       <td>
-        ${renderNeedAndConsequence(
-          item?.traceabilityGrouped
-        )}
-      </td>
-
-      <td>
         ${renderSystemCapabilities(
           item?.traceabilityGrouped
         )}
@@ -599,7 +547,6 @@ export function renderInvestingSystemJobs(
   const defaultColumns = [
     'Guidance indication',
     'Your quiz response',
-    'Investor need and portfolio consequence',
     'System capability'
   ];
 
@@ -610,7 +557,7 @@ export function renderInvestingSystemJobs(
     ) &&
     investingSystemJobs
       .columns
-      .length === 4
+      .length === 3
       ? investingSystemJobs
           .columns
       : defaultColumns;
@@ -619,12 +566,14 @@ export function renderInvestingSystemJobs(
     <section
       class="investing-system-jobs"
     >
-      <h2>
-        ${escapeHtml(
-          investingSystemJobs
-            ?.title ??
-          'Investing System Jobs to be done'
-        )}
+      <span class="pill">
+        INVESTING SYSTEM JOBS TO BE DONE
+      </span>
+
+      <h2
+        style="margin-top: 12px"
+      >
+        How your answers translate into system capabilities
       </h2>
 
       <div
@@ -648,15 +597,9 @@ export function renderInvestingSystemJobs(
               </th>
 
               <th
-                class="investing-system-jobs-need-column"
-              >
-                ${escapeHtml(columns[2])}
-              </th>
-
-              <th
                 class="investing-system-jobs-capability-column"
               >
-                ${escapeHtml(columns[3])}
+                ${escapeHtml(columns[2])}
               </th>
             </tr>
           </thead>

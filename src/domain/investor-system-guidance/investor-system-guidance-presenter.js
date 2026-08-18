@@ -1400,7 +1400,6 @@ function buildInvestingSystemJobs(
       columns: [
         'Guidance indication',
         'Your quiz response',
-        'Investor need and portfolio consequence',
         'System capability'
       ],
 
@@ -1415,7 +1414,6 @@ function buildInvestingSystemJobs(
     columns: [
       'Guidance indication',
       'Your quiz response',
-      'Investor need and portfolio consequence',
       'System capability'
     ],
 

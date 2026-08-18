@@ -512,13 +512,18 @@ const investingSystemJobsHtml =
 
 assert.match(
   investingSystemJobsHtml,
-  /Investing System Jobs to be done/,
-  'Screen should render the exact investing-system-jobs title'
+  /INVESTING SYSTEM JOBS TO BE DONE/,
+  'Screen should render the exact investing-system-jobs pill'
+);
+assert.match(
+  investingSystemJobsHtml,
+  /How your answers translate into system capabilities/,
+  'Screen should render the exact investing-system-jobs heading'
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<th\b/g) ?? []).length,
-  4,
-  'Screen should render exactly four columns'
+  3,
+  'Screen should render exactly three columns'
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr>/g) ?? []).length,
@@ -550,9 +555,9 @@ for (const item of investingSystemJobs.items) {
 
   for (const group of item.traceabilityGrouped) {
     for (const response of group.responses) {
-      assert.ok(investingSystemJobsHtml.includes(response.investorNeed));
-      assert.ok(investingSystemJobsHtml.includes(response.portfolioConsequence.label));
-      assert.ok(investingSystemJobsHtml.includes(response.portfolioConsequence.copy));
+      assert.ok(!investingSystemJobsHtml.includes(response.investorNeed));
+      assert.ok(!investingSystemJobsHtml.includes(response.portfolioConsequence.label));
+      assert.ok(!investingSystemJobsHtml.includes(response.portfolioConsequence.copy));
       assert.ok(investingSystemJobsHtml.includes(response.systemCapability.label));
       assert.ok(investingSystemJobsHtml.includes(response.systemCapability.copy));
     }
@@ -561,8 +566,21 @@ for (const item of investingSystemJobs.items) {
 
 assert.equal(
   (investingSystemJobsHtml.match(/class="traceability-response-block"/g) ?? []).length,
-  selectedResponseCount * 2,
-  'Every selected response should render independently in both traceability columns'
+  selectedResponseCount,
+  'Every selected response should render one independent capability block'
+);
+
+assert.ok(
+  !investingSystemJobsHtml.includes(
+    'Investor need and portfolio consequence'
+  ),
+  'Removed need/consequence header should not render'
+);
+assert.ok(
+  !investingSystemJobsHtml.includes(
+    'traceability-consequence'
+  ),
+  'Removed need/consequence structure should not render'
 );
 
 const escapedHtml =
@@ -571,8 +589,7 @@ const escapedHtml =
     columns: [
       '<b>one</b>',
       'two & three',
-      'four',
-      'five'
+      'four'
     ],
     items: [
       {
@@ -617,9 +634,10 @@ const escapedHtml =
 assert.ok(!escapedHtml.includes('<script>'));
 assert.ok(!escapedHtml.includes('<img src=x>'));
 assert.ok(!escapedHtml.includes('<unsafe'));
-assert.match(escapedHtml, /&lt;script&gt;/);
+assert.match(escapedHtml, /&lt;b&gt;one&lt;\/b&gt;/);
+assert.match(escapedHtml, /&lt;img src=x&gt;/);
 assert.match(escapedHtml, /two &amp; three/);
-assert.match(escapedHtml, /copy &amp; more/);
+assert.match(escapedHtml, /capability &amp; more/);
 
 for (const invalidModel of [
   undefined,
