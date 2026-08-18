@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/verify-copy.mjs && node tests/smoke-test.mjs && node tests/investor-jobs-test.mjs && node tests/portfolio-map-test.mjs"
+    "test": "node tests/verify-copy.mjs && node tests/smoke-test.mjs && node tests/investor-jobs-test.mjs && node tests/portfolio-map-test.mjs && node tests/investor-need-traceability-copy-test.mjs"
   }
 }
