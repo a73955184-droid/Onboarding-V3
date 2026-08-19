@@ -591,12 +591,6 @@ export function renderInvestingSystemJobs(
         INVESTING SYSTEM JOBS TO BE DONE
       </span>
 
-      <h2
-        style="margin-top: 12px"
-      >
-        How your answers translate into system capabilities
-      </h2>
-
       <div
         class="investing-system-jobs-table-wrap"
       >

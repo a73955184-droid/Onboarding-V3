@@ -555,7 +555,6 @@ for (const removedHeading of [
 
 for (const preservedHeading of [
   'INVESTING SYSTEM JOBS TO BE DONE',
-  'How your answers translate into system capabilities',
   'YOUR PORTFOLIO SYSTEM'
 ]) {
   assert.ok(
@@ -586,10 +585,10 @@ assert.match(
   /INVESTING SYSTEM JOBS TO BE DONE/,
   'Screen should render the exact investing-system-jobs pill'
 );
-assert.match(
+assert.doesNotMatch(
   investingSystemJobsHtml,
   /How your answers translate into system capabilities/,
-  'Screen should render the exact investing-system-jobs heading'
+  'Screen should omit the removed investing-system-jobs subtitle'
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<th\b/g) ?? []).length,
