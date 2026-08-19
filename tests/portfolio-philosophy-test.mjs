@@ -66,8 +66,8 @@ const EXPECTED_INVESTOR_PROBLEMS = Object.freeze({
     meaning: 'The core problem is concentration. The investor wants broad participation in global economic growth rather than relying too heavily on one country, one asset class, one sector, or a small set of return drivers. The job of the system is to spread exposure deliberately and reduce dependence on any single source of performance.'
   },
   FT: {
-    question: 'How do I systematically tilt beyond market-cap weighting?',
-    meaning: 'The investor already accepts diversification, but wants a more deliberate way to shape the portfolio. Instead of picking individual stocks opportunistically, they want rules-based exposure to characteristics such as value, quality, size, momentum, or similar systematic factors. The question becomes: “Can I improve or express a view without turning the portfolio into stock picking?”'
+    question: 'How do I improve an existing portfolio without constantly rebuilding it?',
+    meaning: 'The investor already has a workable portfolio foundation but wants a disciplined way to improve it. The challenge is deciding which limitations are worth addressing, which changes would genuinely add value, and which ideas would only add overlap or complexity. This archetype is about making targeted, evidence-based improvements while keeping the durable parts of the portfolio intact.'
   },
   BFO: {
     question: 'How do I manage several financial jobs simultaneously?',

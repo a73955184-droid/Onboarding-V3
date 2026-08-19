@@ -136,10 +136,10 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
 
     investorProblem: {
       question:
-        'How do I systematically tilt beyond market-cap weighting?',
+        'How do I improve an existing portfolio without constantly rebuilding it?',
 
       meaning:
-        'The investor already accepts diversification, but wants a more deliberate way to shape the portfolio. Instead of picking individual stocks opportunistically, they want rules-based exposure to characteristics such as value, quality, size, momentum, or similar systematic factors. The question becomes: “Can I improve or express a view without turning the portfolio into stock picking?”'
+        'The investor already has a workable portfolio foundation but wants a disciplined way to improve it. The challenge is deciding which limitations are worth addressing, which changes would genuinely add value, and which ideas would only add overlap or complexity. This archetype is about making targeted, evidence-based improvements while keeping the durable parts of the portfolio intact.'
     },
 
     philosophyName:

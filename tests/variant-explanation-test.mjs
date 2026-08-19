@@ -260,6 +260,14 @@ assert.match(
   /three fundamental purposes: Growth, Stability, and Liquidity/
 );
 assert.match(
+  EXPECTED_EXPLANATIONS.BFO.essential,
+  /Balanced Multi-Purpose approach/
+);
+assert.doesNotMatch(
+  EXPECTED_EXPLANATIONS.BFO.essential,
+  /Balanced Family Office/
+);
+assert.match(
   EXPECTED_EXPLANATIONS.BFO.intentional,
   /starts with the same fundamental purposes—Growth, Stability, and Liquidity—but gives selected investment ideas an additional, clearly defined purpose/
 );
