@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 import {
@@ -174,6 +175,17 @@ assert.equal(
   fulfillmentEntryCount,
   301,
   'The current canonical matrix should contain 301 fulfillment entries'
+);
+assert.equal(
+  createHash('sha256')
+    .update(
+      JSON.stringify(
+        PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+      )
+    )
+    .digest('hex'),
+  '14cadaa1b5d17e8f8a29ded3f8e6abf6f27ce1d372de028b17ef318a1e5085c3',
+  'All 301 fulfillment cells should match the approved differentiated copy matrix exactly'
 );
 
 
