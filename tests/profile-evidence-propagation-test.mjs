@@ -491,10 +491,6 @@ assert.match(
   'PortfolioSystemFitScreen should render the additive grouped evidence'
 );
 
-const profileContainerIndex =
-  portfolioFitSource.indexOf(
-    'id="profileAccountability"'
-  );
 const jobsContainerIndex =
   portfolioFitSource.indexOf(
     'id="investingSystemJobs"'
@@ -511,12 +507,27 @@ const mainScreenSource =
   );
 
 assert.ok(
-  profileContainerIndex >= 0 &&
-  jobsContainerIndex >
-    profileContainerIndex &&
+  jobsContainerIndex >= 0 &&
   visualizationIndex >
     jobsContainerIndex,
-  'Investing system jobs should appear after accountability and before visualization'
+  'Investing system jobs should appear before the portfolio visualization'
+);
+
+assert.doesNotMatch(
+  mainScreenSource,
+  /id="profileAccountability"|renderProfileAccountability\(|ACCOUNTABLE TO YOUR INVESTOR PROFILE/,
+  'PortfolioSystemFitScreen should not render the profile-accountability section'
+);
+
+assert.match(
+  portfolioFitSource,
+  /function renderProfileAccountability\(/,
+  'The reusable profile-accountability renderer should remain available'
+);
+assert.match(
+  portfolioFitSource,
+  /ACCOUNTABLE TO YOUR INVESTOR PROFILE/,
+  'The underlying profile-accountability copy should remain unchanged'
 );
 
 assert.doesNotMatch(
@@ -543,7 +554,6 @@ for (const removedHeading of [
 }
 
 for (const preservedHeading of [
-  'ACCOUNTABLE TO YOUR INVESTOR PROFILE',
   'INVESTING SYSTEM JOBS TO BE DONE',
   'How your answers translate into system capabilities',
   'YOUR PORTFOLIO SYSTEM'
@@ -555,6 +565,12 @@ for (const preservedHeading of [
     `PortfolioSystemFitScreen should retain ${preservedHeading}`
   );
 }
+
+assert.equal(
+  guidance.recommendationReveal.eyebrow,
+  'YOUR RECOMMENDED PORTFOLIO SYSTEM',
+  'The recommendation hero should remain unchanged'
+);
 
 const investingSystemJobs =
   guidance

@@ -2316,11 +2316,6 @@ export function renderPortfolioSystemFit(
 
 
             <div
-              id="profileAccountability"
-            ></div>
-
-
-            <div
               id="investingSystemJobs"
             ></div>
 
@@ -3074,21 +3069,6 @@ export function renderPortfolioSystemFit(
           .philosophy
           .sources,
         'Philosophy source'
-      );
-
-
-  /*
-   * Updated four-column accountability section.
-   */
-
-  root
-    .querySelector(
-      '#profileAccountability'
-    )
-    .innerHTML =
-      renderProfileAccountability(
-        reveal
-          .profileAccountability
       );
 
 
