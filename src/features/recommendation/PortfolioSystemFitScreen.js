@@ -541,12 +541,6 @@ function renderInvestingSystemJobRow(
       </td>
 
       <td>
-        ${renderSystemCapabilities(
-          item?.traceabilityGrouped
-        )}
-      </td>
-
-      <td>
         ${renderPortfolioSystemFulfillment(
           item?.traceabilityGrouped
         )}
@@ -621,12 +615,6 @@ export function renderInvestingSystemJobs(
                 class="investing-system-jobs-response-column"
               >
                 ${escapeHtml(columns[1])}
-              </th>
-
-              <th
-                class="investing-system-jobs-capability-column"
-              >
-                ${escapeHtml(columns[2])}
               </th>
 
               <th

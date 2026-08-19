@@ -593,8 +593,8 @@ assert.match(
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<th\b/g) ?? []).length,
-  4,
-  'Screen should render exactly four columns'
+  3,
+  'Screen should render exactly three visible columns'
 );
 assert.deepEqual(
   investingSystemJobs.columns,
@@ -604,7 +604,7 @@ assert.deepEqual(
     'System capability',
     'How your recommended system delivers it'
   ],
-  'The fourth header should be additive and preserve the first three exactly'
+  'The underlying presentation model should retain System capability for fulfillment resolution'
 );
 assert.deepEqual(
   [
@@ -621,10 +621,9 @@ assert.deepEqual(
   [
     'Guidance indication',
     'Your quiz response',
-    'System capability',
     'How your recommended system delivers it'
   ],
-  'Rendered table headers should contain exactly the approved four-column sequence'
+  'Rendered table headers should omit only the System capability column'
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr>/g) ?? []).length,
@@ -659,8 +658,18 @@ for (const item of investingSystemJobs.items) {
       assert.ok(!investingSystemJobsHtml.includes(response.investorNeed));
       assert.ok(!investingSystemJobsHtml.includes(response.portfolioConsequence.label));
       assert.ok(!investingSystemJobsHtml.includes(response.portfolioConsequence.copy));
-      assert.ok(investingSystemJobsHtml.includes(response.systemCapability.label));
-      assert.ok(investingSystemJobsHtml.includes(response.systemCapability.copy));
+      assert.ok(
+        !investingSystemJobsHtml.includes(
+          response.systemCapability.label
+        ),
+        'Capability labels should remain internal rather than render directly'
+      );
+      assert.ok(
+        !investingSystemJobsHtml.includes(
+          response.systemCapability.copy
+        ),
+        'Capability descriptions should remain internal rather than render directly'
+      );
 
       const capabilityId =
         response.systemCapabilityId;
@@ -690,8 +699,8 @@ for (const item of investingSystemJobs.items) {
 
 assert.equal(
   (investingSystemJobsHtml.match(/class="traceability-response-block"/g) ?? []).length,
-  selectedResponseCount,
-  'Every selected response should render one independent capability block'
+  0,
+  'No direct System capability blocks should render'
 );
 assert.equal(
   (investingSystemJobsHtml.match(/class="portfolio-system-fulfillment-block"/g) ?? []).length,
@@ -810,7 +819,7 @@ assert.ok(!escapedHtml.includes('<unsafe'));
 assert.match(escapedHtml, /&lt;b&gt;one&lt;\/b&gt;/);
 assert.match(escapedHtml, /&lt;img src=x&gt;/);
 assert.match(escapedHtml, /two &amp; three/);
-assert.match(escapedHtml, /capability &amp; more/);
+assert.doesNotMatch(escapedHtml, /capability &amp; more/);
 assert.match(escapedHtml, /fulfillment &amp; more/);
 
 for (const invalidModel of [
