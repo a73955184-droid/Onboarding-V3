@@ -223,7 +223,7 @@ export const ARCHETYPE_PHILOSOPHIES = Object.freeze({
     variantExplanations: {
       essential: {
         copy:
-          'The Essential version organizes your investments around three fundamental purposes: Growth, Stability, and Liquidity. Growth is intended to build wealth over time, Stability helps reduce dependence on growth investments when markets are difficult, and Liquidity keeps money available for near-term needs or flexibility. These are broad categories because each describes a major purpose for your money rather than a particular investment idea or strategy, and the Essential version stops there because your portfolio can gain the organizing benefits of the Balanced Family Office approach without giving you additional areas to research, compare, or manage.'
+          'The Essential version organizes your investments around three fundamental purposes: Growth, Stability, and Liquidity. Growth is intended to build wealth over time, Stability helps reduce dependence on growth investments when markets are difficult, and Liquidity keeps money available for near-term needs or flexibility. These are broad categories because each describes a major purpose for your money rather than a particular investment idea or strategy, and the Essential version stops there because your portfolio can gain the organizing benefits of the Balanced Multi-Purpose approach without giving you additional areas to research, compare, or manage.'
       },
 
       intentional: {

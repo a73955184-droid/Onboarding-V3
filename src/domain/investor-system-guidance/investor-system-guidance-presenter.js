@@ -68,27 +68,14 @@ import {
 } from '../investor-jobs.js';
 
 import {
+  PORTFOLIO_ARCHETYPES
+} from '../portfolio-system/portfolio-archetypes.js';
+
+import {
   PROFILE_EVIDENCE_QUESTION_IDS,
   buildGroupedTraceability,
   getGroupedEvidenceForDimension
 } from './profile-evidence-presentation.js';
-
-
-/*
- * ============================================================
- * User-facing archetype names
- * ============================================================
- */
-
-const ARCHETYPE_DISPLAY_NAMES = Object.freeze({
-  ES: 'Emerging Strategist',
-  GD: 'Global Diversified',
-  FT: 'Factor Tilt',
-  BFO: 'Balanced Family Office',
-  GA: 'Growth + Alternatives',
-  TO: 'Tactical / Opportunistic',
-  IP: 'Income / Preservation'
-});
 
 
 /*
@@ -236,6 +223,57 @@ function titleCase(value) {
       (character) =>
         character.toUpperCase()
     );
+}
+
+export function getPortfolioSystemDisplayName(
+  archetypeId
+) {
+  const canonicalName =
+    PORTFOLIO_ARCHETYPES[
+      archetypeId
+    ]?.name;
+
+  if (!canonicalName) {
+    return (
+      archetypeId ??
+      'Portfolio System'
+    );
+  }
+
+  /*
+   * The hero convention omits the generic Portfolio suffix.
+   * Opportunity Portfolio retains it because it is part of that
+   * canonical system's established concise name.
+   */
+  return archetypeId === 'TO'
+    ? canonicalName
+    : canonicalName.replace(
+        / Portfolio$/,
+        ''
+      );
+}
+
+export function getPortfolioSystemTitle(
+  archetypeId,
+  variantId
+) {
+  const archetypeDisplayName =
+    getPortfolioSystemDisplayName(
+      archetypeId
+    );
+
+  const variantDisplayName =
+    titleCase(
+      variantId
+    );
+
+  return variantDisplayName
+    ? (
+        archetypeDisplayName +
+        ' · ' +
+        variantDisplayName
+      )
+    : archetypeDisplayName;
 }
 
 
@@ -1466,11 +1504,9 @@ function buildRecommendationReveal({
     {};
 
   const archetypeDisplayName =
-    ARCHETYPE_DISPLAY_NAMES[
+    getPortfolioSystemDisplayName(
       archetypeId
-    ] ??
-    archetypeId ??
-    'Portfolio System';
+    );
 
   const variantDisplayName =
     titleCase(
@@ -1498,13 +1534,10 @@ function buildRecommendationReveal({
       'YOUR RECOMMENDED PORTFOLIO SYSTEM',
 
     title:
-      variantDisplayName
-        ? (
-            archetypeDisplayName +
-            ' · ' +
-            variantDisplayName
-          )
-        : archetypeDisplayName,
+      getPortfolioSystemTitle(
+        archetypeId,
+        variantId
+      ),
 
     archetypeId,
 

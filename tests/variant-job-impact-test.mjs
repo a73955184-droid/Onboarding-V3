@@ -263,6 +263,7 @@ for (const [
   const renderedText =
     renderedHtml
       .replace(/<[^>]+>/g, ' ')
+      .replace(/&amp;/g, '&')
       .replace(/\s+/g, ' ')
       .trim();
 

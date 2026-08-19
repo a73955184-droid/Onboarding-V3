@@ -5,6 +5,15 @@ import {
 } from '../src/domain/portfolio-philosophy/archetype-philosophies.js';
 
 import {
+  PORTFOLIO_ARCHETYPES
+} from '../src/domain/portfolio-system/portfolio-archetypes.js';
+
+import {
+  getPortfolioSystemDisplayName,
+  getPortfolioSystemTitle
+} from '../src/domain/investor-system-guidance/investor-system-guidance-presenter.js';
+
+import {
   presentPortfolioJobFit
 } from '../src/domain/portfolio-philosophy/portfolio-job-fit-presenter.js';
 
@@ -40,7 +49,7 @@ const EXPECTED_EXPLANATIONS = Object.freeze({
   }),
   BFO: Object.freeze({
     essential:
-      'The Essential version organizes your investments around three fundamental purposes: Growth, Stability, and Liquidity. Growth is intended to build wealth over time, Stability helps reduce dependence on growth investments when markets are difficult, and Liquidity keeps money available for near-term needs or flexibility. These are broad categories because each describes a major purpose for your money rather than a particular investment idea or strategy, and the Essential version stops there because your portfolio can gain the organizing benefits of the Balanced Family Office approach without giving you additional areas to research, compare, or manage.',
+      'The Essential version organizes your investments around three fundamental purposes: Growth, Stability, and Liquidity. Growth is intended to build wealth over time, Stability helps reduce dependence on growth investments when markets are difficult, and Liquidity keeps money available for near-term needs or flexibility. These are broad categories because each describes a major purpose for your money rather than a particular investment idea or strategy, and the Essential version stops there because your portfolio can gain the organizing benefits of the Balanced Multi-Purpose approach without giving you additional areas to research, compare, or manage.',
     intentional:
       'The Intentional version starts with the same fundamental purposes—Growth, Stability, and Liquidity—but gives selected investment ideas an additional, clearly defined purpose in your portfolio. Your answers suggest that you want room to explore ideas without disrupting what already works, so an additional investment should improve an existing part of the portfolio, add a genuinely different source of diversification or return, or otherwise have a clear reason for being there instead of simply becoming another investment you own.',
     engaged:
@@ -72,21 +81,95 @@ const EXPECTED_EXPLANATIONS = Object.freeze({
   })
 });
 
-const FAMILY_NAMES = Object.freeze({
-  ES: 'Emerging Strategist',
-  GD: 'Global Diversified',
-  FT: 'Factor Tilt',
-  BFO: 'Balanced Family Office',
-  GA: 'Growth + Alternatives',
-  TO: 'Tactical / Opportunistic',
-  IP: 'Income / Preservation'
-});
+const FAMILY_NAMES = Object.freeze(
+  Object.fromEntries(
+    Object.keys(
+      PORTFOLIO_ARCHETYPES
+    ).map(
+      archetypeId => [
+        archetypeId,
+        getPortfolioSystemDisplayName(
+          archetypeId
+        )
+      ]
+    )
+  )
+);
 
 const VARIANT_NAMES = Object.freeze({
   essential: 'Essential',
   intentional: 'Intentional',
   engaged: 'Engaged'
 });
+
+const EXPECTED_HERO_NAMES = Object.freeze({
+  ES: 'Effortless',
+  GD: 'Global Diversified',
+  FT: 'Systematic Improvement',
+  BFO: 'Balanced Multi-Purpose',
+  GA: 'Growth & Alternatives',
+  TO: 'Opportunity Portfolio',
+  IP: 'Income Preservation'
+});
+
+for (const [
+  archetypeId,
+  expectedDisplayName
+] of Object.entries(
+  EXPECTED_HERO_NAMES
+)) {
+  const canonicalName =
+    PORTFOLIO_ARCHETYPES[
+      archetypeId
+    ].name;
+
+  assert.ok(
+    canonicalName === expectedDisplayName ||
+      canonicalName === `${expectedDisplayName} Portfolio`,
+    `${archetypeId} hero name should remain derived from its canonical archetype name`
+  );
+
+  assert.equal(
+    getPortfolioSystemDisplayName(
+      archetypeId
+    ),
+    expectedDisplayName,
+    `${archetypeId} should present its canonical concise hero name`
+  );
+
+  assert.equal(
+    getPortfolioSystemTitle(
+      archetypeId,
+      'essential'
+    ),
+    `${expectedDisplayName} · Essential`,
+    `${archetypeId} should preserve variant composition`
+  );
+}
+
+assert.equal(
+  getPortfolioSystemTitle(
+    'GA',
+    'intentional'
+  ),
+  'Growth & Alternatives · Intentional'
+);
+
+assert.equal(
+  getPortfolioSystemTitle(
+    'TO',
+    'engaged'
+  ),
+  'Opportunity Portfolio · Engaged'
+);
+
+assert.doesNotMatch(
+  Object.values(
+    FAMILY_NAMES
+  ).join('|'),
+  /Emerging Strategist|Factor Tilt|Balanced Family Office|Growth \+ Alternatives|Tactical \/ Opportunistic|Income \/ Preservation/,
+  'Official portfolio-system names must not regress to the obsolete taxonomy'
+);
 
 function presentResolvedExplanation(
   archetypeId,
@@ -245,7 +328,7 @@ assert.equal(
     archetypeId: 'BFO',
     variantId: 'intentional',
     portfolioFamily:
-      'Balanced Family Office',
+      'Balanced Multi-Purpose',
     variantDisplayName:
       'Intentional'
   }),
