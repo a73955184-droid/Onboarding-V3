@@ -905,100 +905,6 @@ function renderEffortDistribution(
 }
 
 
-function renderSleeveEffortRows(
-  sleeves = []
-) {
-  if (
-    !Array.isArray(sleeves) ||
-    sleeves.length === 0
-  ) {
-    return '';
-  }
-
-  return `
-    <div
-      class="summary-list"
-      style="margin-top: 18px"
-    >
-
-      ${sleeves
-        .map(
-          (sleeve) => `
-            <div class="summary-item">
-
-              <strong>
-                ${escapeHtml(
-                  sleeve.label
-                )}
-
-                ${
-                  typeof sleeve
-                    .weightPercent ===
-                  'number'
-                    ? ` · ${
-                        sleeve
-                          .weightPercent
-                      }%`
-                    : ''
-                }
-              </strong>
-
-              <div
-                style="margin-top: 4px"
-              >
-                ${escapeHtml(
-                  sleeve
-                    .guidance
-                    ?.effort
-                    ?.label ??
-                  ''
-                )}
-
-                ${
-                  sleeve
-                    .guidance
-                    ?.effort
-                    ?.reviewCadenceLabel
-                    ? ` · ${escapeHtml(
-                        sleeve
-                          .guidance
-                          .effort
-                          .reviewCadenceLabel
-                      )}`
-                    : ''
-                }
-              </div>
-
-              ${
-                sleeve
-                  .guidance
-                  ?.effort
-                  ?.whyThisEffort
-                  ? `
-                    <div
-                      style="margin-top: 6px"
-                    >
-                      ${escapeHtml(
-                        sleeve
-                          .guidance
-                          .effort
-                          .whyThisEffort
-                      )}
-                    </div>
-                  `
-                  : ''
-              }
-
-            </div>
-          `
-        )
-        .join('')}
-
-    </div>
-  `;
-}
-
-
 /*
  * ============================================================
  * Behavior
@@ -1617,7 +1523,7 @@ export function renderVariantExplanation(
 /**
  * Render one cohesive detail panel for the selected sleeve.
  */
-function renderSleeveDetailPanel(
+export function renderSleeveDetailPanel(
   sleeve
 ) {
   if (!sleeve) {
@@ -1626,6 +1532,31 @@ function renderSleeveDetailPanel(
 
   const guidance =
     sleeve.guidance ?? {};
+  const effort =
+    guidance.effort ?? {};
+  const effortLabel =
+    typeof effort.label === 'string'
+      ? effort.label.trim()
+      : '';
+  const reviewCadenceLabel =
+    typeof effort.reviewCadenceLabel === 'string'
+      ? effort.reviewCadenceLabel.trim()
+      : '';
+  const whyThisEffort =
+    typeof effort.whyThisEffort === 'string'
+      ? effort.whyThisEffort.trim()
+      : '';
+  const effortSummary = [
+    effortLabel,
+    reviewCadenceLabel
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const hasEffortInformation =
+    Boolean(
+      effortSummary ||
+      whyThisEffort
+    );
 
   return `
     <article
@@ -1688,6 +1619,30 @@ function renderSleeveDetailPanel(
                 <div>${escapeHtml(
                   guidance.whatBelongs
                 )}</div>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          hasEffortInformation
+            ? `
+              <div class="portfolio-sleeve-detail-group">
+                <strong>Your effort</strong>
+                ${
+                  effortSummary
+                    ? `<div>${escapeHtml(
+                        effortSummary
+                      )}</div>`
+                    : ''
+                }
+                ${
+                  whyThisEffort
+                    ? `<div>${escapeHtml(
+                        whyThisEffort
+                      )}</div>`
+                    : ''
+                }
               </div>
             `
             : ''
@@ -2593,11 +2548,6 @@ export function renderPortfolioSystemFit(
 
 
             <div
-              id="sleeveEffortRows"
-            ></div>
-
-
-            <div
               class="evidence"
               style="margin-top: 18px"
             >
@@ -3464,17 +3414,6 @@ export function renderPortfolioSystemFit(
     .innerHTML =
       renderEffortDistribution(
         effort
-      );
-
-
-  root
-    .querySelector(
-      '#sleeveEffortRows'
-    )
-    .innerHTML =
-      renderSleeveEffortRows(
-        guidance
-          .sleeves
       );
 
 
