@@ -27,6 +27,11 @@ import {
 } from '../src/content/investor-need-traceability-copy.js';
 
 import {
+  PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT,
+  toCanonicalCapabilityId
+} from '../src/content/portfolio-system-capability-fulfillment-copy.js';
+
+import {
   renderInvestingSystemJobs
 } from '../src/features/recommendation/PortfolioSystemFitScreen.js';
 
@@ -229,6 +234,13 @@ for (const group of groupedTraceability) {
       response.systemCapability,
       expected.systemCapability,
       'Grouped traceability should return the exact capability record'
+    );
+    assert.equal(
+      response.systemCapabilityId,
+      toCanonicalCapabilityId(
+        expected.systemCapability.label
+      ),
+      'Grouped traceability should expose the stable canonical capability ID'
     );
   }
 }
@@ -565,8 +577,38 @@ assert.match(
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<th\b/g) ?? []).length,
-  3,
-  'Screen should render exactly three columns'
+  4,
+  'Screen should render exactly four columns'
+);
+assert.deepEqual(
+  investingSystemJobs.columns,
+  [
+    'Guidance indication',
+    'Your quiz response',
+    'System capability',
+    'How your recommended system delivers it'
+  ],
+  'The fourth header should be additive and preserve the first three exactly'
+);
+assert.deepEqual(
+  [
+    ...investingSystemJobsHtml.matchAll(
+      /<th\b[^>]*>([\s\S]*?)<\/th>/g
+    )
+  ].map(
+    match =>
+      match[1]
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+  ),
+  [
+    'Guidance indication',
+    'Your quiz response',
+    'System capability',
+    'How your recommended system delivers it'
+  ],
+  'Rendered table headers should contain exactly the approved four-column sequence'
 );
 assert.equal(
   (investingSystemJobsHtml.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr>/g) ?? []).length,
@@ -603,6 +645,29 @@ for (const item of investingSystemJobs.items) {
       assert.ok(!investingSystemJobsHtml.includes(response.portfolioConsequence.copy));
       assert.ok(investingSystemJobsHtml.includes(response.systemCapability.label));
       assert.ok(investingSystemJobsHtml.includes(response.systemCapability.copy));
+
+      const capabilityId =
+        response.systemCapabilityId;
+      const expectedFulfillment =
+        PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+          [capabilityId]
+          .FT;
+
+      assert.deepEqual(
+        response.portfolioSystemFulfillment,
+        {
+          capabilityId,
+          archetypeId: 'FT',
+          copy: expectedFulfillment
+        },
+        'Each response should resolve fulfillment from the final FT recommendation'
+      );
+      assert.ok(
+        investingSystemJobsHtml.includes(
+          expectedFulfillment
+        ),
+        'Screen should render canonical fulfillment copy verbatim'
+      );
     }
   }
 }
@@ -611,6 +676,49 @@ assert.equal(
   (investingSystemJobsHtml.match(/class="traceability-response-block"/g) ?? []).length,
   selectedResponseCount,
   'Every selected response should render one independent capability block'
+);
+assert.equal(
+  (investingSystemJobsHtml.match(/class="portfolio-system-fulfillment-block"/g) ?? []).length,
+  selectedResponseCount,
+  'Every selected response should render one matching fulfillment block'
+);
+
+const experimentFulfillment =
+  investingSystemJobs.items
+    .flatMap(item => item.traceabilityGrouped)
+    .flatMap(group => group.responses)
+    .find(response => response.optionId === 'experiment')
+    .portfolioSystemFulfillment;
+const experimentOption =
+  QUESTIONS
+    .find(question => question.screenKey === 'evolution')
+    .options
+    .find(option => option.id === 'experiment');
+
+assert.equal(
+  experimentOption.scores.GA,
+  3,
+  'The selected experiment response should retain its strong GA scoring signal'
+);
+assert.equal(
+  guidance.resolved.archetypeId,
+  'FT',
+  'The fixture final recommendation should remain FT'
+);
+
+assert.equal(
+  experimentFulfillment.copy,
+  PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+    ['bounded-experimentation-framework']
+    .FT,
+  'A GA-favoring response should use the final FT recommendation for fulfillment'
+);
+assert.notEqual(
+  experimentFulfillment.copy,
+  PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+    ['bounded-experimentation-framework']
+    .GA,
+  'Response-level archetype preference must not select fulfillment copy'
 );
 
 assert.ok(
@@ -632,6 +740,7 @@ const escapedHtml =
     columns: [
       '<b>one</b>',
       'two & three',
+      'three',
       'four'
     ],
     items: [
@@ -665,6 +774,11 @@ const escapedHtml =
                 systemCapability: {
                   label: '<unsafe capability>',
                   copy: 'capability & more'
+                },
+                portfolioSystemFulfillment: {
+                  capabilityId: 'unsafe',
+                  archetypeId: 'FT',
+                  copy: 'fulfillment & more'
                 }
               }
             ]
@@ -681,6 +795,7 @@ assert.match(escapedHtml, /&lt;b&gt;one&lt;\/b&gt;/);
 assert.match(escapedHtml, /&lt;img src=x&gt;/);
 assert.match(escapedHtml, /two &amp; three/);
 assert.match(escapedHtml, /capability &amp; more/);
+assert.match(escapedHtml, /fulfillment &amp; more/);
 
 for (const invalidModel of [
   undefined,

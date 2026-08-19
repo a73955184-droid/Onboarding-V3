@@ -501,6 +501,26 @@ function renderSystemCapabilities(
 }
 
 
+function renderPortfolioSystemFulfillment(
+  groups
+) {
+  return renderTraceabilityGroups(
+    groups,
+    (response) => `
+      <div
+        class="portfolio-system-fulfillment-block"
+      >
+        ${escapeHtml(
+          response
+            ?.portfolioSystemFulfillment
+            ?.copy
+        )}
+      </div>
+    `
+  );
+}
+
+
 function renderInvestingSystemJobRow(
   item
 ) {
@@ -522,6 +542,12 @@ function renderInvestingSystemJobRow(
 
       <td>
         ${renderSystemCapabilities(
+          item?.traceabilityGrouped
+        )}
+      </td>
+
+      <td>
+        ${renderPortfolioSystemFulfillment(
           item?.traceabilityGrouped
         )}
       </td>
@@ -547,7 +573,8 @@ export function renderInvestingSystemJobs(
   const defaultColumns = [
     'Guidance indication',
     'Your quiz response',
-    'System capability'
+    'System capability',
+    'How your recommended system delivers it'
   ];
 
   const columns =
@@ -557,7 +584,7 @@ export function renderInvestingSystemJobs(
     ) &&
     investingSystemJobs
       .columns
-      .length === 3
+      .length === 4
       ? investingSystemJobs
           .columns
       : defaultColumns;
@@ -600,6 +627,12 @@ export function renderInvestingSystemJobs(
                 class="investing-system-jobs-capability-column"
               >
                 ${escapeHtml(columns[2])}
+              </th>
+
+              <th
+                class="investing-system-jobs-fulfillment-column"
+              >
+                ${escapeHtml(columns[3])}
               </th>
             </tr>
           </thead>

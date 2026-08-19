@@ -33,7 +33,7 @@
 
 .investing-system-jobs .investing-system-jobs-table {
   width: 100%;
-  min-width: 920px;
+  min-width: 1120px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -65,15 +65,19 @@
 }
 
 .investing-system-jobs .investing-system-jobs-guidance-column {
-  width: 20%;
+  width: 16%;
 }
 
 .investing-system-jobs .investing-system-jobs-response-column {
-  width: 32%;
+  width: 24%;
 }
 
 .investing-system-jobs .investing-system-jobs-capability-column {
-  width: 48%;
+  width: 28%;
+}
+
+.investing-system-jobs .investing-system-jobs-fulfillment-column {
+  width: 32%;
 }
 
 .investing-system-jobs .traceability-question-group +
@@ -90,8 +94,18 @@
   padding-bottom: 14px;
 }
 
+.investing-system-jobs .portfolio-system-fulfillment-block {
+  padding-bottom: 14px;
+}
+
 .investing-system-jobs .traceability-response-block +
 .investing-system-jobs .traceability-response-block {
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.investing-system-jobs .portfolio-system-fulfillment-block +
+.investing-system-jobs .portfolio-system-fulfillment-block {
   padding-top: 14px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }

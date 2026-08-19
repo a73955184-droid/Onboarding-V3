@@ -7,6 +7,10 @@ import {
   getInvestorNeedTraceability
 } from '../../content/investor-need-traceability-copy.js';
 
+import {
+  toCanonicalCapabilityId
+} from '../../content/portfolio-system-capability-fulfillment-copy.js';
+
 
 export const PROFILE_EVIDENCE_QUESTION_IDS = Object.freeze({
   stage: Object.freeze([
@@ -253,7 +257,14 @@ export function buildGroupedTraceability(
 
                   systemCapability:
                     traceability
-                      .systemCapability
+                      .systemCapability,
+
+                  systemCapabilityId:
+                    toCanonicalCapabilityId(
+                      traceability
+                        .systemCapability
+                        .label
+                    )
                 };
               })
               .filter(Boolean)

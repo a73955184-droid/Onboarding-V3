@@ -68,6 +68,10 @@ import {
 } from '../investor-jobs.js';
 
 import {
+  PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+} from '../../content/portfolio-system-capability-fulfillment-copy.js';
+
+import {
   PORTFOLIO_ARCHETYPES
 } from '../portfolio-system/portfolio-archetypes.js';
 
@@ -1423,8 +1427,57 @@ function buildProfileAccountability({
 }
 
 
+export function resolvePortfolioSystemCapabilityFulfillment(
+  capabilityId,
+  archetypeId
+) {
+  const copy =
+    PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+      [capabilityId]
+      ?.[archetypeId];
+
+  if (
+    !capabilityId ||
+    typeof copy !== 'string' ||
+    copy.trim().length === 0
+  ) {
+    return null;
+  }
+
+  return {
+    capabilityId,
+    archetypeId,
+    copy
+  };
+}
+
+
+function addPortfolioSystemFulfillment(
+  groupedTraceability,
+  archetypeId
+) {
+  return groupedTraceability.map(
+    group => ({
+      ...group,
+      responses:
+        group.responses.map(
+          response => ({
+            ...response,
+            portfolioSystemFulfillment:
+              resolvePortfolioSystemCapabilityFulfillment(
+                response.systemCapabilityId,
+                archetypeId
+              )
+          })
+        )
+    })
+  );
+}
+
+
 function buildInvestingSystemJobs(
-  profileAccountability
+  profileAccountability,
+  archetypeId
 ) {
   const items =
     profileAccountability
@@ -1438,7 +1491,8 @@ function buildInvestingSystemJobs(
       columns: [
         'Guidance indication',
         'Your quiz response',
-        'System capability'
+        'System capability',
+        'How your recommended system delivers it'
       ],
 
       items: []
@@ -1452,7 +1506,8 @@ function buildInvestingSystemJobs(
     columns: [
       'Guidance indication',
       'Your quiz response',
-      'System capability'
+      'System capability',
+      'How your recommended system delivers it'
     ],
 
     items:
@@ -1473,8 +1528,11 @@ function buildInvestingSystemJobs(
             groupedEvidence,
 
           traceabilityGrouped:
-            buildGroupedTraceability(
-              groupedEvidence
+            addPortfolioSystemFulfillment(
+              buildGroupedTraceability(
+                groupedEvidence
+              ),
+              archetypeId
             )
         };
       })
@@ -2243,7 +2301,8 @@ export function presentInvestorSystemGuidance(
 
   const investingSystemJobs =
     buildInvestingSystemJobs(
-      profileAccountability
+      profileAccountability,
+      archetypeId
     );
 
 

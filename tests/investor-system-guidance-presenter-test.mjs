@@ -9,7 +9,8 @@ import {
 } from '../src/domain/portfolio-philosophy/portfolio-job-fit-presenter.js';
 
 import {
-  presentInvestorSystemGuidance
+  presentInvestorSystemGuidance,
+  resolvePortfolioSystemCapabilityFulfillment
 } from '../src/domain/investor-system-guidance/investor-system-guidance-presenter.js';
 
 import {
@@ -19,6 +20,13 @@ import {
 import {
   getInvestorNeedTraceability
 } from '../src/content/investor-need-traceability-copy.js';
+
+import {
+  CANONICAL_SYSTEM_CAPABILITIES,
+  PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT,
+  PORTFOLIO_SYSTEM_IDS,
+  toCanonicalCapabilityId
+} from '../src/content/portfolio-system-capability-fulfillment-copy.js';
 
 
 const EXPECTED_VARIANT_RATIONALES = Object.freeze({
@@ -68,6 +76,78 @@ function buildGuidance(assessmentResult) {
     guidance
   };
 }
+
+
+const representativeCapability =
+  getInvestorNeedTraceability(
+    'decisionStyle',
+    'fit'
+  ).systemCapability;
+const representativeCapabilityId =
+  toCanonicalCapabilityId(
+    representativeCapability.label
+  );
+
+for (const capability of CANONICAL_SYSTEM_CAPABILITIES) {
+  for (const archetypeId of PORTFOLIO_SYSTEM_IDS) {
+    assert.equal(
+      resolvePortfolioSystemCapabilityFulfillment(
+        capability.id,
+        archetypeId
+      ).copy,
+      PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+        [capability.id]
+        [archetypeId],
+      `${capability.id}.${archetypeId} should resolve through the presenter lookup`
+    );
+  }
+}
+
+for (const archetypeId of PORTFOLIO_SYSTEM_IDS) {
+  assert.deepEqual(
+    resolvePortfolioSystemCapabilityFulfillment(
+      representativeCapabilityId,
+      archetypeId
+    ),
+    {
+      capabilityId:
+        representativeCapabilityId,
+      archetypeId,
+      copy:
+        PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+          [representativeCapabilityId]
+          [archetypeId]
+    },
+    `Fit-evaluation fulfillment should resolve canonically for ${archetypeId}`
+  );
+}
+
+assert.notEqual(
+  resolvePortfolioSystemCapabilityFulfillment(
+    representativeCapabilityId,
+    'ES'
+  ).copy,
+  resolvePortfolioSystemCapabilityFulfillment(
+    representativeCapabilityId,
+    'FT'
+  ).copy,
+  'The same capability should resolve differently for final ES and FT systems'
+);
+
+const esFulfillmentAcrossVariants =
+  ['essential', 'intentional', 'engaged'].map(
+    () =>
+      resolvePortfolioSystemCapabilityFulfillment(
+        representativeCapabilityId,
+        'ES'
+      ).copy
+  );
+
+assert.equal(
+  new Set(esFulfillmentAcrossVariants).size,
+  1,
+  'Variant labels must not alter archetype-level capability fulfillment'
+);
 
 
 function findSleeve(
@@ -977,7 +1057,8 @@ function assertCommonContract(
     [
       'Guidance indication',
       'Your quiz response',
-      'System capability'
+      'System capability',
+      'How your recommended system delivers it'
     ],
     'Investing-system-jobs headers should match exactly'
   );
@@ -1071,6 +1152,24 @@ function assertCommonContract(
         assert.equal(response.investorNeed, expected.investorNeed);
         assert.strictEqual(response.portfolioConsequence, expected.portfolioConsequence);
         assert.strictEqual(response.systemCapability, expected.systemCapability);
+
+        const capabilityId =
+          toCanonicalCapabilityId(
+            expected.systemCapability.label
+          );
+
+        assert.deepEqual(
+          response.portfolioSystemFulfillment,
+          {
+            capabilityId,
+            archetypeId: 'TO',
+            copy:
+              PORTFOLIO_SYSTEM_CAPABILITY_FULFILLMENT
+                [capabilityId]
+                .TO
+          },
+          'Capability fulfillment should use the final recommended archetype'
+        );
       }
     }
   }
