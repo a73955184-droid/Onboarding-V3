@@ -2291,11 +2291,6 @@ export function renderPortfolioSystemFit(
               id="investingSystemJobs"
             ></div>
 
-
-            <div
-              id="recommendationExplainability"
-            ></div>
-
           </section>
 
 
@@ -3075,21 +3070,6 @@ export function renderPortfolioSystemFit(
         renderInvestingSystemJobs(
           reveal
             ?.investingSystemJobs
-        );
-  }
-
-
-  const recommendationExplainabilityContainer =
-    root.querySelector(
-      '#recommendationExplainability'
-    );
-
-  if (recommendationExplainabilityContainer) {
-    recommendationExplainabilityContainer
-      .innerHTML =
-        renderRecommendationExplainability(
-          reveal
-            ?.recommendationExplainability
         );
   }
 

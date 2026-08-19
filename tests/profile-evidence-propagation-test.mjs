@@ -491,6 +491,12 @@ const visualizationIndex =
   portfolioFitSource.indexOf(
     'id="portfolioVisualizationSection"'
   );
+const mainScreenSource =
+  portfolioFitSource.slice(
+    portfolioFitSource.indexOf(
+      'export function renderPortfolioSystemFit'
+    )
+  );
 
 assert.ok(
   profileContainerIndex >= 0 &&
@@ -500,6 +506,43 @@ assert.ok(
     jobsContainerIndex,
   'Investing system jobs should appear after accountability and before visualization'
 );
+
+assert.doesNotMatch(
+  mainScreenSource,
+  /id="recommendationExplainability"|recommendationExplainabilityContainer|renderRecommendationExplainability\(/,
+  'PortfolioSystemFitScreen should not insert the recommendation explainability block'
+);
+
+for (const removedHeading of [
+  'WHY THIS SYSTEM FITS YOUR ANSWERS',
+  'Why this system rose to the top',
+  'What your answers say your system needs',
+  'How your recommended system provides that',
+  'Why the Essential version',
+  'Why the Intentional version',
+  'Why the Engaged version'
+]) {
+  assert.ok(
+    !mainScreenSource.includes(
+      removedHeading
+    ),
+    `PortfolioSystemFitScreen should omit ${removedHeading}`
+  );
+}
+
+for (const preservedHeading of [
+  'ACCOUNTABLE TO YOUR INVESTOR PROFILE',
+  'INVESTING SYSTEM JOBS TO BE DONE',
+  'How your answers translate into system capabilities',
+  'YOUR PORTFOLIO SYSTEM'
+]) {
+  assert.ok(
+    portfolioFitSource.includes(
+      preservedHeading
+    ),
+    `PortfolioSystemFitScreen should retain ${preservedHeading}`
+  );
+}
 
 const investingSystemJobs =
   guidance
