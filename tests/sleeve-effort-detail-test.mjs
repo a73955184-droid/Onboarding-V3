@@ -274,20 +274,10 @@ assert.doesNotMatch(
   /renderSleeveEffortRows|sleeveEffortRows/,
   'Duplicated sleeve-by-sleeve effort rows should be removed'
 );
-assert.match(
+assert.doesNotMatch(
   screenSource,
-  /renderEffortDistribution\(/,
-  'Aggregate portfolio effort distribution should remain'
-);
-assert.match(
-  screenSource,
-  /YOUR EFFORT MODEL/,
-  'The standalone effort section should remain'
-);
-assert.match(
-  screenSource,
-  /Effort vs\. return contribution/,
-  'Portfolio-level return and effort guidance should remain'
+  /renderEffortDistribution|YOUR EFFORT MODEL|id="effortSummary"|effortDistribution|returnEffortExplanation|effortWarning|Effort vs\. return contribution/,
+  'The standalone effort-model section and its dedicated code should be removed'
 );
 
 console.log(
