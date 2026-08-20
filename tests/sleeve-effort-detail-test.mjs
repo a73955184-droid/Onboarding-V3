@@ -32,6 +32,8 @@ const sleeve = {
       'Provide the primary strategic portfolio foundation.',
     returnContribution:
       'Support the portfolio main long-term return objective.',
+    whatUsuallyDoesNotBelong:
+      'Concentrated bets whose behavior conflicts with the sleeve mandate.',
     whatBelongs:
       'Broad, durable exposures that are intended to remain part of the portfolio through ordinary market cycles.',
     effort: {
@@ -57,6 +59,8 @@ for (const expectedCopy of [
   sleeve.guidance.returnContribution,
   'What can belong here',
   'Broad US equity',
+  'What usually does not belong',
+  sleeve.guidance.whatUsuallyDoesNotBelong,
   'Sleeve mandate',
   sleeve.guidance.whatBelongs,
   'Your effort',
@@ -66,6 +70,22 @@ for (const expectedCopy of [
   assert.ok(
     html.includes(expectedCopy),
     `Sleeve detail should render ${expectedCopy}`
+  );
+}
+
+const detailGroupOrder = [
+  'Its job',
+  'Return contribution',
+  'What can belong here',
+  'What usually does not belong',
+  'Sleeve mandate',
+  'Your effort'
+];
+for (let index = 1; index < detailGroupOrder.length; index += 1) {
+  assert.ok(
+    html.indexOf(detailGroupOrder[index - 1]) <
+      html.indexOf(detailGroupOrder[index]),
+    `${detailGroupOrder[index]} should follow ${detailGroupOrder[index - 1]}`
   );
 }
 
@@ -140,6 +160,8 @@ const escapedHtml =
     label: '<unsafe sleeve>',
     weightPercent: 10,
     guidance: {
+      whatUsuallyDoesNotBelong:
+        '<unsafe exclusion>',
       effort: {
         label: '<unsafe effort>',
         reviewCadenceLabel:
@@ -157,6 +179,25 @@ assert.match(
   escapedHtml,
   /Review &amp; decide/
 );
+assert.match(
+  escapedHtml,
+  /&lt;unsafe exclusion&gt;/
+);
+
+for (const invalidValue of [null, {}, '   ']) {
+  assert.doesNotMatch(
+    renderSleeveDetailPanel({
+      label: 'Missing boundary',
+      weightPercent: 10,
+      guidance: {
+        whatUsuallyDoesNotBelong:
+          invalidValue
+      }
+    }),
+    /What usually does not belong/,
+    'Missing or invalid boundary copy should omit the group'
+  );
+}
 
 const resolvedGuidance =
   presentInvestorSystemGuidance(
@@ -226,6 +267,27 @@ for (const resolvedSleeve of resolvedGuidance.sleeves) {
     );
   const resolvedEffort =
     resolvedSleeve.guidance.effort;
+  const resolvedBoundary =
+    resolvedSleeve.guidance.whatUsuallyDoesNotBelong;
+
+  assert.equal(
+    typeof resolvedBoundary,
+    'string',
+    `${resolvedSleeve.label} should expose resolved boundary copy`
+  );
+  assert.ok(
+    resolvedHtml.includes(
+      resolvedBoundary
+    ),
+    `${resolvedSleeve.label} should render its resolved boundary copy`
+  );
+  assert.ok(
+    resolvedHtml.indexOf('What can belong here') <
+      resolvedHtml.indexOf('What usually does not belong') &&
+      resolvedHtml.indexOf('What usually does not belong') <
+        resolvedHtml.indexOf('Sleeve mandate'),
+    `${resolvedSleeve.label} should render boundary copy between assets and mandate`
+  );
 
   assert.ok(
     resolvedHtml.includes(
@@ -278,6 +340,11 @@ assert.doesNotMatch(
   screenSource,
   /renderEffortDistribution|YOUR EFFORT MODEL|id="effortSummary"|effortDistribution|returnEffortExplanation|effortWarning|Effort vs\. return contribution/,
   'The standalone effort-model section and its dedicated code should be removed'
+);
+assert.equal(
+  (screenSource.match(/What usually does not belong/g) ?? []).length,
+  2,
+  'Interactive details and bounded-system details should share the existing boundary field'
 );
 
 console.log(

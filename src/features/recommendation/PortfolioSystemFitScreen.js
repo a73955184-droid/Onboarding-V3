@@ -1462,6 +1462,11 @@ export function renderSleeveDetailPanel(
 
   const guidance =
     sleeve.guidance ?? {};
+  const whatUsuallyDoesNotBelong =
+    typeof guidance.whatUsuallyDoesNotBelong === 'string' &&
+    guidance.whatUsuallyDoesNotBelong.trim()
+      ? guidance.whatUsuallyDoesNotBelong
+      : '';
   const effort =
     guidance.effort ?? {};
   const effortLabel =
@@ -1540,6 +1545,19 @@ export function renderSleeveDetailPanel(
         ${renderAssetCategories(
           sleeve
         )}
+
+        ${
+          whatUsuallyDoesNotBelong
+            ? `
+              <div class="portfolio-sleeve-detail-group">
+                <strong>What usually does not belong</strong>
+                <div>${escapeHtml(
+                  whatUsuallyDoesNotBelong
+                )}</div>
+              </div>
+            `
+            : ''
+        }
 
         ${
           guidance.whatBelongs
