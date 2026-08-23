@@ -2820,40 +2820,6 @@ export function renderPortfolioSystemFit(
 
 
           <!-- ==================================================
-               BOUNDED SLEEVES
-               ================================================== -->
-
-          <section
-            style="margin-top: 24px"
-          >
-
-            <span class="pill">
-              YOUR BOUNDED PORTFOLIO SYSTEM
-            </span>
-
-
-            <h2>
-              Every part has a job, boundary, and effort budget
-            </h2>
-
-
-            <p>
-              Each sleeve defines what belongs, what outcome it
-              contributes, what information matters, how much
-              attention it deserves, and when reconsideration is
-              actually warranted.
-            </p>
-
-
-            <div
-              class="system-grid"
-              id="boundedSleeveCards"
-            ></div>
-
-          </section>
-
-
-          <!-- ==================================================
                USER LED
                ================================================== -->
 
@@ -3655,25 +3621,6 @@ export function renderPortfolioSystemFit(
         behavior
           ?.outcomes
       );
-
-
-  /*
-   * ==========================================================
-   * BOUNDED SLEEVES
-   * ==========================================================
-   */
-
-  root
-    .querySelector(
-      '#boundedSleeveCards'
-    )
-    .innerHTML =
-      guidance
-        .sleeves
-        .map(
-          renderSleeveCard
-        )
-        .join('');
 
 
   /*

@@ -614,10 +614,30 @@ assert.doesNotMatch(
   /renderEffortDistribution|YOUR EFFORT MODEL|id="effortSummary"|effortDistribution|returnEffortExplanation|effortWarning|Effort vs\. return contribution/,
   'The standalone effort-model section and its dedicated code should be removed'
 );
-assert.match(
+assert.doesNotMatch(
   screenSource,
   /YOUR BOUNDED PORTFOLIO SYSTEM/,
-  'The bounded portfolio system should remain intact'
+  'The redundant bounded portfolio system should not render'
+);
+assert.doesNotMatch(
+  screenSource,
+  /boundedSleeveCards/,
+  'The duplicate bounded sleeve cards should not render'
+);
+assert.match(
+  screenSource,
+  /YOUR PORTFOLIO SYSTEM/,
+  'The interactive portfolio system should remain intact'
+);
+assert.match(
+  screenSource,
+  /HOW YOUR SYSTEM HELPS YOU DECIDE/,
+  'The decision section should remain intact'
+);
+assert.match(
+  screenSource,
+  /USER LED/,
+  'The user-led section should remain intact'
 );
 assert.match(
   screenSource,
