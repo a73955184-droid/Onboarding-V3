@@ -1454,12 +1454,24 @@ export function renderVariantExplanation(
  * Render one cohesive detail panel for the selected sleeve.
  */
 export function renderSleeveDetailPanel(
-  sleeve
+  sleeve,
+  focusArea = 'belongs'
 ) {
   if (!sleeve) {
     return '';
   }
 
+  const validFocusAreas = [
+    'belongs',
+    'attention',
+    'watch'
+  ];
+  const activeFocusArea =
+    validFocusAreas.includes(
+      focusArea
+    )
+      ? focusArea
+      : 'belongs';
   const guidance =
     sleeve.guidance ?? {};
   const whatUsuallyDoesNotBelong =
@@ -1492,6 +1504,242 @@ export function renderSleeveDetailPanel(
       effortSummary ||
       whyThisEffort
     );
+  const redundancyCheck =
+    typeof guidance.redundancyCheck === 'string' &&
+    guidance.redundancyCheck.trim()
+      ? guidance.redundancyCheck
+      : '';
+  const redundantAttention =
+    typeof effort.redundantAttention === 'string' &&
+    effort.redundantAttention.trim()
+      ? effort.redundantAttention
+      : '';
+  const actionBoundary =
+    typeof guidance.actionBoundary === 'string' &&
+    guidance.actionBoundary.trim()
+      ? guidance.actionBoundary
+      : '';
+  const marketTrends =
+    Array.isArray(
+      sleeve?.monitoring?.marketTrends
+    )
+      ? sleeve.monitoring.marketTrends
+      : [];
+  const relevantSignals =
+    typeof guidance.relevantSignals === 'string' &&
+    guidance.relevantSignals.trim()
+      ? guidance.relevantSignals
+      : '';
+
+  const focusControls = [
+    {
+      id: 'belongs',
+      label: 'WHAT BELONGS HERE'
+    },
+    {
+      id: 'attention',
+      label: 'WHAT NEEDS YOUR ATTENTION'
+    },
+    {
+      id: 'watch',
+      label: 'WHAT TO WATCH'
+    }
+  ];
+
+  const belongsContent = `
+    ${
+      Array.isArray(
+        sleeve.assetCategories
+      ) &&
+      sleeve.assetCategories.length > 0
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Can belong</strong>
+            <div>
+              ${sleeve.assetCategories
+                .map(
+                  (category) =>
+                    escapeHtml(
+                      category?.label ??
+                      category?.displayName ??
+                      category?.id ??
+                      category
+                    )
+                )
+                .join(' Â· ')}
+            </div>
+          </div>
+        `
+        : ''
+    }
+
+    ${
+      whatUsuallyDoesNotBelong
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Usually doesn't belong</strong>
+            <div>${escapeHtml(
+              whatUsuallyDoesNotBelong
+            )}</div>
+          </div>
+        `
+        : ''
+    }
+
+    ${
+      guidance.whatBelongs
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Sleeve rule</strong>
+            <div>${escapeHtml(
+              guidance.whatBelongs
+            )}</div>
+          </div>
+        `
+        : ''
+    }
+
+    ${
+      redundancyCheck
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Before adding something</strong>
+            <div>${escapeHtml(
+              redundancyCheck
+            )}</div>
+          </div>
+        `
+        : ''
+    }
+  `;
+
+  const attentionContent = `
+    ${
+      hasEffortInformation
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Routine review</strong>
+            ${
+              effortSummary
+                ? `<div>${escapeHtml(
+                    effortSummary
+                  )}</div>`
+                : ''
+            }
+            ${
+              whyThisEffort
+                ? `<div>${escapeHtml(
+                    whyThisEffort
+                  )}</div>`
+                : ''
+            }
+          </div>
+        `
+        : ''
+    }
+
+    ${
+      actionBoundary
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Review sooner if</strong>
+            <div>${escapeHtml(
+              actionBoundary
+            )}</div>
+          </div>
+        `
+        : ''
+    }
+
+    ${
+      redundantAttention
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>Usually leave it alone when</strong>
+            <div>${escapeHtml(
+              redundantAttention
+            )}</div>
+          </div>
+        `
+        : ''
+    }
+  `;
+
+  const watchContent = `
+    ${
+      marketTrends.length > 0
+        ? marketTrends
+            .map(
+              (trend) => {
+                const label =
+                  typeof trend?.label === 'string' &&
+                  trend.label.trim()
+                    ? trend.label
+                    : '';
+                const reviewQuestion =
+                  typeof trend?.reviewQuestion === 'string' &&
+                  trend.reviewQuestion.trim()
+                    ? trend.reviewQuestion
+                    : '';
+
+                if (
+                  !label &&
+                  !reviewQuestion
+                ) {
+                  return '';
+                }
+
+                return `
+                  <div class="portfolio-sleeve-detail-group portfolio-sleeve-signal">
+                    ${
+                      label
+                        ? `<strong>${escapeHtml(
+                            label
+                          )}</strong>`
+                        : ''
+                    }
+                    ${
+                      reviewQuestion
+                        ? `<div>${escapeHtml(
+                            reviewQuestion
+                          )}</div>`
+                        : ''
+                    }
+                  </div>
+                `;
+              }
+            )
+            .join('')
+        : relevantSignals
+          ? `
+            <div class="portfolio-sleeve-detail-group">
+              <div>${escapeHtml(
+                relevantSignals
+              )}</div>
+            </div>
+          `
+          : ''
+    }
+
+    ${
+      actionBoundary
+        ? `
+          <div class="portfolio-sleeve-detail-group">
+            <strong>When it warrants review</strong>
+            <div>${escapeHtml(
+              actionBoundary
+            )}</div>
+          </div>
+        `
+        : ''
+    }
+  `;
+
+  const focusContent = {
+    belongs: belongsContent,
+    attention: attentionContent,
+    watch: watchContent
+  }[activeFocusArea];
 
   return `
     <article
@@ -1514,7 +1762,7 @@ export function renderSleeveDetailPanel(
       </div>
 
       <div
-        class="portfolio-sleeve-details-body"
+        class="portfolio-sleeve-orientation"
       >
         ${
           guidance.job
@@ -1542,59 +1790,40 @@ export function renderSleeveDetailPanel(
             : ''
         }
 
-        ${renderAssetCategories(
-          sleeve
-        )}
+      </div>
 
-        ${
-          whatUsuallyDoesNotBelong
-            ? `
-              <div class="portfolio-sleeve-detail-group">
-                <strong>What usually does not belong</strong>
-                <div>${escapeHtml(
-                  whatUsuallyDoesNotBelong
-                )}</div>
-              </div>
+      <div
+        class="portfolio-sleeve-focus-controls"
+        role="tablist"
+      >
+        ${focusControls
+          .map(
+            (control) => `
+              <button
+                type="button"
+                class="portfolio-sleeve-focus-control"
+                role="tab"
+                data-focus-area="${control.id}"
+                aria-selected="${
+                  control.id === activeFocusArea
+                    ? 'true'
+                    : 'false'
+                }"
+                aria-controls="portfolioSleeveFocusPanel"
+              >
+                ${control.label}
+              </button>
             `
-            : ''
-        }
+          )
+          .join('')}
+      </div>
 
-        ${
-          guidance.whatBelongs
-            ? `
-              <div class="portfolio-sleeve-detail-group">
-                <strong>Sleeve mandate</strong>
-                <div>${escapeHtml(
-                  guidance.whatBelongs
-                )}</div>
-              </div>
-            `
-            : ''
-        }
-
-        ${
-          hasEffortInformation
-            ? `
-              <div class="portfolio-sleeve-detail-group">
-                <strong>Your effort</strong>
-                ${
-                  effortSummary
-                    ? `<div>${escapeHtml(
-                        effortSummary
-                      )}</div>`
-                    : ''
-                }
-                ${
-                  whyThisEffort
-                    ? `<div>${escapeHtml(
-                        whyThisEffort
-                      )}</div>`
-                    : ''
-                }
-              </div>
-            `
-            : ''
-        }
+      <div
+        id="portfolioSleeveFocusPanel"
+        class="portfolio-sleeve-details-body"
+        role="tabpanel"
+      >
+        ${focusContent}
       </div>
     </article>
   `;
@@ -2360,11 +2589,59 @@ export function renderPortfolioSystemFit(
               }
 
               #portfolioVisualizationSection
+              .portfolio-sleeve-orientation,
+              #portfolioVisualizationSection
               .portfolio-sleeve-details-body {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 28px 40px;
                 padding: 24px;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-orientation {
+                padding-bottom: 20px;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-focus-controls {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 6px;
+                margin: 0 24px;
+                padding: 5px;
+                border: 1px solid #424a4e;
+                border-radius: 12px;
+                background: #0e141a;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-focus-control {
+                min-width: 0;
+                padding: 10px 12px;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                background: transparent;
+                color: #9eabb2;
+                font: inherit;
+                font-size: 0.7rem;
+                font-weight: 700;
+                letter-spacing: 0.07em;
+                line-height: 1.35;
+                cursor: pointer;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-focus-control[aria-selected="true"] {
+                border-color: #5a5142;
+                background: #2f353c;
+                color: #ffe2ab;
+              }
+
+              #portfolioVisualizationSection
+              .portfolio-sleeve-focus-control:focus-visible {
+                outline: 2px solid #ffbf00;
+                outline-offset: 2px;
               }
 
               #portfolioVisualizationSection
@@ -2408,10 +2685,18 @@ export function renderPortfolioSystemFit(
                 }
 
                 #portfolioVisualizationSection
+                .portfolio-sleeve-orientation,
+                #portfolioVisualizationSection
                 .portfolio-sleeve-details-body {
                   grid-template-columns: 1fr;
                   gap: 22px;
                   padding: 20px 18px;
+                }
+
+                #portfolioVisualizationSection
+                .portfolio-sleeve-focus-controls {
+                  grid-template-columns: 1fr;
+                  margin: 0 18px;
                 }
               }
             </style>
@@ -2929,6 +3214,9 @@ export function renderPortfolioSystemFit(
         )?.id
       : null;
 
+  let selectedSleeveFocusArea =
+    'belongs';
+
   // Render the donut
   const donutContainer =
     root.querySelector(
@@ -3021,9 +3309,39 @@ export function renderPortfolioSystemFit(
     detailsContainer.innerHTML =
       sleeve
         ? renderSleeveDetailPanel(
-            sleeve
+            sleeve,
+            selectedSleeveFocusArea
           )
         : '';
+
+    detailsContainer
+      .querySelectorAll(
+        '.portfolio-sleeve-focus-control'
+      )
+      .forEach(
+        (control) => {
+          control.addEventListener(
+            'click',
+            () => {
+              const focusArea =
+                control.getAttribute(
+                  'data-focus-area'
+                );
+
+              if (!focusArea) {
+                return;
+              }
+
+              selectedSleeveFocusArea =
+                focusArea;
+
+              updateSleeveDetails(
+                sleeveId
+              );
+            }
+          );
+        }
+      );
   }
 
   // Function to update arc styling
