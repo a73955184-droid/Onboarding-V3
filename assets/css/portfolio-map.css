@@ -136,6 +136,60 @@
   margin-bottom: 12px;
 }
 
+.example-securities {
+  min-width: 0;
+}
+
+.example-securities h3,
+.example-security-category h4,
+.example-security-card h4 {
+  margin: 0;
+}
+
+.example-security-disclosure,
+.example-security-empty {
+  color: var(--muted);
+}
+
+.example-security-category {
+  margin-top: 16px;
+  min-width: 0;
+}
+
+.example-security-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.example-security-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+
+.example-security-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.example-security-ticker {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.example-security-details {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
 @media (max-width: 800px) {
   .portfolio-map-grid {
     flex-direction: column;

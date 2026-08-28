@@ -11,6 +11,10 @@ import { navigate } from '../../application/router.js';
 
 import { renderPortfolioRing, calculateSleeveArcs } from './portfolio-ring.js';
 
+import {
+  resolveExampleSecurities
+} from '../../domain/portfolio-system/example-security-resolver.js';
+
 function escapeHtml(value = '') {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -100,7 +104,7 @@ export function renderPortfolioMap(root) {
 
               <div class="card panel detail-tabs">
                 <div class="tab-buttons">
-                  <button class="tab-btn active" data-tab="allocation">Allocation</button>
+                  <button class="tab-btn active" data-tab="allocation">Assets in this sleeve</button>
                   <button class="tab-btn" data-tab="effort">Effort & Return Role</button>
                   <button class="tab-btn" data-tab="monitor">What to Monitor</button>
                 </div>
@@ -186,12 +190,102 @@ export function renderPortfolioMap(root) {
     `;
   }
 
-  function renderAllocationPanel(sleeve) {
+  function renderExampleSecurity(example) {
+    const sourceLink = example.sourceUrl
+      ? `
+          <div>
+            <strong>Source:</strong>
+            <a href="${escapeHtml(example.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="View source for ${escapeHtml(example.name)}">View issuer source</a>
+          </div>
+        `
+      : '';
+
+    const extraEffort =
+      example.variantGuidance?.monitoringBurden
+        ? `
+            <div>
+              <strong>Extra effort introduced:</strong>
+              ${escapeHtml(example.variantGuidance.monitoringBurden)}
+            </div>
+          `
+        : '';
+
     return `
-      <div class="summary-item"><strong>Allocation</strong><div>${formatPercentage(sleeve.weight)}</div></div>
-      <div class="summary-item"><strong>Job</strong><div>${escapeHtml(sleeve.description || '')}</div></div>
+      <article class="example-security-card">
+        <div class="example-security-heading">
+          <h4>${escapeHtml(example.name)}</h4>
+          <span class="example-security-ticker">${escapeHtml(example.symbol)}</span>
+        </div>
+        <div class="example-security-details">
+          <div><strong>Asset category:</strong> ${escapeHtml(example.assetCategoryId)}</div>
+          <div><strong>Why it fits:</strong> ${escapeHtml(example.whyItFits)}</div>
+          <div><strong>Why it may not fit:</strong> ${escapeHtml(example.whyItMayNotFit)}</div>
+          <div><strong>Job performed:</strong> ${escapeHtml(example.portfolioJob)}</div>
+          ${extraEffort}
+          ${sourceLink}
+          <div><strong>Verification status:</strong> ${escapeHtml(example.verificationStatus)}</div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderExampleSecurities(examples) {
+    const hasVerifiedExample = examples.some(
+      (example) => example.verificationStatus === 'verified'
+    );
+
+    const emptyMessage = hasVerifiedExample
+      ? ''
+      : '<p class="example-security-empty">No verified example security is available for this sleeve yet.</p>';
+
+    const categoryGroups = [];
+
+    for (const example of examples) {
+      let group = categoryGroups.find(
+        (candidate) =>
+          candidate.assetCategoryId === example.assetCategoryId
+      );
+
+      if (!group) {
+        group = {
+          assetCategoryId: example.assetCategoryId,
+          examples: []
+        };
+        categoryGroups.push(group);
+      }
+
+      group.examples.push(example);
+    }
+
+    return `
+      <section class="example-securities" aria-labelledby="exampleSecuritiesHeading">
+        <h3 id="exampleSecuritiesHeading">Example securities</h3>
+        <p class="example-security-disclosure">Illustrative examples only—not personalized investment recommendations or guaranteed portfolio holdings.</p>
+        ${emptyMessage}
+        ${categoryGroups.map(
+          (group) => `
+            <section class="example-security-category">
+              <h4>${escapeHtml(group.assetCategoryId)}</h4>
+              <div class="example-security-list">
+                ${group.examples.map(renderExampleSecurity).join('')}
+              </div>
+            </section>
+          `
+        ).join('')}
+      </section>
+    `;
+  }
+
+  function renderAllocationPanel(sleeve, system) {
+    const examples = resolveExampleSecurities({
+      archetypeId: system.system.id,
+      variantId: system.profileVariantId,
+      sleeveId: sleeve.id
+    });
+
+    return `
       <div class="summary-item"><strong>Default categories</strong><div>${(sleeve.assetCategories||[]).map(a=>escapeHtml(a.displayName||a.id||a)).join(' · ')}</div></div>
-      <div class="summary-item"><strong>Starts unallocated</strong><div>${sleeve.startsUnallocated? 'Yes':'No'}</div></div>
+      ${renderExampleSecurities(examples)}
     `;
   }
 
@@ -215,7 +309,7 @@ export function renderPortfolioMap(root) {
   }
 
   function updateDetailPanels(sleeve) {
-    root.querySelector('[data-panel="allocation"]').innerHTML = renderAllocationPanel(sleeve);
+    root.querySelector('[data-panel="allocation"]').innerHTML = renderAllocationPanel(sleeve, portfolioSystem);
     root.querySelector('[data-panel="effort"]').innerHTML = renderEffortPanel(sleeve, portfolioSystem);
     root.querySelector('[data-panel="monitor"]').innerHTML = renderMonitorPanel(sleeve);
   }
