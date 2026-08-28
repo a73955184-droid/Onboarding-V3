@@ -191,7 +191,9 @@ export function renderPortfolioMap(root) {
   }
 
   function renderExampleSecurity(example) {
-    const sourceLink = example.sourceUrl
+    const sourceLink =
+      example.verificationStatus === 'verified' &&
+      example.sourceUrl
       ? `
           <div>
             <strong>Source:</strong>
@@ -200,16 +202,6 @@ export function renderPortfolioMap(root) {
         `
       : '';
 
-    const extraEffort =
-      example.variantGuidance?.monitoringBurden
-        ? `
-            <div>
-              <strong>Extra effort introduced:</strong>
-              ${escapeHtml(example.variantGuidance.monitoringBurden)}
-            </div>
-          `
-        : '';
-
     return `
       <article class="example-security-card">
         <div class="example-security-heading">
@@ -217,13 +209,8 @@ export function renderPortfolioMap(root) {
           <span class="example-security-ticker">${escapeHtml(example.symbol)}</span>
         </div>
         <div class="example-security-details">
-          <div><strong>Asset category:</strong> ${escapeHtml(example.assetCategoryId)}</div>
           <div><strong>Why it fits:</strong> ${escapeHtml(example.whyItFits)}</div>
-          <div><strong>Why it may not fit:</strong> ${escapeHtml(example.whyItMayNotFit)}</div>
-          <div><strong>Job performed:</strong> ${escapeHtml(example.portfolioJob)}</div>
-          ${extraEffort}
           ${sourceLink}
-          <div><strong>Verification status:</strong> ${escapeHtml(example.verificationStatus)}</div>
         </div>
       </article>
     `;
