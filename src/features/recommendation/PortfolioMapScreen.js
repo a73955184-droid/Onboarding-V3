@@ -171,7 +171,6 @@ export function renderPortfolioMap(root) {
     el.innerHTML = `
       <div class="center-name">${escapeHtml(sleeve.label)}</div>
       <div class="center-pct">${formatPercentage(sleeve.weight)}</div>
-      <div class="center-desc">${escapeHtml(sleeve.description || '')}</div>
     `;
   }
 
