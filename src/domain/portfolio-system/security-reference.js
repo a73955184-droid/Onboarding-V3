@@ -1,3 +1,8 @@
+import {
+  PHASE_1_APPROVED_SECURITY_IDS
+} from './security-category-universe.js';
+
+
 const VERIFIED_AS_OF = '2026-08-28';
 
 
@@ -373,3 +378,73 @@ export const SECURITY_REFERENCE = Object.freeze({
     sourceUrl: 'https://www.jpmorganchase.com/ir'
   })
 });
+
+
+function toPhaseOneSecurity(security) {
+  const isVerified =
+    security.verificationStatus === 'verified';
+
+  return Object.freeze({
+    securityId: security.id.toLowerCase(),
+    ticker: security.symbol,
+    name: security.name,
+    issuer: security.issuer,
+    securityType: security.securityType,
+    sourceUrl: security.sourceUrl,
+    verificationStatus: security.verificationStatus,
+    verifiedAt:
+      isVerified ? security.verifiedAsOf : null,
+    activeStatus:
+      isVerified ? 'active' : 'unknown',
+    legacyId: security.id
+  });
+}
+
+
+function createPendingPhaseOneSecurity(securityId) {
+  return Object.freeze({
+    securityId,
+    ticker: securityId.toUpperCase(),
+    name: null,
+    issuer: null,
+    securityType: null,
+    sourceUrl: null,
+    verificationStatus: 'pending',
+    verifiedAt: null,
+    activeStatus: 'unknown',
+    legacyId: null
+  });
+}
+
+
+const PHASE_ONE_EXISTING_SECURITIES = Object.values(
+  SECURITY_REFERENCE
+).map(toPhaseOneSecurity);
+
+
+const PHASE_ONE_EXISTING_IDS = new Set(
+  PHASE_ONE_EXISTING_SECURITIES.map(
+    ({ securityId }) => securityId
+  )
+);
+
+
+const PHASE_ONE_PENDING_SECURITIES =
+  PHASE_1_APPROVED_SECURITY_IDS
+    .filter(
+      (securityId) =>
+        !PHASE_ONE_EXISTING_IDS.has(securityId)
+    )
+    .map(createPendingPhaseOneSecurity);
+
+
+export const PHASE_1_SECURITY_REFERENCE = Object.freeze(
+  Object.fromEntries(
+    [
+      ...PHASE_ONE_EXISTING_SECURITIES,
+      ...PHASE_ONE_PENDING_SECURITIES
+    ].map(
+      (security) => [security.securityId, security]
+    )
+  )
+);
