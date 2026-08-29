@@ -60,9 +60,17 @@ const portfolioMapSource = fs.readFileSync(
 
 assert.doesNotMatch(
   portfolioMapSource,
-  /security-category-universe|security-portfolio-fit-resolver|sleeve-security-eligibility-resolver/
+  /security-category-universe/
+);
+assert.match(
+  portfolioMapSource,
+  /security-portfolio-fit-resolver/
+);
+assert.match(
+  portfolioMapSource,
+  /sleeve-security-eligibility-resolver/
 );
 
 console.log(
-  'Security fit compliance test passed: language is bounded and no UI integration exists.'
+  'Security fit compliance test passed: language is bounded and the UI delegates decisions to Phase 1 resolvers.'
 );
