@@ -7,6 +7,10 @@ import {
 } from './security-reference.js';
 
 import {
+  PHASE_1_SECURITY_METADATA
+} from './security-metadata.js';
+
+import {
   SLEEVE_SECURITY_ELIGIBILITY
 } from './sleeve-security-eligibility.js';
 
@@ -58,7 +62,10 @@ export function resolveEligibleSecurities({
     (categoryId) => {
       const categoryRecords = records.filter(
         (record) =>
-          record.categoryId === categoryId
+          record.categoryId === categoryId &&
+          PHASE_1_SECURITY_METADATA[
+            record.securityId
+          ] !== undefined
       );
 
       return Object.freeze({

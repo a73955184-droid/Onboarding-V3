@@ -12,6 +12,10 @@ import {
   resolveEligibleSecurities
 } from '../src/domain/portfolio-system/sleeve-security-eligibility-resolver.js';
 
+import {
+  PHASE_1_SECURITY_METADATA
+} from '../src/domain/portfolio-system/security-metadata.js';
+
 
 const portfolios = Object.values(CONSTITUENT_PORTFOLIOS)
   .flatMap((variants) => Object.values(variants));
@@ -40,8 +44,9 @@ for (const portfolio of portfolios) {
       );
       assert.ok(
         category.securities.every(
-          ({ automaticallyHeld }) =>
-            automaticallyHeld === false
+          ({ automaticallyHeld, securityId }) =>
+            automaticallyHeld === false &&
+            PHASE_1_SECURITY_METADATA[securityId] !== undefined
         )
       );
     }
@@ -50,6 +55,29 @@ for (const portfolio of portfolios) {
 
 assert.equal(portfolios.length, 21);
 assert.equal(sleeveCount, 107);
+
+const browseSecurityIds = new Set(
+  portfolios.flatMap((portfolio) =>
+    portfolio.sleeves.flatMap((sleeve) =>
+      resolveEligibleSecurities({
+        portfolioSystemId: portfolio.id,
+        variantId: portfolio.variantId,
+        sleeveId: sleeve.id
+      }).categories.flatMap(({ securityIds }) => securityIds)
+    )
+  )
+);
+
+for (const legacyOnlyId of [
+  'bndw', 'esgv', 'jpm', 'msft', 'soxx', 'vfmf'
+]) {
+  assert.equal(browseSecurityIds.has(legacyOnlyId), false);
+}
+
+assert.deepEqual(
+  browseSecurityIds,
+  new Set(Object.keys(PHASE_1_SECURITY_METADATA))
+);
 
 assert.deepEqual(
   resolveEligibleSecurities({
@@ -63,4 +91,3 @@ assert.deepEqual(
 console.log(
   'Sleeve security eligibility resolver test passed: all 21 systems and 107 sleeves resolve exact browse lists.'
 );
-

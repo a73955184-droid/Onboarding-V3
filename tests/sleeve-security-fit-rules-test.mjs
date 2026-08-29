@@ -4,48 +4,46 @@ import {
   resolveSecurityPortfolioFit
 } from '../src/domain/portfolio-system/security-portfolio-fit-resolver.js';
 
-
 const baseInput = {
-  portfolioSystemId: 'GA-intentional',
-  variantId: 'intentional',
-  targetSleeveId: 'alternativeStrategy'
+  portfolioSystemId: 'ES-essential',
+  variantId: 'essential',
+  targetSleeveId: 'stability',
+  candidateSecurityId: 'bnd'
 };
-
-const added = resolveSecurityPortfolioFit({
-  ...baseInput,
-  candidateSecurityId: 'dbmf',
-  holdingsBySleeve: {}
-});
-
-const replaced = resolveSecurityPortfolioFit({
-  ...baseInput,
-  candidateSecurityId: 'dbmf',
-  holdingsBySleeve: {
-    alternativeStrategy: ['qai']
-  }
-});
-
-const redundant = resolveSecurityPortfolioFit({
-  ...baseInput,
-  candidateSecurityId: 'dbmf',
-  holdingsBySleeve: {
-    alternativeStrategy: ['dbmf']
-  }
-});
-
-const rejected = resolveSecurityPortfolioFit({
-  ...baseInput,
-  candidateSecurityId: 'qai',
-  holdingsBySleeve: {}
-});
-
-assert.equal(added.outcome, 'add');
-assert.equal(replaced.outcome, 'replace');
-assert.equal(replaced.affectedSecurityId, 'qai');
-assert.equal(redundant.outcome, 'redundant');
-assert.equal(rejected.outcome, 'do-not-add');
-
-console.log(
-  'Sleeve security fit rules test passed: all four contextual outcomes are distinct.'
+const scenarios = {
+  add: {},
+  replace: { stability: ['lqd'] },
+  redundant: { stability: ['bnd'] },
+  'do-not-add': { broadGrowthCore: ['lqd'] }
+};
+const results = Object.fromEntries(
+  Object.entries(scenarios).map(([expectedOutcome, holdingsBySleeve]) => [
+    expectedOutcome,
+    resolveSecurityPortfolioFit({ ...baseInput, holdingsBySleeve })
+  ])
 );
 
+for (const [expectedOutcome, result] of Object.entries(results)) {
+  assert.equal(result.assessmentStatus, 'complete');
+  assert.equal(result.outcome, expectedOutcome);
+}
+
+assert.equal(results.replace.affectedSecurityId, 'lqd');
+assert.equal(
+  results.redundant.allocationAfter.totalWeight,
+  results.redundant.allocationBefore.totalWeight
+);
+assert.equal(
+  results['do-not-add'].reasonCodes[0],
+  'cross-sleeve-role-conflict'
+);
+assert.equal(
+  new Set(
+    Object.values(results).map(({ candidateSecurityId }) => candidateSecurityId)
+  ).size,
+  1
+);
+
+console.log(
+  'Sleeve security fit rules test passed: BND reaches all four outcomes from holdings context alone.'
+);

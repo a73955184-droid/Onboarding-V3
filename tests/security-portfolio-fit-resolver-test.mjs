@@ -4,50 +4,75 @@ import {
   resolveSecurityPortfolioFit
 } from '../src/domain/portfolio-system/security-portfolio-fit-resolver.js';
 
-
 const input = {
   portfolioSystemId: 'FT-intentional',
   variantId: 'intentional',
-  targetSleeveId: 'smallValueImprovement',
-  candidateSecurityId: 'vbr'
+  targetSleeveId: 'smallValueImprovement'
 };
-
-const missingRole = resolveSecurityPortfolioFit({
+const added = resolveSecurityPortfolioFit({
   ...input,
+  candidateSecurityId: 'vbr',
   holdingsBySleeve: {}
 });
-
 const duplicate = resolveSecurityPortfolioFit({
   ...input,
-  holdingsBySleeve: {
-    smallValueImprovement: ['vbr']
-  }
+  candidateSecurityId: 'vbr',
+  holdingsBySleeve: { smallValueImprovement: ['vbr'] }
 });
 
-assert.equal(missingRole.outcome, 'add');
+assert.equal(added.assessmentStatus, 'complete');
+assert.equal(added.outcome, 'add');
+assert.equal(duplicate.assessmentStatus, 'complete');
 assert.equal(duplicate.outcome, 'redundant');
-assert.equal(missingRole.allocationBefore.holdings.length, 0);
-assert.equal(missingRole.allocationAfter.holdings.length, 1);
-assert.equal(
-  missingRole.allocationAfter.totalWeight,
-  0.1
-);
+assert.equal(added.allocationBefore.holdings.length, 0);
+assert.equal(added.allocationAfter.holdings.length, 1);
+assert.equal(added.allocationAfter.totalWeight, 0.1);
 assert.equal(
   duplicate.allocationAfter.holdings.length,
   duplicate.allocationBefore.holdings.length
 );
 
-const pending = resolveSecurityPortfolioFit({
+const incompleteCandidate = resolveSecurityPortfolioFit({
+  ...input,
+  candidateSecurityId: 'vfmf',
+  holdingsBySleeve: {}
+});
+assert.equal(incompleteCandidate.assessmentStatus, 'unavailable');
+assert.equal(incompleteCandidate.outcome, null);
+assert.equal(incompleteCandidate.reasonCode, 'incomplete-security-profile');
+assert.equal(incompleteCandidate.missingFields[0].securityId, 'vfmf');
+
+const incompleteHolding = resolveSecurityPortfolioFit({
+  ...input,
+  candidateSecurityId: 'vbr',
+  holdingsBySleeve: { durableCore: ['vfmf'] }
+});
+assert.equal(incompleteHolding.assessmentStatus, 'unavailable');
+assert.equal(incompleteHolding.outcome, null);
+assert.equal(incompleteHolding.reasonCode, 'missing-holdings-profile');
+
+const unapprovedExactMapping = resolveSecurityPortfolioFit({
   ...input,
   candidateSecurityId: 'avuv',
   holdingsBySleeve: {}
 });
-
-assert.equal(pending.outcome, 'do-not-add');
-assert.notEqual(pending.outcome, 'add');
-assert.notEqual(pending.outcome, 'replace');
-
-console.log(
-  'Security portfolio fit resolver test passed: outcomes depend on exact hypothetical holdings.'
+assert.equal(unapprovedExactMapping.assessmentStatus, 'unavailable');
+assert.equal(unapprovedExactMapping.outcome, null);
+assert.equal(unapprovedExactMapping.reasonCode, 'unresolved-sleeve');
+assert.deepEqual(
+  unapprovedExactMapping.missingFields[0].fields,
+  ['exactEligibility']
 );
 
+for (const unavailable of [
+  incompleteCandidate,
+  incompleteHolding,
+  unapprovedExactMapping
+]) {
+  assert.equal('allocationBefore' in unavailable, false);
+  assert.equal('allocationAfter' in unavailable, false);
+}
+
+console.log(
+  'Security portfolio fit resolver test passed: readiness, exact eligibility and equal-weight outputs are separated.'
+);

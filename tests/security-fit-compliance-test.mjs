@@ -39,10 +39,15 @@ for (const result of results) {
     assert.doesNotMatch(output, pattern);
   }
 
-  assert.match(
-    result.disclosure,
-    /educational system-fit assessment/
-  );
+  if (result.assessmentStatus === 'complete') {
+    assert.match(
+      result.disclosure,
+      /educational system-fit assessment/
+    );
+  } else {
+    assert.equal(result.outcome, null);
+    assert.equal('disclosure' in result, false);
+  }
 }
 
 const portfolioMapSource = fs.readFileSync(
