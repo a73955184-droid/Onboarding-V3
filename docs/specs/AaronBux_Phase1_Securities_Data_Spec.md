@@ -136,7 +136,7 @@ These are candidate tickers for verification and classification. They are not re
 | Category | Target verified breadth | Candidate seed tickers |
 |---|---:|---|
 | `global-equity` | 15–25 | VT, ACWI, SPGM, IOO, URTH, VEU, CWI |
-| `broad-us-equity` | 20–30 | VTI, ITOT, SCHB, SPTM, IWV, VONE, VV, SCHX, IWB, SPY, IVV, VOO, SPLG |
+| `broad-us-equity` | 20–30 | VTI, ITOT, SCHB, SPTM, IWV, VONE, VV, SCHX, IWB, SPY, IVV, VOO, SPYM |
 | `broad-international-equity` | 15–25 | VXUS, IXUS, VEU, ACWX, CWI, SCHF, SPDW, VEA, IEFA |
 | `developed-international-equity` | 12–20 | VEA, IEFA, SCHF, SPDW, EFA, IDEV, FNDF, EFV, EFG |
 | `emerging-market-equity` | 15–25 | VWO, IEMG, EEM, SCHE, SPEM, EMXC, FNDE, DGS, DEM, AVEM |
@@ -149,7 +149,7 @@ These are candidate tickers for verification and classification. They are not re
 | `small-value-equity` | 10–18 | AVUV, VBR, IJS, SLYV, VIOV, DFSV, ISCV, RWJ |
 | `style-equity` | 30–50 | VUG, VTV, VO, VB, IWF, IWD, IWP, IWS, IWO, IWN, SCHG, SCHV, SCHM, SCHA, SPYG, SPYV |
 | `sector-equity` | 40–70 | XLK, XLV, XLF, XLY, XLP, XLE, XLI, XLB, XLU, XLRE, XLC, VGT, VHT, VFH, VCR, VDC, VDE, VIS, VAW, VPU, VNQ, IYW, IYH, IYF, IYC, IYK, IYE, IYJ, IYM, IDU |
-| `thematic-equity` | 30–50 | ARKK, BOTZ, ROBO, IRBO, AIQ, CIBR, HACK, ICLN, TAN, FAN, PBW, DRIV, IDRV, LIT, CLOU, FINX, GNOM, PAVE, IFRA, SKYY |
+| `thematic-equity` | 30–50 | ARKK, BOTZ, ROBO, ARTY, AIQ, CIBR, HACK, ICLN, TAN, FAN, PBW, DRIV, IDRV, LIT, CLOU, FINX, GNOM, PAVE, IFRA, SKYY |
 | `high-quality-bonds` | 20–30 | BND, AGG, SCHZ, IUSB, GOVT, BIV, IEF, VGIT, VCSH, VCIT, LQD, MBB, BNDX |
 | `government-bonds` | 20–30 | GOVT, SHY, IEI, IEF, TLH, TLT, VGSH, VGIT, VGLT, SCHO, SCHR, EDV, ZROZ |
 | `short-government-securities` | 12–20 | SGOV, BIL, SHV, VGSH, SCHO, SHY, GBIL, TBIL, CLIP, USFR, TFLO |
@@ -570,4 +570,3 @@ The following gates remain open:
 9. Approve user-facing explanation templates.
 
 Until these gates are closed, this is an implementation specification and candidate-data seed—not an approved production security catalogue.
-

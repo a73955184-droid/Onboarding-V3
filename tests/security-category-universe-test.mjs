@@ -36,6 +36,11 @@ assert.equal(
   307
 );
 
+assert.ok(PHASE_1_APPROVED_SECURITY_IDS.includes('spym'));
+assert.ok(PHASE_1_APPROVED_SECURITY_IDS.includes('arty'));
+assert.ok(!PHASE_1_APPROVED_SECURITY_IDS.includes('splg'));
+assert.ok(!PHASE_1_APPROVED_SECURITY_IDS.includes('irbo'));
+
 assert.deepEqual(
   getSecurityCategory('small-value-equity').securityIds,
   [
@@ -58,4 +63,3 @@ for (const categoryId of [
 console.log(
   'Security category universe test passed: 28 categories, 261 unique securities and 307 associations.'
 );
-

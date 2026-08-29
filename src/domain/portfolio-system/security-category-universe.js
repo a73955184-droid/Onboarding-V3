@@ -8,7 +8,7 @@
 
 const CATEGORY_SECURITY_IDS = Object.freeze({
   'global-equity': Object.freeze(["vt","acwi","spgm","ioo","urth","veu","cwi"]),
-  'broad-us-equity': Object.freeze(["vti","itot","schb","sptm","iwv","vone","vv","schx","iwb","spy","ivv","voo","splg"]),
+  'broad-us-equity': Object.freeze(["vti","itot","schb","sptm","iwv","vone","vv","schx","iwb","spy","ivv","voo","spym"]),
   'broad-international-equity': Object.freeze(["vxus","ixus","veu","acwx","cwi","schf","spdw","vea","iefa"]),
   'developed-international-equity': Object.freeze(["vea","iefa","schf","spdw","efa","idev","fndf","efv","efg"]),
   'emerging-market-equity': Object.freeze(["vwo","iemg","eem","sche","spem","emxc","fnde","dgs","dem","avem"]),
@@ -21,7 +21,7 @@ const CATEGORY_SECURITY_IDS = Object.freeze({
   'small-value-equity': Object.freeze(["avuv","vbr","ijs","slyv","viov","dfsv","iscv","rwj"]),
   'style-equity': Object.freeze(["vug","vtv","vo","vb","iwf","iwd","iwp","iws","iwo","iwn","schg","schv","schm","scha","spyg","spyv"]),
   'sector-equity': Object.freeze(["xlk","xlv","xlf","xly","xlp","xle","xli","xlb","xlu","xlre","xlc","vgt","vht","vfh","vcr","vdc","vde","vis","vaw","vpu","vnq","iyw","iyh","iyf","iyc","iyk","iye","iyj","iym","idu"]),
-  'thematic-equity': Object.freeze(["arkk","botz","robo","irbo","aiq","cibr","hack","icln","tan","fan","pbw","driv","idrv","lit","clou","finx","gnom","pave","ifra","skyy"]),
+  'thematic-equity': Object.freeze(["arkk","botz","robo","arty","aiq","cibr","hack","icln","tan","fan","pbw","driv","idrv","lit","clou","finx","gnom","pave","ifra","skyy"]),
   'high-quality-bonds': Object.freeze(["bnd","agg","schz","iusb","govt","biv","ief","vgit","vcsh","vcit","lqd","mbb","bndx"]),
   'government-bonds': Object.freeze(["govt","shy","iei","ief","tlh","tlt","vgsh","vgit","vglt","scho","schr","edv","zroz"]),
   'short-government-securities': Object.freeze(["sgov","bil","shv","vgsh","scho","shy","gbil","tbil","clip","usfr","tflo"]),
