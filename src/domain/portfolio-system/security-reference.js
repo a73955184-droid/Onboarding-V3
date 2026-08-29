@@ -2,6 +2,10 @@ import {
   PHASE_1_APPROVED_SECURITY_IDS
 } from './security-category-universe.js';
 
+import {
+  PHASE_1_SECURITY_METADATA_RECORDS
+} from './security-metadata.js';
+
 
 const VERIFIED_AS_OF = '2026-08-28';
 
@@ -396,23 +400,29 @@ function toPhaseOneSecurity(security) {
       isVerified ? security.verifiedAsOf : null,
     activeStatus:
       isVerified ? 'active' : 'unknown',
+    evidenceSourceType:
+      isVerified ? 'issuer' : null,
     legacyId: security.id
   });
 }
 
 
-function createPendingPhaseOneSecurity(securityId) {
+function toManifestSecurity(security) {
+  const legacy = SECURITY_REFERENCE[security.ticker];
+
   return Object.freeze({
-    securityId,
-    ticker: securityId.toUpperCase(),
-    name: null,
-    issuer: null,
-    securityType: null,
-    sourceUrl: null,
-    verificationStatus: 'pending',
-    verifiedAt: null,
-    activeStatus: 'unknown',
-    legacyId: null
+    securityId: security.securityId,
+    ticker: security.ticker,
+    name: security.name,
+    issuer: security.issuer,
+    securityType: security.securityType,
+    sourceUrl: security.sourceUrl,
+    verificationStatus: 'verified',
+    verifiedAt: security.verifiedAt,
+    activeStatus: security.activeStatus,
+    evidenceSourceType:
+      security.evidenceSourceType,
+    legacyId: legacy?.id ?? null
   });
 }
 
@@ -422,27 +432,29 @@ const PHASE_ONE_EXISTING_SECURITIES = Object.values(
 ).map(toPhaseOneSecurity);
 
 
-const PHASE_ONE_EXISTING_IDS = new Set(
-  PHASE_ONE_EXISTING_SECURITIES.map(
-    ({ securityId }) => securityId
-  )
+const APPROVED_SECURITY_IDS = new Set(
+  PHASE_1_APPROVED_SECURITY_IDS
 );
 
 
-const PHASE_ONE_PENDING_SECURITIES =
-  PHASE_1_APPROVED_SECURITY_IDS
-    .filter(
-      (securityId) =>
-        !PHASE_ONE_EXISTING_IDS.has(securityId)
-    )
-    .map(createPendingPhaseOneSecurity);
+const PHASE_ONE_MANIFEST_SECURITIES =
+  PHASE_1_SECURITY_METADATA_RECORDS.map(
+    toManifestSecurity
+  );
+
+
+const PHASE_ONE_PRESERVED_SECURITIES =
+  PHASE_ONE_EXISTING_SECURITIES.filter(
+    ({ securityId }) =>
+      !APPROVED_SECURITY_IDS.has(securityId)
+  );
 
 
 export const PHASE_1_SECURITY_REFERENCE = Object.freeze(
   Object.fromEntries(
     [
-      ...PHASE_ONE_EXISTING_SECURITIES,
-      ...PHASE_ONE_PENDING_SECURITIES
+      ...PHASE_ONE_MANIFEST_SECURITIES,
+      ...PHASE_ONE_PRESERVED_SECURITIES
     ].map(
       (security) => [security.securityId, security]
     )

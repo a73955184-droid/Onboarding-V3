@@ -47,15 +47,26 @@ const EXPLANATIONS = Object.freeze({
       'The existing holding sufficiently performs the role.'
   }),
 
-  'replace-unverified-role': Object.freeze({
+  'lower-effort-role-replacement': Object.freeze({
     sleeveEffect:
-      'The verified candidate can perform the same sleeve role as an unverified hypothetical holding.',
+      'The candidate can perform the same sleeve role with a more straightforward structural implementation.',
     portfolioEffect:
-      'The replacement reinforces the approved role without adding another holding.',
+      'The replacement reinforces the approved role without adding another holding or a new concentration.',
     allocationEffect:
       'The affected sleeve is reweighted after replacing the identified holding.',
     primaryReason:
-      'The identified existing holding is not verified.'
+      'The identified holding performs the same role with greater implementation complexity.'
+  }),
+
+  'cross-sleeve-role-conflict': Object.freeze({
+    sleeveEffect:
+      'The candidate would repeat a role already assigned to another sleeve.',
+    portfolioEffect:
+      'Adding the candidate here would weaken the separation of responsibilities across sleeves.',
+    allocationEffect:
+      'The hypothetical allocation remains unchanged.',
+    primaryReason:
+      'The candidate creates a cross-sleeve role conflict.'
   }),
 
   'fills-missing-role': Object.freeze({

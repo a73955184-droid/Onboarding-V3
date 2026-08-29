@@ -1,0 +1,10645 @@
+function deepFreeze(value) {
+  if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
+  for (const nested of Object.values(value)) deepFreeze(nested);
+  return Object.freeze(value);
+}
+
+const SECURITY_METADATA_RECORDS = [
+  {
+    "securityId": "vt",
+    "ticker": "VT",
+    "name": "Vanguard Total World Stock ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vt",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "global-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vt"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "acwi",
+    "ticker": "ACWI",
+    "name": "iShares MSCI ACWI ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000021461&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "global-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000021461&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spgm",
+    "ticker": "SPGM",
+    "name": "State Street(R) SPDR(R) Portfolio MSCI Global Stock Market ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000036082&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "global-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000036082&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ioo",
+    "ticker": "IOO",
+    "name": "iShares Global 100 ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004326&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "global-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004326&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "urth",
+    "ticker": "URTH",
+    "name": "iShares MSCI World ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000035395&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "global-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000035395&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "veu",
+    "ticker": "VEU",
+    "name": "Vanguard FTSE All-World ex-US Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000015871&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "global-equity",
+      "broad-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000015871&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "cwi",
+    "ticker": "CWI",
+    "name": "State Street(R) SPDR(R) MSCI ACWI ex-US ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014042&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "global-equity",
+      "broad-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014042&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vti",
+    "ticker": "VTI",
+    "name": "Vanguard Total Stock Market ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vti"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "itot",
+    "ticker": "ITOT",
+    "name": "iShares Core S&P Total U.S. Stock Market ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004317&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004317&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schb",
+    "ticker": "SCHB",
+    "name": "Schwab U.S. Broad Market ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026631&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026631&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "sptm",
+    "ticker": "SPTM",
+    "name": "State Street(R) SPDR(R) Portfolio S&P 1500(R) Composite Stock Market ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006973&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006973&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwv",
+    "ticker": "IWV",
+    "name": "iShares Russell 3000 ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004341&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004341&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vone",
+    "ticker": "VONE",
+    "name": "Vanguard Russell 1000 Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030000&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030000&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vv",
+    "ticker": "VV",
+    "name": "Vanguard Morningstar Large-Cap Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002843&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002843&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schx",
+    "ticker": "SCHX",
+    "name": "Schwab U.S. Large-Cap ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026632&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026632&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwb",
+    "ticker": "IWB",
+    "name": "iShares Russell 1000 ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004347&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004347&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spy",
+    "ticker": "SPY",
+    "name": "State Street SPDR S&P 500 ETF Trust",
+    "issuer": "State Street Investment Management",
+    "securityType": "Unit investment trust",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ivv",
+    "ticker": "IVV",
+    "name": "iShares Core S&P 500 ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004310&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004310&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "voo",
+    "ticker": "VOO",
+    "name": "Vanguard 500 Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002839&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002839&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spym",
+    "ticker": "SPYM",
+    "name": "State Street(R) SPDR(R) Portfolio S&P 500(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006983&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-us-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006983&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vxus",
+    "ticker": "VXUS",
+    "name": "Vanguard Total International Stock ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vxus",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "broad-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vxus"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ixus",
+    "ticker": "IXUS",
+    "name": "iShares Core MSCI Total International Stock ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038931&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038931&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "acwx",
+    "ticker": "ACWX",
+    "name": "iShares MSCI ACWI ex U.S. ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000021460&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000021460&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schf",
+    "ticker": "SCHF",
+    "name": "Schwab International Equity ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026637&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-international-equity",
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026637&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spdw",
+    "ticker": "SPDW",
+    "name": "State Street(R) SPDR(R) Portfolio Developed World ex-US ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014038&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-international-equity",
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014038&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vea",
+    "ticker": "VEA",
+    "name": "Vanguard FTSE Developed Markets ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vea",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "broad-international-equity",
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vea"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iefa",
+    "ticker": "IEFA",
+    "name": "iShares Core MSCI EAFE ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038930&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "broad-international-equity",
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038930&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "efa",
+    "ticker": "EFA",
+    "name": "iShares MSCI EAFE ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004351&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004351&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "idev",
+    "ticker": "IDEV",
+    "name": "iShares Core MSCI International Developed Markets ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000056604&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000056604&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fndf",
+    "ticker": "FNDF",
+    "name": "Schwab Fundamental International Equity ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040879&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040879&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "efv",
+    "ticker": "EFV",
+    "name": "iShares MSCI EAFE Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004438&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004438&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "efg",
+    "ticker": "EFG",
+    "name": "iShares MSCI EAFE Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004437&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "developed-international-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "developed-ex-united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004437&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vwo",
+    "ticker": "VWO",
+    "name": "Vanguard FTSE Emerging Markets ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vwo",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vwo"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iemg",
+    "ticker": "IEMG",
+    "name": "iShares Core MSCI Emerging Markets ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038923&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038923&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "eem",
+    "ticker": "EEM",
+    "name": "iShares MSCI Emerging Markets ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004266&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004266&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "sche",
+    "ticker": "SCHE",
+    "name": "Schwab Emerging Markets Equity ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026639&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026639&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spem",
+    "ticker": "SPEM",
+    "name": "State Street(R) SPDR(R) Portfolio Emerging Markets ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014048&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014048&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "emxc",
+    "ticker": "EMXC",
+    "name": "iShares MSCI Emerging Markets ex China ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000057835&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000057835&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fnde",
+    "ticker": "FNDE",
+    "name": "Schwab Fundamental Emerging Markets Equity ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040881&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040881&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dgs",
+    "ticker": "DGS",
+    "name": "WisdomTree Emerging Markets SmallCap Dividend Fund",
+    "issuer": "WisdomTree",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019332&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019332&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dem",
+    "ticker": "DEM",
+    "name": "WisdomTree Emerging Markets High Dividend Fund",
+    "issuer": "WisdomTree",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000015483&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000015483&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "avem",
+    "ticker": "AVEM",
+    "name": "Avantis Emerging Markets Equity ETF",
+    "issuer": "Avantis Investors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066454&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "emerging-market-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "emerging-markets"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066454&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vb",
+    "ticker": "VB",
+    "name": "Vanguard Small-Cap ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vb",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "small-cap-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vb"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ijr",
+    "ticker": "IJR",
+    "name": "iShares Core S&P Small-Cap ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004313&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004313&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwm",
+    "ticker": "IWM",
+    "name": "iShares Russell 2000 ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004344&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004344&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "scha",
+    "ticker": "SCHA",
+    "name": "Schwab U.S. Small-Cap ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026636&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026636&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spsm",
+    "ticker": "SPSM",
+    "name": "State Street(R) SPDR(R) Portfolio S&P 600(TM) Small Cap ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000041317&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000041317&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vtwo",
+    "ticker": "VTWO",
+    "name": "Vanguard Russell 2000 Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030003&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030003&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vioo",
+    "ticker": "VIOO",
+    "name": "Vanguard S&P Small-Cap 600 Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030017&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030017&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iscb",
+    "ticker": "ISCB",
+    "name": "iShares Morningstar Small-Cap ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004433&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004433&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fnda",
+    "ticker": "FNDA",
+    "name": "Schwab Fundamental U.S. Small Company ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040878&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-cap-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040878&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vug",
+    "ticker": "VUG",
+    "name": "Vanguard Growth ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vug",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "growth-oriented-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vug"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schg",
+    "ticker": "SCHG",
+    "name": "Schwab U.S. Large-Cap Growth ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026633&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026633&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwf",
+    "ticker": "IWF",
+    "name": "iShares Russell 1000 Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "growth-oriented-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spyg",
+    "ticker": "SPYG",
+    "name": "State Street(R) SPDR(R) Portfolio S&P 500(R) Growth ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006984&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006984&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ivw",
+    "ticker": "IVW",
+    "name": "iShares S&P 500 Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004311&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004311&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "voog",
+    "ticker": "VOOG",
+    "name": "Vanguard S&P 500 Growth Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030012&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030012&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "mgk",
+    "ticker": "MGK",
+    "name": "Vanguard Morningstar Mega Cap Growth Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019700&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019700&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qqqm",
+    "ticker": "QQQM",
+    "name": "Invesco NASDAQ 100 ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000069448&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000069448&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qqq",
+    "ticker": "QQQ",
+    "name": "Invesco QQQ Trust, Series 1",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000101292&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000101292&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iusg",
+    "ticker": "IUSG",
+    "name": "iShares Core S&P U.S. Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004340&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004340&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vong",
+    "ticker": "VONG",
+    "name": "Vanguard Russell 1000 Growth Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030002&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "growth-oriented-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "growth"
+      ],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "broad-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030002&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schd",
+    "ticker": "SCHD",
+    "name": "Schwab U.S. Dividend Equity ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.schwabassetmanagement.com/products/schd",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.schwabassetmanagement.com/products/schd"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vym",
+    "ticker": "VYM",
+    "name": "Vanguard High Dividend Yield Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014011&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000014011&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "hdv",
+    "ticker": "HDV",
+    "name": "iShares Core High Dividend ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000031844&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000031844&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dgro",
+    "ticker": "DGRO",
+    "name": "iShares Core Dividend Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045648&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045648&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dvy",
+    "ticker": "DVY",
+    "name": "iShares Select Dividend ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004334&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004334&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "sdy",
+    "ticker": "SDY",
+    "name": "State Street(R) SPDR(R) S&P(R) Dividend ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006981&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006981&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "nobl",
+    "ticker": "NOBL",
+    "name": "ProShares S&P 500 Dividend Aristocrats ETF",
+    "issuer": "ProShares",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000042349&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000042349&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dgrw",
+    "ticker": "DGRW",
+    "name": "WisdomTree U.S. Quality Dividend Growth Fund",
+    "issuer": "WisdomTree",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040816&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity",
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality",
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040816&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spyd",
+    "ticker": "SPYD",
+    "name": "State Street(R) SPDR(R) Portfolio S&P 500(R) High Dividend ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000050968&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000050968&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fdvv",
+    "ticker": "FDVV",
+    "name": "Fidelity High Dividend ETF",
+    "issuer": "Fidelity Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054749&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054749&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vig",
+    "ticker": "VIG",
+    "name": "Vanguard Dividend Appreciation Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000011322&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "dividend"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000011322&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dynf",
+    "ticker": "DYNF",
+    "name": "iShares U.S. Equity Factor Rotation Active ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000064945&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000064945&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "lrgf",
+    "ticker": "LRGF",
+    "name": "iShares U.S. Equity Factor ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000048623&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000048623&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "gslc",
+    "ticker": "GSLC",
+    "name": "Goldman Sachs ActiveBeta(R) U.S. Large Cap Equity ETF",
+    "issuer": "Goldman Sachs Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000048295&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000048295&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fndx",
+    "ticker": "FNDX",
+    "name": "Schwab Fundamental U.S. Large Company ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040877&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040877&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fndb",
+    "ticker": "FNDB",
+    "name": "Schwab Fundamental U.S. Broad Market ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040876&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040876&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "jpme",
+    "ticker": "JPME",
+    "name": "JPMorgan Diversified Return U.S. Mid Cap Equity ETF",
+    "issuer": "J.P. Morgan Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000053745&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000053745&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "omfl",
+    "ticker": "OMFL",
+    "name": "Invesco Russell 1000(R) Dynamic Multifactor ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000064607&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000064607&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "rous",
+    "ticker": "ROUS",
+    "name": "Hartford Multifactor US Equity ETF",
+    "issuer": "Hartford Funds",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000047586&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000047586&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "deus",
+    "ticker": "DEUS",
+    "name": "Xtrackers Russell US Multifactor ETF",
+    "issuer": "DWS",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000048521&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000048521&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "avus",
+    "ticker": "AVUS",
+    "name": "Avantis U.S. Equity ETF",
+    "issuer": "Avantis Investors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066458&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "diversified-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "multi-factor"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066458&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qual",
+    "ticker": "QUAL",
+    "name": "iShares MSCI USA Quality Factor ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "sphq",
+    "ticker": "SPHQ",
+    "name": "Invesco S&P 500 Quality ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000003049&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000003049&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "jqua",
+    "ticker": "JQUA",
+    "name": "JPMorgan U.S. Quality Factor ETF",
+    "issuer": "J.P. Morgan Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000059315&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000059315&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qgro",
+    "ticker": "QGRO",
+    "name": "American Century U.S. Quality Growth ETF",
+    "issuer": "American Century Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062302&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062302&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ousa",
+    "ticker": "OUSA",
+    "name": "ALPS | O'Shares U.S. Quality Dividend ETF Shares",
+    "issuer": "ALPS Advisors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000075797&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000075797&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qdf",
+    "ticker": "QDF",
+    "name": "Northern Trust Quality Dividend ETF",
+    "issuer": "Northern Trust Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038873&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038873&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fqal",
+    "ticker": "FQAL",
+    "name": "Fidelity Quality Factor ETF",
+    "issuer": "Fidelity Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054753&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "quality-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [
+        "quality"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054753&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vtv",
+    "ticker": "VTV",
+    "name": "Vanguard Morningstar Value Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002840&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002840&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwd",
+    "ticker": "IWD",
+    "name": "iShares Russell 1000 Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "value-factor-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iusv",
+    "ticker": "IUSV",
+    "name": "iShares Core S&P U.S. Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004339&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004339&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schv",
+    "ticker": "SCHV",
+    "name": "Schwab U.S. Large-Cap Value ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026634&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026634&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spyv",
+    "ticker": "SPYV",
+    "name": "State Street(R) SPDR(R) Portfolio S&P 500(R) Value ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006985&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity",
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006985&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "rpv",
+    "ticker": "RPV",
+    "name": "Invesco S&P 500 Pure Value ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000060792&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000060792&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vlue",
+    "ticker": "VLUE",
+    "name": "iShares MSCI USA Value Factor ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "value-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "avlv",
+    "ticker": "AVLV",
+    "name": "Avantis U.S. Large Cap Value ETF",
+    "issuer": "Avantis Investors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000072998&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000072998&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fval",
+    "ticker": "FVAL",
+    "name": "Fidelity Value Factor ETF",
+    "issuer": "Fidelity Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054754&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054754&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dflv",
+    "ticker": "DFLV",
+    "name": "Dimensional US Large Cap Value ETF",
+    "issuer": "Dimensional Fund Advisors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000078987&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "value-factor-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000078987&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "avuv",
+    "ticker": "AVUV",
+    "name": "Avantis U.S. Small Cap Value ETF",
+    "issuer": "Avantis Investors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066459&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066459&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vbr",
+    "ticker": "VBR",
+    "name": "Vanguard Small-Cap Value ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vbr",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vbr"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ijs",
+    "ticker": "IJS",
+    "name": "iShares S&P Small-Cap 600 Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004316&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004316&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "slyv",
+    "ticker": "SLYV",
+    "name": "State Street(R) SPDR(R) S & P 600(TM) Small Cap Value ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006974&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006974&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "viov",
+    "ticker": "VIOV",
+    "name": "Vanguard S&P Small-Cap 600 Value Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030019&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030019&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dfsv",
+    "ticker": "DFSV",
+    "name": "Dimensional US Small Cap Value ETF",
+    "issuer": "Dimensional Fund Advisors",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000075151&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000075151&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iscv",
+    "ticker": "ISCV",
+    "name": "iShares Morningstar Small-Cap Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004435&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004435&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "rwj",
+    "ticker": "RWJ",
+    "name": "Invesco S&P SmallCap 600 Revenue ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000064596&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "small-value-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [
+        "value"
+      ],
+      "factors": [
+        "size",
+        "value"
+      ],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "systematic-factor",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000064596&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vo",
+    "ticker": "VO",
+    "name": "Vanguard Morningstar Mid-Cap Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002844&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002844&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwp",
+    "ticker": "IWP",
+    "name": "iShares Russell Mid-Cap Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004336&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004336&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iws",
+    "ticker": "IWS",
+    "name": "iShares Russell Mid-Cap Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004335&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004335&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwo",
+    "ticker": "IWO",
+    "name": "iShares Russell 2000 Growth ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004343&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004343&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iwn",
+    "ticker": "IWN",
+    "name": "iShares Russell 2000 Value ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004342&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004342&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schm",
+    "ticker": "SCHM",
+    "name": "Schwab U.S. Mid-Cap ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026635&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "style-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "mid-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "style-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026635&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlk",
+    "ticker": "XLK",
+    "name": "State Street Technology Select Sector SPDR ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ssga.com/us/en/individual/etfs/state-street-technology-select-sector-spdr-etf-xlk",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "technology"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ssga.com/us/en/individual/etfs/state-street-technology-select-sector-spdr-etf-xlk"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlv",
+    "ticker": "XLV",
+    "name": "State Street Health Care Select Sector SPDR ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ssga.com/us/en/individual/etfs/state-street-health-care-select-sector-spdr-etf-xlv",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "health-care"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ssga.com/us/en/individual/etfs/state-street-health-care-select-sector-spdr-etf-xlv"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlf",
+    "ticker": "XLF",
+    "name": "State Street(R) Financial Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006411&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "financials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006411&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xly",
+    "ticker": "XLY",
+    "name": "State Street(R) Consumer Discretionary Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006408&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "consumer-discretionary"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006408&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlp",
+    "ticker": "XLP",
+    "name": "State Street(R) Consumer Staples Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006409&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "consumer-staples"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006409&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xle",
+    "ticker": "XLE",
+    "name": "State Street(R) Energy Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006410&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "energy"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006410&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xli",
+    "ticker": "XLI",
+    "name": "State Street(R) Industrial Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006413&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "industrials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006413&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlb",
+    "ticker": "XLB",
+    "name": "State Street(R) Materials Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006414&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "materials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006414&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlu",
+    "ticker": "XLU",
+    "name": "State Street(R) Utilities Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006416&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "utilities"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000006416&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlre",
+    "ticker": "XLRE",
+    "name": "State Street(R) Real Estate Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000051152&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity",
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "real-estate"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000051152&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "xlc",
+    "ticker": "XLC",
+    "name": "State Street(R) Communication Services Select Sector SPDR(R) ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062095&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "communication-services"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062095&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vgt",
+    "ticker": "VGT",
+    "name": "Vanguard Information Technology Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004452&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "technology"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004452&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vht",
+    "ticker": "VHT",
+    "name": "Vanguard Health Care Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004450&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "health-care"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004450&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vfh",
+    "ticker": "VFH",
+    "name": "Vanguard Financials Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004449&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "financials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004449&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vcr",
+    "ticker": "VCR",
+    "name": "Vanguard Consumer Discretionary Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004446&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "consumer-discretionary"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004446&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vdc",
+    "ticker": "VDC",
+    "name": "Vanguard Consumer Staples Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004447&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "consumer-staples"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004447&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vde",
+    "ticker": "VDE",
+    "name": "Vanguard Energy Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004448&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "energy"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004448&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vis",
+    "ticker": "VIS",
+    "name": "Vanguard Industrials Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004451&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "industrials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004451&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vaw",
+    "ticker": "VAW",
+    "name": "Vanguard Materials Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004441&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "materials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004441&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vpu",
+    "ticker": "VPU",
+    "name": "Vanguard Utilities Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004445&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "utilities"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004445&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vnq",
+    "ticker": "VNQ",
+    "name": "Vanguard Real Estate ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vnq",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "sector-equity",
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "real-estate"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vnq"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyw",
+    "ticker": "IYW",
+    "name": "iShares U.S. Technology ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004329&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "technology"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004329&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyh",
+    "ticker": "IYH",
+    "name": "iShares U.S. Healthcare ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004324&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "health-care"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004324&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyf",
+    "ticker": "IYF",
+    "name": "iShares U.S. Financials ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004323&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "financials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004323&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyc",
+    "ticker": "IYC",
+    "name": "iShares U.S. Consumer Discretionary ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004320&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "consumer-discretionary"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004320&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyk",
+    "ticker": "IYK",
+    "name": "iShares U.S. Consumer Staples ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004431&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "consumer-staples"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004431&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iye",
+    "ticker": "IYE",
+    "name": "iShares U.S. Energy ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004321&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "energy"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004321&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyj",
+    "ticker": "IYJ",
+    "name": "iShares U.S. Industrials ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004325&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "industrials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004325&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iym",
+    "ticker": "IYM",
+    "name": "iShares U.S. Basic Materials ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004318&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "materials"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004318&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "idu",
+    "ticker": "IDU",
+    "name": "iShares U.S. Utilities ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004332&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "sector-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [
+        "utilities"
+      ],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "sector-equity",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004332&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "arkk",
+    "ticker": "ARKK",
+    "name": "ARK Innovation ETF",
+    "issuer": "ARK Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000042977&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000042977&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "botz",
+    "ticker": "BOTZ",
+    "name": "Global X Robotics & Artificial Intelligence ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054693&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054693&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "robo",
+    "ticker": "ROBO",
+    "name": "ROBO Global(R) Robotics and Automation Index ETF",
+    "issuer": "ROBO Global",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000042659&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000042659&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "arty",
+    "ticker": "ARTY",
+    "name": "iShares Future AI & Tech ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062201&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062201&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "aiq",
+    "ticker": "AIQ",
+    "name": "Global X Artificial Intelligence & Technology ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061326&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061326&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "cibr",
+    "ticker": "CIBR",
+    "name": "First Trust NASDAQ Cybersecurity ETF",
+    "issuer": "First Trust",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000050385&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000050385&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "hack",
+    "ticker": "HACK",
+    "name": "Amplify Cybersecurity ETF",
+    "issuer": "Amplify ETFs",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://amplifyetfs.com/hack/",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://amplifyetfs.com/hack/"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "icln",
+    "ticker": "ICLN",
+    "name": "iShares Global Clean Energy ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "tan",
+    "ticker": "TAN",
+    "name": "Invesco Solar ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000060822&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000060822&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fan",
+    "ticker": "FAN",
+    "name": "First Trust Global Wind Energy ETF",
+    "issuer": "First Trust",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000022933&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000022933&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "pbw",
+    "ticker": "PBW",
+    "name": "Invesco WilderHill Clean Energy ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000003053&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000003053&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "driv",
+    "ticker": "DRIV",
+    "name": "Global X Autonomous & Electric Vehicles ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061415&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061415&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "idrv",
+    "ticker": "IDRV",
+    "name": "iShares Self-Driving EV and Tech ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000063520&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000063520&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "lit",
+    "ticker": "LIT",
+    "name": "Global X Lithium & Battery Tech ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029441&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029441&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "clou",
+    "ticker": "CLOU",
+    "name": "Global X Cloud Computing ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000065121&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000065121&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "finx",
+    "ticker": "FINX",
+    "name": "Global X FinTech ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054691&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054691&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "gnom",
+    "ticker": "GNOM",
+    "name": "Global X Genomics & Biotechnology ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062676&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000062676&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "pave",
+    "ticker": "PAVE",
+    "name": "Global X U.S. Infrastructure Development ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000056509&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity",
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000056509&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ifra",
+    "ticker": "IFRA",
+    "name": "iShares U.S. Infrastructure ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061314&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity",
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061314&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "skyy",
+    "ticker": "SKYY",
+    "name": "First Trust Cloud Computing ETF",
+    "issuer": "First Trust",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033237&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "thematic-equity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": [
+        "large-cap",
+        "mid-cap",
+        "small-cap"
+      ],
+      "styles": [],
+      "factors": [],
+      "sectors": [],
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "thematic-equity",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033237&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "bnd",
+    "ticker": "BND",
+    "name": "Vanguard Total Bond Market ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/bnd",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/bnd"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "agg",
+    "ticker": "AGG",
+    "name": "iShares Core U.S. Aggregate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schz",
+    "ticker": "SCHZ",
+    "name": "Schwab U.S. Aggregate Bond ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033156&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033156&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iusb",
+    "ticker": "IUSB",
+    "name": "iShares Core Universal USD Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045644&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045644&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "govt",
+    "ticker": "GOVT",
+    "name": "iShares U.S. Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "high-quality-bonds",
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "biv",
+    "ticker": "BIV",
+    "name": "Vanguard Intermediate-Term Bond Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002561&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000002561&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ief",
+    "ticker": "IEF",
+    "name": "iShares 7-10 Year Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004358&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds",
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004358&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vgit",
+    "ticker": "VGIT",
+    "name": "Vanguard Intermediate-Term Treasury Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026860&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds",
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026860&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vcsh",
+    "ticker": "VCSH",
+    "name": "Vanguard Short-Term Corporate Bond Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026862&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds",
+      "short-duration-bonds",
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026862&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vcit",
+    "ticker": "VCIT",
+    "name": "Vanguard Intermediate-Term Corporate Bond Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026863&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds",
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026863&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "lqd",
+    "ticker": "LQD",
+    "name": "iShares iBoxx $ Investment Grade Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "high-quality-bonds",
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "mbb",
+    "ticker": "MBB",
+    "name": "iShares MBS ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013702&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013702&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "bndx",
+    "ticker": "BNDX",
+    "name": "Vanguard Total International Bond ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/bndx",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "high-quality-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "low"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/bndx"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "shy",
+    "ticker": "SHY",
+    "name": "iShares 1-3 Year Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004357&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds",
+      "short-government-securities",
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004357&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iei",
+    "ticker": "IEI",
+    "name": "iShares 3-7 Year Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013695&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013695&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "tlh",
+    "ticker": "TLH",
+    "name": "iShares 10-20 Year Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013696&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013696&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "tlt",
+    "ticker": "TLT",
+    "name": "iShares 20+ Year Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004360&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004360&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vgsh",
+    "ticker": "VGSH",
+    "name": "Vanguard Short-Term Treasury ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vgsh",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "government-bonds",
+      "short-government-securities",
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vgsh"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vglt",
+    "ticker": "VGLT",
+    "name": "Vanguard Long-Term Treasury Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026861&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026861&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "scho",
+    "ticker": "SCHO",
+    "name": "Schwab Short-Term U.S. Treasury ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029408&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds",
+      "short-government-securities",
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029408&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schr",
+    "ticker": "SCHR",
+    "name": "Schwab Intermediate-Term U.S. Treasury ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029409&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029409&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "edv",
+    "ticker": "EDV",
+    "name": "Vanguard Extended Duration Treasury Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000018789&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000018789&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "zroz",
+    "ticker": "ZROZ",
+    "name": "PIMCO 25+ Year Zero Coupon U.S. Treasury Index Exchange-Traded Fund",
+    "issuer": "PIMCO",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026750&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "government-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026750&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "sgov",
+    "ticker": "SGOV",
+    "name": "iShares 0-3 Month Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "bil",
+    "ticker": "BIL",
+    "name": "State Street(R) SPDR(R) Bloomberg 1-3 Month T-Bill ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000017326&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000017326&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "shv",
+    "ticker": "SHV",
+    "name": "iShares 0-1 Year Treasury Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013694&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013694&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "gbil",
+    "ticker": "GBIL",
+    "name": "Goldman Sachs Access Treasury 0-1 Year ETF",
+    "issuer": "Goldman Sachs Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054796&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054796&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "tbil",
+    "ticker": "TBIL",
+    "name": "F/m US Treasury 3 Month Bill Fund - ETF Class Shares",
+    "issuer": "F/m Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000077176&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000077176&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "clip",
+    "ticker": "CLIP",
+    "name": "Global X 1-3 Month T-Bill ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000080638&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000080638&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "usfr",
+    "ticker": "USFR",
+    "name": "WisdomTree Floating Rate Treasury Fund",
+    "issuer": "WisdomTree",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000043966&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000043966&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "tflo",
+    "ticker": "TFLO",
+    "name": "iShares Treasury Floating Rate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044143&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-government-securities",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "ultra-short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044143&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "bsv",
+    "ticker": "BSV",
+    "name": "Vanguard Short-Term Bond ETF",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/bsv",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/bsv"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spsb",
+    "ticker": "SPSB",
+    "name": "State Street(R) SPDR(R) Portfolio Short Term Corporate Bond ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019666&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019666&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "igsb",
+    "ticker": "IGSB",
+    "name": "iShares 1-5 Year Investment Grade Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013697&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds",
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013697&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "jpst",
+    "ticker": "JPST",
+    "name": "JPMorgan Ultra-Short Income ETF",
+    "issuer": "J.P. Morgan Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054790&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054790&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "mint",
+    "ticker": "MINT",
+    "name": "PIMCO Enhanced Short Maturity Active Exchange-Traded Fund",
+    "issuer": "PIMCO",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026751&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026751&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "near",
+    "ticker": "NEAR",
+    "name": "iShares Short Duration Bond Active ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000037042&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000037042&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "flot",
+    "ticker": "FLOT",
+    "name": "iShares Floating Rate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033136&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033136&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "flrn",
+    "ticker": "FLRN",
+    "name": "State Street(R) SPDR(R) Bloomberg Investment Grade Floating Rate ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000034874&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000034874&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "icsh",
+    "ticker": "ICSH",
+    "name": "iShares Ultra Short Duration Bond Active ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040474&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "short-duration-bonds",
+      "cash-equivalent"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000040474&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "igib",
+    "ticker": "IGIB",
+    "name": "iShares 5-10 Year Investment Grade Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013698&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013698&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iglb",
+    "ticker": "IGLB",
+    "name": "iShares 10+ Year Investment Grade Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026651&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026651&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spib",
+    "ticker": "SPIB",
+    "name": "State Street(R) SPDR(R) Portfolio Intermediate Term Corporate Bond ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000022923&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "intermediate",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000022923&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "splb",
+    "ticker": "SPLB",
+    "name": "State Street(R) SPDR(R) Portfolio Long Term Corporate Bond ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000022924&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000022924&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "usig",
+    "ticker": "USIG",
+    "name": "iShares Broad USD Investment Grade Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013699&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000013699&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "corp",
+    "ticker": "CORP",
+    "name": "PIMCO Investment Grade Corporate Bond Index Exchange-Traded Fund",
+    "issuer": "PIMCO",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000028999&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000028999&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qlta",
+    "ticker": "QLTA",
+    "name": "iShares Aaa - A Rated Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000035916&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "investment-grade-credit"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "investment-grade"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "none",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000035916&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "tip",
+    "ticker": "TIP",
+    "name": "iShares TIPS Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schp",
+    "ticker": "SCHP",
+    "name": "Schwab U.S. TIPS ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029407&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000029407&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vtip",
+    "ticker": "VTIP",
+    "name": "Vanguard Short-Term Inflation-Protected Securities Index Fund",
+    "issuer": "Vanguard",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038501&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000038501&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "stip",
+    "ticker": "STIP",
+    "name": "iShares 0-5 Year TIPS Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030481&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "short",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030481&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "spip",
+    "ticker": "SPIP",
+    "name": "State Street(R) SPDR(R) Portfolio TIPS ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000017330&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000017330&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ltpz",
+    "ticker": "LTPZ",
+    "name": "PIMCO 15+ Year U.S. TIPS Index Exchange-Traded Fund",
+    "issuer": "PIMCO",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026343&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "long",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000026343&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "rinf",
+    "ticker": "RINF",
+    "name": "ProShares Inflation Expectations ETF",
+    "issuer": "ProShares",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000035008&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000035008&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ivol",
+    "ticker": "IVOL",
+    "name": "Quadratic Interest Rate Volatility and Inflation Hedge ETF",
+    "issuer": "Quadratic Capital Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000065362&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "inflation-protected-bonds"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": "broad",
+      "creditQualities": [
+        "government"
+      ],
+      "incomeRole": "supporting",
+      "inflationSensitivity": "explicit",
+      "strategyType": "fixed-income",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000065362&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "schh",
+    "ticker": "SCHH",
+    "name": "Schwab U.S. REIT ETF",
+    "issuer": "Schwab Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030518&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000030518&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "usrt",
+    "ticker": "USRT",
+    "name": "iShares Core U.S. REIT ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000015627&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000015627&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iyr",
+    "ticker": "IYR",
+    "name": "iShares U.S. Real Estate ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004328&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000004328&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "reet",
+    "ticker": "REET",
+    "name": "iShares Global REIT ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045649&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045649&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "gldm",
+    "ticker": "GLDM",
+    "name": "SPDR Gold MiniShares Trust",
+    "issuer": "World Gold Trust",
+    "securityType": "Commodity trust",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ssga.com/us/en/individual/etfs/spdr-gold-minishares-gldm",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ssga.com/us/en/individual/etfs/spdr-gold-minishares-gldm"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "iau",
+    "ticker": "IAU",
+    "name": "iShares Gold Trust",
+    "issuer": "BlackRock",
+    "securityType": "Commodity trust",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/239561/IAU",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/239561/IAU"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "gld",
+    "ticker": "GLD",
+    "name": "SPDR Gold Shares",
+    "issuer": "World Gold Trust Services",
+    "securityType": "Commodity trust",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ssga.com/us/en/individual/etfs/spdr-gold-shares-gld",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ssga.com/us/en/individual/etfs/spdr-gold-shares-gld"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "sgol",
+    "ticker": "SGOL",
+    "name": "abrdn Physical Gold Shares ETF",
+    "issuer": "abrdn",
+    "securityType": "Commodity trust",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.abrdn.com/docs?editionId=609cef3b-2b69-4887-b672-3d8fa93b28bd",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.abrdn.com/docs?editionId=609cef3b-2b69-4887-b672-3d8fa93b28bd"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "pdbc",
+    "ticker": "PDBC",
+    "name": "Invesco Optimum Yield Diversified Commodity Strategy No K-1 ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044509&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044509&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dbc",
+    "ticker": "DBC",
+    "name": "Invesco DB Commodity Index Tracking Fund",
+    "issuer": "Invesco",
+    "securityType": "Exchange-traded commodity pool",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.invesco.com/us/en/solutions/invesco-etfs/commodity-investing.html",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.invesco.com/us/en/solutions/invesco-etfs/commodity-investing.html"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "comt",
+    "ticker": "COMT",
+    "name": "iShares GSCI Commodity Dynamic Roll Strategy ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044971&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044971&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "gsg",
+    "ticker": "GSG",
+    "name": "iShares S&P GSCI Commodity-Indexed Trust",
+    "issuer": "BlackRock",
+    "securityType": "Commodity trust",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/239757/GSG",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "commodity"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/239757/GSG"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "igf",
+    "ticker": "IGF",
+    "name": "iShares Global Infrastructure ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "rwo",
+    "ticker": "RWO",
+    "name": "State Street(R) SPDR(R) Dow Jones(R) Global Real Estate ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000021764&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "real-assets"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity",
+        "real-asset"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "indirect",
+      "strategyType": "real-asset",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000021764&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "dbmf",
+    "ticker": "DBMF",
+    "name": "iMGP DBi Managed Futures Strategy ETF",
+    "issuer": "iM Global Partner Fund Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://imgpfunds.com/wp-content/uploads/2025/10/DBMF-September-2025-Deck-Final-V2.pdf",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://imgpfunds.com/wp-content/uploads/2025/10/DBMF-September-2025-Deck-Final-V2.pdf"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "kmlm",
+    "ticker": "KMLM",
+    "name": "KraneShares Mount Lucas Managed Futures Index Strategy ETF",
+    "issuer": "KFA Funds",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000070143&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000070143&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "cta",
+    "ticker": "CTA",
+    "name": "Simplify Managed Futures Strategy ETF",
+    "issuer": "Simplify Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000075092&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000075092&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "fmf",
+    "ticker": "FMF",
+    "name": "First Trust Managed Futures Strategy Fund",
+    "issuer": "First Trust",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000037848&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000037848&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "qai",
+    "ticker": "QAI",
+    "name": "NYLI Hedge Multi-Strategy Tracker ETF",
+    "issuer": "New York Life Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.nylim.com/etf/nyli-hedge-multi-strategy-tracker-etf-qai",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.nylim.com/etf/nyli-hedge-multi-strategy-tracker-etf-qai"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "btal",
+    "ticker": "BTAL",
+    "name": "AGF U.S. Market Neutral Anti-Beta Fund",
+    "issuer": "AGF Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033013&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033013&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "mna",
+    "ticker": "MNA",
+    "name": "NYLI Merger Arbitrage ETF",
+    "issuer": "New York Life Investments",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000025931&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000025931&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "rpar",
+    "ticker": "RPAR",
+    "name": "RPAR Risk Parity ETF",
+    "issuer": "Advanced Research Investment Solutions",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066941&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000066941&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "aoa",
+    "ticker": "AOA",
+    "name": "iShares Core 80/20 Aggressive Allocation ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023588&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023588&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "aor",
+    "ticker": "AOR",
+    "name": "iShares Core 60/40 Balanced Allocation ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023587&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023587&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "aom",
+    "ticker": "AOM",
+    "name": "iShares Core 40/60 Moderate Allocation ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023586&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023586&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "aok",
+    "ticker": "AOK",
+    "name": "iShares Core 30/70 Conservative Allocation ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023585&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000023585&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "ntsx",
+    "ticker": "NTSX",
+    "name": "WisdomTree U.S. Efficient Core Fund",
+    "issuer": "WisdomTree",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061867&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000061867&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "swan",
+    "ticker": "SWAN",
+    "name": "Amplify BlackSwan Growth & Treasury Core ETF",
+    "issuer": "Amplify ETFs",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://amplifyetfs.com/swan/",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "alternative-strategy"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "multi-asset"
+      ],
+      "geographies": [
+        "global"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "none",
+      "inflationSensitivity": "none",
+      "strategyType": "alternative-strategy",
+      "complexity": "high"
+    },
+    "evidenceSourceUrls": [
+      "https://amplifyetfs.com/swan/"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "pff",
+    "ticker": "PFF",
+    "name": "iShares Preferred and Income Securities ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.ishares.com/us/products/etf-investments",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "issuer",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "hybrid-security"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "mixed"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.ishares.com/us/products/etf-investments"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity was verified through the official issuer source. Structural classifications reconcile issuer evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "pgx",
+    "ticker": "PGX",
+    "name": "Invesco Preferred ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019228&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "hybrid-security"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "mixed"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019228&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "vrp",
+    "ticker": "VRP",
+    "name": "Invesco Variable Rate Preferred ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045020&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "hybrid-security"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "mixed"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000045020&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "pffd",
+    "ticker": "PFFD",
+    "name": "Global X U.S. Preferred ETF",
+    "issuer": "Global X",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000058429&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "hybrid-security"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "mixed"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000058429&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "hylb",
+    "ticker": "HYLB",
+    "name": "Xtrackers USD High Yield Corporate Bond ETF",
+    "issuer": "DWS",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044475&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000044475&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "hyg",
+    "ticker": "HYG",
+    "name": "iShares iBoxx $ High Yield Corporate Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000016772&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000016772&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "jnk",
+    "ticker": "JNK",
+    "name": "State Street(R) SPDR(R) Bloomberg High Yield Bond ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019669&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000019669&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "angl",
+    "ticker": "ANGL",
+    "name": "VanEck Fallen Angel High Yield Bond ETF",
+    "issuer": "VanEck",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000036772&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000036772&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "faln",
+    "ticker": "FALN",
+    "name": "iShares Fallen Angels USD Bond ETF",
+    "issuer": "BlackRock",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054186&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000054186&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "bkln",
+    "ticker": "BKLN",
+    "name": "Invesco Senior Loan ETF",
+    "issuer": "Invesco",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000031053&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000031053&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "srln",
+    "ticker": "SRLN",
+    "name": "State Street(R) Blackstone Senior Loan ETF",
+    "issuer": "State Street Investment Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033064&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "fixed-income"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": [
+        "below-investment-grade"
+      ],
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000033064&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "jepi",
+    "ticker": "JEPI",
+    "name": "JPMorgan Equity Premium Income ETF",
+    "issuer": "J.P. Morgan Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000068402&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000068402&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "jepq",
+    "ticker": "JEPQ",
+    "name": "JPMorgan Nasdaq Equity Premium Income ETF",
+    "issuer": "J.P. Morgan Asset Management",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000076132&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000076132&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  },
+  {
+    "securityId": "divo",
+    "ticker": "DIVO",
+    "name": "Amplify CWP Enhanced Dividend Income ETF",
+    "issuer": "Amplify ETFs",
+    "securityType": "ETF",
+    "activeStatus": "active",
+    "sourceUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000055107&owner=exclude&count=40",
+    "verifiedAt": "2026-08-28",
+    "evidenceSourceType": "regulatory",
+    "categoryIds": [
+      "income-opportunity"
+    ],
+    "exposureProfile": {
+      "assetClasses": [
+        "equity"
+      ],
+      "geographies": [
+        "united-states"
+      ],
+      "marketCaps": null,
+      "styles": [],
+      "factors": [],
+      "sectors": null,
+      "durationBand": null,
+      "creditQualities": null,
+      "incomeRole": "primary",
+      "inflationSensitivity": "none",
+      "strategyType": "income-strategy",
+      "complexity": "moderate"
+    },
+    "evidenceSourceUrls": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=S000055107&owner=exclude&count=40"
+    ],
+    "unresolvedFields": [],
+    "researchNotes": "Current identity and active filing availability were verified through SEC structured fund data and the linked EDGAR series record. Structural classifications reconcile that evidence with the immutable approved category associations and controlled vocabulary definitions."
+  }
+];
+
+export const PHASE_1_SECURITY_METADATA_RECORDS =
+  deepFreeze(SECURITY_METADATA_RECORDS);
+
+export const PHASE_1_SECURITY_METADATA = deepFreeze(
+  Object.fromEntries(
+    PHASE_1_SECURITY_METADATA_RECORDS.map((record) => [
+      record.securityId,
+      record
+    ])
+  )
+);

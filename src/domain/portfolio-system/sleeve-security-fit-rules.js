@@ -3,8 +3,19 @@ import {
 } from './security-category-universe.js';
 
 import {
-  PHASE_1_SECURITY_REFERENCE
-} from './security-reference.js';
+  getSecurityExposureProfile
+} from './security-exposure-profiles.js';
+
+import {
+  SECURITY_FIT_OUTCOMES
+} from './security-fit-constants.js';
+
+
+const COMPLEXITY_RANK = Object.freeze({
+  low: 0,
+  moderate: 1,
+  high: 2
+});
 
 
 function overlaps(first, second) {
@@ -19,22 +30,14 @@ function roleOverlaps(
   return Object.entries(holdingsBySleeve).flatMap(
     ([sleeveId, securityIds]) =>
       securityIds.flatMap((securityId) => {
-        const normalizedId = securityId.toLowerCase();
         const categoryIds =
-          getSecurityCategories(normalizedId);
+          getSecurityCategories(securityId);
 
-        return overlaps(
-          candidateCategoryIds,
-          categoryIds
-        )
+        return overlaps(candidateCategoryIds, categoryIds)
           ? [{
               sleeveId,
-              securityId: normalizedId,
-              categoryIds,
-              verificationStatus:
-                PHASE_1_SECURITY_REFERENCE[
-                  normalizedId
-                ]?.verificationStatus ?? 'unknown'
+              securityId,
+              categoryIds
             }]
           : [];
       })
@@ -44,49 +47,12 @@ function roleOverlaps(
 
 export function resolveSleeveSecurityFit({
   candidateSecurityId,
-  candidateVerificationStatus,
   candidateCategoryIds,
-  exactEligibility,
   targetSleeveId,
   holdingsBySleeve
 }) {
-  if (
-    candidateVerificationStatus !== 'verified'
-  ) {
-    return Object.freeze({
-      outcome: 'do-not-add',
-      affectedSecurityId: null,
-      reasonCode: 'candidate-unverified',
-      roleOverlaps: Object.freeze([])
-    });
-  }
-
-  if (
-    !exactEligibility ||
-    exactEligibility.eligibilityStatus !== 'eligible'
-  ) {
-    return Object.freeze({
-      outcome: 'do-not-add',
-      affectedSecurityId: null,
-      reasonCode:
-        'candidate-not-exactly-eligible',
-      roleOverlaps: Object.freeze([])
-    });
-  }
-
-  const normalizedHoldings = Object.fromEntries(
-    Object.entries(holdingsBySleeve).map(
-      ([sleeveId, securityIds]) => [
-        sleeveId,
-        securityIds.map(
-          (securityId) => securityId.toLowerCase()
-        )
-      ]
-    )
-  );
-
   const duplicateEntry = Object.entries(
-    normalizedHoldings
+    holdingsBySleeve
   ).find(
     ([, securityIds]) =>
       securityIds.includes(candidateSecurityId)
@@ -94,9 +60,8 @@ export function resolveSleeveSecurityFit({
 
   if (duplicateEntry) {
     return Object.freeze({
-      outcome: 'redundant',
-      affectedSecurityId:
-        candidateSecurityId,
+      outcome: SECURITY_FIT_OUTCOMES.REDUNDANT,
+      affectedSecurityId: null,
       reasonCode: 'duplicate-security',
       roleOverlaps: Object.freeze([{
         sleeveId: duplicateEntry[0],
@@ -107,41 +72,57 @@ export function resolveSleeveSecurityFit({
 
   const overlapsByRole = roleOverlaps(
     candidateCategoryIds,
-    normalizedHoldings
+    holdingsBySleeve
+  );
+  const targetSleeveOverlaps = overlapsByRole.filter(
+    ({ sleeveId }) => sleeveId === targetSleeveId
   );
 
-  const replaceable = overlapsByRole.find(
-    (overlap) =>
-      overlap.sleeveId === targetSleeveId &&
-      overlap.verificationStatus !== 'verified'
-  );
+  if (targetSleeveOverlaps.length > 0) {
+    const candidateComplexity = COMPLEXITY_RANK[
+      getSecurityExposureProfile(
+        candidateSecurityId
+      ).complexity
+    ];
+    const replaceable = targetSleeveOverlaps.find(
+      ({ securityId }) =>
+        COMPLEXITY_RANK[
+          getSecurityExposureProfile(
+            securityId
+          ).complexity
+        ] > candidateComplexity
+    );
 
-  if (replaceable) {
+    if (replaceable) {
+      return Object.freeze({
+        outcome: SECURITY_FIT_OUTCOMES.REPLACE,
+        affectedSecurityId: replaceable.securityId,
+        reasonCode: 'lower-effort-role-replacement',
+        roleOverlaps: Object.freeze(overlapsByRole)
+      });
+    }
+
     return Object.freeze({
-      outcome: 'replace',
-      affectedSecurityId:
-        replaceable.securityId,
-      reasonCode: 'replace-unverified-role',
-      roleOverlaps:
-        Object.freeze(overlapsByRole)
+      outcome: SECURITY_FIT_OUTCOMES.REDUNDANT,
+      affectedSecurityId: null,
+      reasonCode: 'existing-role-sufficient',
+      roleOverlaps: Object.freeze(overlapsByRole)
     });
   }
 
   if (overlapsByRole.length > 0) {
     return Object.freeze({
-      outcome: 'redundant',
+      outcome: SECURITY_FIT_OUTCOMES.DO_NOT_ADD,
       affectedSecurityId: null,
-      reasonCode: 'existing-role-sufficient',
-      roleOverlaps:
-        Object.freeze(overlapsByRole)
+      reasonCode: 'cross-sleeve-role-conflict',
+      roleOverlaps: Object.freeze(overlapsByRole)
     });
   }
 
   return Object.freeze({
-    outcome: 'add',
+    outcome: SECURITY_FIT_OUTCOMES.ADD,
     affectedSecurityId: null,
     reasonCode: 'fills-missing-role',
     roleOverlaps: Object.freeze([])
   });
 }
-

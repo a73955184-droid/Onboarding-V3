@@ -7,6 +7,16 @@ import {
 } from './security-category-universe.js';
 
 import {
+  resolveSecurityAssessmentReadiness
+} from './security-assessment-readiness.js';
+
+import {
+  ASSESSMENT_STATUSES,
+  ASSESSMENT_UNAVAILABLE_REASONS,
+  SECURITY_FIT_OUTCOMES
+} from './security-fit-constants.js';
+
+import {
   resolveSecurityFitExplanation
 } from './security-fit-explanations.js';
 
@@ -32,6 +42,30 @@ const PORTFOLIOS = Object.values(
 ).flatMap(
   (variantMap) => Object.values(variantMap)
 );
+
+
+function unavailableResult({
+  portfolioSystemId,
+  variantId,
+  targetSleeveId,
+  candidateSecurityId,
+  reasonCode,
+  missingFields = []
+}) {
+  return Object.freeze({
+    assessmentStatus: ASSESSMENT_STATUSES.UNAVAILABLE,
+    outcome: null,
+    portfolioSystemId: portfolioSystemId ?? null,
+    variantId: variantId ?? null,
+    targetSleeveId: targetSleeveId ?? null,
+    candidateSecurityId:
+      typeof candidateSecurityId === 'string'
+        ? candidateSecurityId.toLowerCase()
+        : null,
+    reasonCode,
+    missingFields: Object.freeze([...missingFields])
+  });
+}
 
 
 function normalizeHoldings(portfolio, holdingsBySleeve) {
@@ -75,16 +109,7 @@ function normalizeHoldings(portfolio, holdingsBySleeve) {
             );
           }
 
-          const normalizedId =
-            securityId.toLowerCase();
-
-          if (!PHASE_1_SECURITY_REFERENCE[normalizedId]) {
-            throw new TypeError(
-              'Holding IDs must be canonical security IDs'
-            );
-          }
-
-          return normalizedId;
+          return securityId.toLowerCase();
         }
       );
 
@@ -109,11 +134,11 @@ function resolveAfterSecurityIds({
   affectedSecurityId,
   beforeSecurityIds
 }) {
-  if (outcome === 'add') {
+  if (outcome === SECURITY_FIT_OUTCOMES.ADD) {
     return [...beforeSecurityIds, candidateSecurityId];
   }
 
-  if (outcome === 'replace') {
+  if (outcome === SECURITY_FIT_OUTCOMES.REPLACE) {
     return beforeSecurityIds.map(
       (securityId) =>
         securityId === affectedSecurityId
@@ -140,9 +165,14 @@ export function resolveSecurityPortfolioFit({
   );
 
   if (!portfolio) {
-    throw new TypeError(
-      'Unknown portfolio system and variant combination'
-    );
+    return unavailableResult({
+      portfolioSystemId,
+      variantId,
+      targetSleeveId,
+      candidateSecurityId,
+      reasonCode:
+        ASSESSMENT_UNAVAILABLE_REASONS.UNRESOLVED_SLEEVE
+    });
   }
 
   const targetSleeve = portfolio.sleeves.find(
@@ -150,43 +180,77 @@ export function resolveSecurityPortfolioFit({
   );
 
   if (!targetSleeve) {
-    throw new TypeError(
-      'Unknown target sleeve for portfolio system'
-    );
+    return unavailableResult({
+      portfolioSystemId,
+      variantId,
+      targetSleeveId,
+      candidateSecurityId,
+      reasonCode:
+        ASSESSMENT_UNAVAILABLE_REASONS.UNRESOLVED_SLEEVE
+    });
   }
 
   if (typeof candidateSecurityId !== 'string') {
-    throw new TypeError(
-      'candidateSecurityId must be a string'
-    );
+    return unavailableResult({
+      portfolioSystemId,
+      variantId,
+      targetSleeveId,
+      candidateSecurityId,
+      reasonCode:
+        ASSESSMENT_UNAVAILABLE_REASONS.UNKNOWN_SECURITY
+    });
   }
 
   const normalizedCandidateId =
     candidateSecurityId.toLowerCase();
-
   const candidate =
-    PHASE_1_SECURITY_REFERENCE[
-      normalizedCandidateId
-    ];
+    PHASE_1_SECURITY_REFERENCE[normalizedCandidateId];
 
   if (!candidate) {
-    throw new TypeError('Unknown candidate security ID');
+    return unavailableResult({
+      portfolioSystemId,
+      variantId,
+      targetSleeveId,
+      candidateSecurityId,
+      reasonCode:
+        ASSESSMENT_UNAVAILABLE_REASONS.UNKNOWN_SECURITY
+    });
   }
 
   const normalizedHoldings = normalizeHoldings(
     portfolio,
     holdingsBySleeve
   );
+  const holdingSecurityIds = Object.values(
+    normalizedHoldings
+  ).flat();
+  const readiness = resolveSecurityAssessmentReadiness({
+    candidateSecurityId: normalizedCandidateId,
+    holdingSecurityIds
+  });
+
+  if (!readiness.ready) {
+    return unavailableResult({
+      portfolioSystemId,
+      variantId,
+      targetSleeveId,
+      candidateSecurityId,
+      reasonCode:
+        readiness.subject === 'candidate'
+          ? ASSESSMENT_UNAVAILABLE_REASONS
+              .INCOMPLETE_SECURITY_PROFILE
+          : ASSESSMENT_UNAVAILABLE_REASONS
+              .MISSING_HOLDINGS_PROFILE,
+      missingFields: readiness.missingFields
+    });
+  }
 
   const candidateCategoryIds =
     getSecurityCategories(normalizedCandidateId);
-
-  const targetCategoryIds =
-    candidateCategoryIds.filter(
-      (categoryId) =>
-        targetSleeve.assetCategories.includes(categoryId)
-    );
-
+  const targetCategoryIds = candidateCategoryIds.filter(
+    (categoryId) =>
+      targetSleeve.assetCategories.includes(categoryId)
+  );
   const eligibilityRecords = targetCategoryIds.map(
     (categoryId) =>
       getExactSleeveSecurityEligibility({
@@ -197,52 +261,52 @@ export function resolveSecurityPortfolioFit({
         securityId: normalizedCandidateId
       })
   ).filter(Boolean);
+  const exactEligibility = eligibilityRecords.find(
+    ({ eligibilityStatus }) =>
+      eligibilityStatus === 'eligible'
+  ) ?? null;
 
-  const exactEligibility =
-    eligibilityRecords.find(
-      ({ eligibilityStatus }) =>
-        eligibilityStatus === 'eligible'
-    ) ?? eligibilityRecords[0] ?? null;
+  if (!exactEligibility) {
+    return unavailableResult({
+      portfolioSystemId,
+      variantId,
+      targetSleeveId,
+      candidateSecurityId,
+      reasonCode:
+        ASSESSMENT_UNAVAILABLE_REASONS.UNRESOLVED_SLEEVE,
+      missingFields: Object.freeze([Object.freeze({
+        securityId: normalizedCandidateId,
+        fields: Object.freeze(['exactEligibility'])
+      })])
+    });
+  }
 
   const fit = resolveSleeveSecurityFit({
     candidateSecurityId: normalizedCandidateId,
-    candidateVerificationStatus:
-      candidate.verificationStatus,
     candidateCategoryIds: targetCategoryIds,
-    exactEligibility,
     targetSleeveId,
     holdingsBySleeve: normalizedHoldings
   });
-
   const beforeSecurityIds =
     normalizedHoldings[targetSleeveId];
-
-  const afterSecurityIds =
-    resolveAfterSecurityIds({
-      outcome: fit.outcome,
-      candidateSecurityId: normalizedCandidateId,
-      affectedSecurityId:
-        fit.affectedSecurityId,
-      beforeSecurityIds
-    });
-
-  const allocationBefore =
-    resolveEqualWeightAllocation({
-      sleeveWeight: targetSleeve.weight,
-      securityIds: beforeSecurityIds
-    });
-
-  const allocationAfter =
-    resolveEqualWeightAllocation({
-      sleeveWeight: targetSleeve.weight,
-      securityIds: afterSecurityIds
-    });
-
+  const afterSecurityIds = resolveAfterSecurityIds({
+    outcome: fit.outcome,
+    candidateSecurityId: normalizedCandidateId,
+    affectedSecurityId: fit.affectedSecurityId,
+    beforeSecurityIds
+  });
+  const allocationBefore = resolveEqualWeightAllocation({
+    sleeveWeight: targetSleeve.weight,
+    securityIds: beforeSecurityIds
+  });
+  const allocationAfter = resolveEqualWeightAllocation({
+    sleeveWeight: targetSleeve.weight,
+    securityIds: afterSecurityIds
+  });
   const explanation = resolveSecurityFitExplanation({
     outcome: fit.outcome,
     reasonCode: fit.reasonCode
   });
-
   const overlappingSecurityIds = Object.freeze(
     [...new Set(
       fit.roleOverlaps.map(
@@ -250,7 +314,6 @@ export function resolveSecurityPortfolioFit({
       )
     )]
   );
-
   const overlappingSleeveIds = Object.freeze(
     [...new Set(
       fit.roleOverlaps.map(
@@ -258,16 +321,16 @@ export function resolveSecurityPortfolioFit({
       )
     )]
   );
-
   const mandateEffect = {
     add: 'completes',
     replace: 'reinforces',
     redundant: 'duplicates',
-    'do-not-add': 'unresolved'
+    'do-not-add': 'conflicts'
   }[fit.outcome];
 
   return Object.freeze({
-    candidate: candidate,
+    assessmentStatus: ASSESSMENT_STATUSES.COMPLETE,
+    candidate,
     candidateSecurityId: normalizedCandidateId,
     targetSleeve: Object.freeze({
       portfolioSystemId,
@@ -276,52 +339,52 @@ export function resolveSecurityPortfolioFit({
       categoryIds:
         Object.freeze([...targetSleeve.assetCategories])
     }),
+    reasonCodes: Object.freeze([fit.reasonCode]),
     sleeveAssessment: Object.freeze({
-      eligibility:
-        exactEligibility?.eligibilityStatus ??
-        'ineligible',
+      eligibility: exactEligibility.eligibilityStatus,
       mandateEffect,
       returnRoleEffect:
-        fit.outcome === 'add'
+        fit.outcome === SECURITY_FIT_OUTCOMES.ADD
           ? 'adds-distinct-role'
-          : fit.outcome === 'replace'
+          : fit.outcome === SECURITY_FIT_OUTCOMES.REPLACE
             ? 'reinforces-existing-role'
-            : fit.outcome === 'redundant'
+            : fit.outcome === SECURITY_FIT_OUTCOMES.REDUNDANT
               ? 'repeats-existing-role'
-              : 'not-established',
-      structuralRiskEffect: 'not-assessed',
+              : 'creates-role-conflict',
+      structuralRiskEffect:
+        fit.outcome === SECURITY_FIT_OUTCOMES.DO_NOT_ADD
+          ? 'creates-cross-sleeve-conflict'
+          : 'no-new-conflict-established',
       effortEffect:
-        fit.outcome === 'add'
+        fit.outcome === SECURITY_FIT_OUTCOMES.ADD
           ? 'increases'
-          : 'unchanged',
+          : fit.outcome === SECURITY_FIT_OUTCOMES.REPLACE
+            ? 'decreases'
+            : 'unchanged',
       overlappingSecurityIds
     }),
     portfolioAssessment: Object.freeze({
       overlappingSecurityIds,
       overlappingSleeveIds,
-      missingRolesFilled:
-        Object.freeze(
-          fit.outcome === 'add'
-            ? [...targetCategoryIds]
-            : []
-        ),
-      concentrationsIntroduced:
-        Object.freeze([]),
+      missingRolesFilled: Object.freeze(
+        fit.outcome === SECURITY_FIT_OUTCOMES.ADD
+          ? [...targetCategoryIds]
+          : []
+      ),
+      concentrationsIntroduced: Object.freeze([]),
       systemCoherenceEffect:
-        fit.outcome === 'add' ||
-        fit.outcome === 'replace'
+        fit.outcome === SECURITY_FIT_OUTCOMES.ADD ||
+        fit.outcome === SECURITY_FIT_OUTCOMES.REPLACE
           ? 'strengthens'
-          : fit.outcome === 'redundant'
+          : fit.outcome === SECURITY_FIT_OUTCOMES.REDUNDANT
             ? 'unchanged'
-            : 'unresolved'
+            : 'weakens'
     }),
     allocationBefore,
     allocationAfter,
     outcome: fit.outcome,
-    affectedSecurityId:
-      fit.affectedSecurityId,
-    primaryExplanation:
-      explanation.primaryReason,
+    affectedSecurityId: fit.affectedSecurityId,
+    primaryExplanation: explanation.primaryReason,
     explanation,
     disclosure: explanation.disclosure
   });
