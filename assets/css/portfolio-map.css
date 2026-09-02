@@ -337,6 +337,19 @@
   border-color: rgba(255, 214, 0, 0.35);
 }
 
+.curation-assessment.pending {
+  border-color: rgba(153, 207, 221, 0.45);
+}
+
+.curation-assessment:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+[data-curation-assessment] {
+  scroll-margin-block: 20px;
+}
+
 .curation-assessment-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -45,6 +45,26 @@ import {
 
 const CURATION_SESSIONS = new Map();
 
+
+export function revealCurationAssessment(container) {
+  const assessment = container?.querySelector?.(
+    '[data-curation-assessment]'
+  );
+
+  if (!assessment) return false;
+
+  assessment.focus?.({ preventScroll: true });
+  assessment.scrollIntoView?.({
+    behavior: globalThis.matchMedia?.(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+      ? 'auto'
+      : 'smooth',
+    block: 'nearest'
+  });
+  return true;
+}
+
 function escapeHtml(value = '') {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -219,6 +239,7 @@ export function renderPortfolioMap(root) {
     portfolioSystem.sleeves.map(({ id }) => [id, ''])
   );
   let replacementPreviewSleeveId = null;
+  let assessingSleeveId = null;
 
   CURATION_SESSIONS.set(curationSessionKey, curationState);
 
@@ -421,6 +442,7 @@ export function renderPortfolioMap(root) {
       curationState.holdingsBySleeve[sleeve.id].includes(candidate.securityId);
     const assessment =
       curationState.assessmentBySleeve[sleeve.id];
+    const isAssessing = assessingSleeveId === sleeve.id;
     const inspection = presentSecurityInspection({
       portfolioSystemId: phaseOnePortfolioSystemId,
       variantId: portfolioSystem.profileVariantId,
@@ -462,10 +484,10 @@ export function renderPortfolioMap(root) {
         ${sourceLink}
         ${assessment ? '' : `
           <div class="curation-actions">
-            <button class="btn btn-secondary" type="button" data-curation-action="use-current" ${isCurrentHolding ? 'disabled' : ''}>
+            <button class="btn btn-secondary" type="button" data-curation-action="use-current" ${isCurrentHolding || isAssessing ? 'disabled' : ''}>
               ${isCurrentHolding ? 'Current hypothetical holding' : 'Use as current holding'}
             </button>
-            <button class="btn btn-primary" type="button" data-curation-action="assess-fit">Assess fit</button>
+            <button class="btn btn-primary" type="button" data-curation-action="assess-fit" ${isAssessing ? 'disabled aria-disabled="true"' : ''}>${isAssessing ? 'Assessing&hellip;' : 'Assess fit'}</button>
           </div>
         `}
       </section>
@@ -484,13 +506,32 @@ export function renderPortfolioMap(root) {
   function renderAssessmentPanel(sleeve) {
     const assessment = curationState.assessmentBySleeve[sleeve.id];
 
+    if (assessingSleeveId === sleeve.id) {
+      return `
+        <section
+          class="curation-assessment pending"
+          data-curation-assessment
+          tabindex="-1"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <h3>System-fit assessment</h3>
+          <p>Assessing sleeve and portfolio fit&hellip;</p>
+        </section>
+      `;
+    }
+
     if (!assessment) return '';
 
     if (assessment.assessmentStatus === 'unavailable') {
       return `
-        <section class="curation-assessment unavailable" aria-live="polite">
+        <section class="curation-assessment unavailable" data-curation-assessment tabindex="-1" aria-live="polite" aria-atomic="true">
           <h3>Assessment unavailable</h3>
           <p>AaronBux does not have enough verified information to complete this comparison. No portfolio-fit conclusion has been generated.</p>
+          <p>No allocation change has been calculated.</p>
+          <div class="curation-actions">
+            <button class="btn btn-secondary" type="button" data-curation-action="return-browser">Return to securities</button>
+          </div>
         </section>
       `;
     }
@@ -534,7 +575,7 @@ export function renderPortfolioMap(root) {
     }[assessment.outcome];
 
     return `
-      <section class="curation-assessment" aria-live="polite">
+      <section class="curation-assessment" data-curation-assessment tabindex="-1" aria-live="polite" aria-atomic="true">
         <h3>System-fit assessment</h3>
         <div class="curation-assessment-grid">
           <div><strong>Effect on this sleeve</strong><p>${escapeHtml(assessment.explanation.effectOnSleeve)}</p></div>
@@ -667,6 +708,8 @@ export function renderPortfolioMap(root) {
 
     if (!actionButton) return;
 
+    if (assessingSleeveId !== null) return;
+
     const sleeve = getActiveSleeve();
     const action = actionButton.dataset.curationAction;
     const candidateId =
@@ -690,18 +733,45 @@ export function renderPortfolioMap(root) {
       addCurationHolding(curationState, sleeve.id, candidateId);
       replacementPreviewSleeveId = null;
     } else if (action === 'assess-fit' && candidateId) {
-      setCurationAssessment(
-        curationState,
-        sleeve.id,
-        resolveSecurityPortfolioFit({
-          portfolioSystemId: phaseOnePortfolioSystemId,
-          variantId: portfolioSystem.profileVariantId,
-          targetSleeveId: sleeve.id,
-          candidateSecurityId: candidateId,
-          holdingsBySleeve: curationState.holdingsBySleeve
-        })
-      );
+      assessingSleeveId = sleeve.id;
       replacementPreviewSleeveId = null;
+      updateAllocationPanel(sleeve);
+      revealCurationAssessment(allocationPanel);
+
+      globalThis.setTimeout(() => {
+        let assessment;
+
+        try {
+          assessment = resolveSecurityPortfolioFit({
+            portfolioSystemId: phaseOnePortfolioSystemId,
+            variantId: portfolioSystem.profileVariantId,
+            targetSleeveId: sleeve.id,
+            candidateSecurityId: candidateId,
+            holdingsBySleeve: curationState.holdingsBySleeve
+          });
+        } catch (error) {
+          console.error('Security fit assessment failed', error);
+          assessment = Object.freeze({
+            assessmentStatus: 'unavailable',
+            outcome: null,
+            reasonCode: 'assessment-runtime-error',
+            missingFields: Object.freeze([])
+          });
+        }
+
+        setCurationAssessment(
+          curationState,
+          sleeve.id,
+          assessment
+        );
+        assessingSleeveId = null;
+
+        if (getActiveSleeve()?.id === sleeve.id) {
+          updateAllocationPanel(sleeve);
+          revealCurationAssessment(allocationPanel);
+        }
+      }, 0);
+      return;
     } else if (action === 'add-result' && candidateId) {
       addCurationHolding(curationState, sleeve.id, candidateId);
       replacementPreviewSleeveId = null;
