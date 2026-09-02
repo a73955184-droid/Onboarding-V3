@@ -51,28 +51,22 @@ assert.equal(incompleteHolding.assessmentStatus, 'unavailable');
 assert.equal(incompleteHolding.outcome, null);
 assert.equal(incompleteHolding.reasonCode, 'missing-holdings-profile');
 
-const unapprovedExactMapping = resolveSecurityPortfolioFit({
+const expandedExactMapping = resolveSecurityPortfolioFit({
   ...input,
   candidateSecurityId: 'avuv',
   holdingsBySleeve: {}
 });
-assert.equal(unapprovedExactMapping.assessmentStatus, 'unavailable');
-assert.equal(unapprovedExactMapping.outcome, null);
-assert.equal(unapprovedExactMapping.reasonCode, 'unresolved-sleeve');
-assert.deepEqual(
-  unapprovedExactMapping.missingFields[0].fields,
-  ['exactEligibility']
-);
+assert.equal(expandedExactMapping.assessmentStatus, 'complete');
+assert.equal(expandedExactMapping.outcome, 'add');
 
 for (const unavailable of [
   incompleteCandidate,
-  incompleteHolding,
-  unapprovedExactMapping
+  incompleteHolding
 ]) {
   assert.equal('allocationBefore' in unavailable, false);
   assert.equal('allocationAfter' in unavailable, false);
 }
 
 console.log(
-  'Security portfolio fit resolver test passed: readiness, exact eligibility and equal-weight outputs are separated.'
+  'Security portfolio fit resolver test passed: readiness, expanded exact eligibility and equal-weight outputs are separated.'
 );

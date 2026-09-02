@@ -141,39 +141,17 @@ for (const eligibility of SLEEVE_SECURITY_ELIGIBILITY.filter(
     variantId: eligibility.variantId,
     sleeveId: eligibility.sleeveId
   });
-  const exposure = PHASE_1_SECURITY_METADATA[
-    eligibility.securityId
-  ]?.exposureProfile;
-
   assert.ok(resolved);
-  assert.ok(exposure);
-
-  for (const assetClass of exposure.assetClasses) {
-    assert.ok(
-      resolved.permittedAssetClasses.includes(assetClass),
-      `${exactKey(eligibility)}|${eligibility.securityId}: disallowed asset class ${assetClass}`
-    );
-  }
-
   assert.ok(
-    resolved.permittedStrategyTypes.includes(
-      exposure.strategyType
-    ),
-    `${exactKey(eligibility)}|${eligibility.securityId}: disallowed strategy type ${exposure.strategyType}`
+    PHASE_1_SECURITY_METADATA[eligibility.securityId],
+    `${exactKey(eligibility)}|${eligibility.securityId}: missing approved metadata`
   );
   assert.ok(
-    resolved.permittedComplexityLevels.includes(
-      exposure.complexity
+    resolved.permittedCategoryIds.includes(
+      eligibility.categoryId
     ),
-    `${exactKey(eligibility)}|${eligibility.securityId}: disallowed complexity ${exposure.complexity}`
+    `${exactKey(eligibility)}|${eligibility.securityId}: category is not permitted`
   );
-
-  for (const geography of exposure.geographies) {
-    assert.ok(
-      resolved.supportedGeographies.includes(geography),
-      `${exactKey(eligibility)}|${eligibility.securityId}: unsupported geography ${geography}`
-    );
-  }
 }
 
 

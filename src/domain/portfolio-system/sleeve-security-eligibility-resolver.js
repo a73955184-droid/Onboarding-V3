@@ -63,6 +63,7 @@ export function resolveEligibleSecurities({
       const categoryRecords = records.filter(
         (record) =>
           record.categoryId === categoryId &&
+          record.eligibilityStatus === 'eligible' &&
           PHASE_1_SECURITY_METADATA[
             record.securityId
           ] !== undefined

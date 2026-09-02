@@ -164,8 +164,8 @@ assert.equal('allocationAfter' in incompleteDuplicate, false);
 // Unresolved exact permission precedes sleeve-role alignment.
 const unavailableBeforeRoleConflict = resolveSecurityPortfolioFit({
   ...stability,
-  candidateSecurityId: 'xlk',
-  holdingsBySleeve: { broadGrowthCore: ['xlk'] }
+  candidateSecurityId: 'vti',
+  holdingsBySleeve: { broadGrowthCore: ['vti'] }
 });
 
 assert.equal(unavailableBeforeRoleConflict.assessmentStatus, 'unavailable');
@@ -190,8 +190,8 @@ const unavailableBeforeBoundaryConflict =
     portfolioSystemId: 'BFO-intentional',
     variantId: 'intentional',
     targetSleeveId: 'income',
-    candidateSecurityId: 'dgrw',
-    holdingsBySleeve: { income: ['dgrw'] }
+    candidateSecurityId: 'vti',
+    holdingsBySleeve: { income: ['vti'] }
   });
 
 assert.equal(
@@ -293,7 +293,7 @@ const categoryOnly = resolveSecurityPortfolioFit({
   portfolioSystemId: 'FT-intentional',
   variantId: 'intentional',
   targetSleeveId: 'smallValueImprovement',
-  candidateSecurityId: 'avuv',
+  candidateSecurityId: 'vti',
   holdingsBySleeve: {}
 });
 
