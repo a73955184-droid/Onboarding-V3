@@ -8,6 +8,10 @@ import {
   resolveSecurityPortfolioFit
 } from '../src/domain/portfolio-system/security-portfolio-fit-resolver.js';
 
+import {
+  resolveSleeveSecurityFit
+} from '../src/domain/portfolio-system/sleeve-security-fit-rules.js';
+
 
 const constituentSnapshot = JSON.stringify(
   CONSTITUENT_PORTFOLIOS
@@ -157,26 +161,31 @@ assert.equal('allocationBefore' in incompleteDuplicate, false);
 assert.equal('allocationAfter' in incompleteDuplicate, false);
 
 
-// Sleeve-role alignment precedes exact duplication.
-const roleConflictBeforeDuplicate = resolveSecurityPortfolioFit({
+// Unresolved exact permission precedes sleeve-role alignment.
+const unavailableBeforeRoleConflict = resolveSecurityPortfolioFit({
   ...stability,
   candidateSecurityId: 'xlk',
   holdingsBySleeve: { broadGrowthCore: ['xlk'] }
 });
 
-assert.equal(roleConflictBeforeDuplicate.outcome, 'do-not-add');
-assert.equal(
-  roleConflictBeforeDuplicate.reasonCodes[0],
-  'sleeve-role-conflict'
+assert.equal(unavailableBeforeRoleConflict.assessmentStatus, 'unavailable');
+assert.equal(unavailableBeforeRoleConflict.outcome, null);
+assert.deepEqual(
+  unavailableBeforeRoleConflict.missingFields[0].fields,
+  ['exactEligibility']
 );
 assert.equal(
-  roleConflictBeforeDuplicate.decisionFactors.sleeveBoundary.status,
-  'not-evaluated'
+  'allocationBefore' in unavailableBeforeRoleConflict,
+  false
+);
+assert.equal(
+  'allocationAfter' in unavailableBeforeRoleConflict,
+  false
 );
 
 
-// Boundary alignment precedes exact duplication and pending permission.
-const boundaryConflictBeforeDuplicate =
+// Unresolved exact permission also precedes sleeve-boundary alignment.
+const unavailableBeforeBoundaryConflict =
   resolveSecurityPortfolioFit({
     portfolioSystemId: 'BFO-intentional',
     variantId: 'intentional',
@@ -186,16 +195,50 @@ const boundaryConflictBeforeDuplicate =
   });
 
 assert.equal(
-  boundaryConflictBeforeDuplicate.outcome,
-  'do-not-add'
+  unavailableBeforeBoundaryConflict.assessmentStatus,
+  'unavailable'
 );
+assert.equal(unavailableBeforeBoundaryConflict.outcome, null);
+assert.deepEqual(
+  unavailableBeforeBoundaryConflict.missingFields[0].fields,
+  ['exactEligibility']
+);
+
+
+// With exact permission complete, role and boundary conflicts remain
+// completed Do not add decisions.
+const completedRoleConflict = resolveSleeveSecurityFit({
+  ...stability,
+  candidateSecurityId: 'xlk',
+  holdingsBySleeve: { broadGrowthCore: ['xlk'] },
+  exactEligibilityStatus: 'eligible'
+});
+
+assert.equal(completedRoleConflict.assessmentAvailable, true);
+assert.equal(completedRoleConflict.outcome, 'do-not-add');
+assert.equal(completedRoleConflict.reasonCodes[0], 'sleeve-role-conflict');
 assert.equal(
-  boundaryConflictBeforeDuplicate.reasonCodes[0],
+  completedRoleConflict.decisionFactors.sleeveBoundary.status,
+  'not-evaluated'
+);
+
+const completedBoundaryConflict = resolveSleeveSecurityFit({
+  portfolioSystemId: 'BFO-intentional',
+  variantId: 'intentional',
+  targetSleeveId: 'income',
+  candidateSecurityId: 'dgrw',
+  holdingsBySleeve: { income: ['dgrw'] },
+  exactEligibilityStatus: 'eligible'
+});
+
+assert.equal(completedBoundaryConflict.assessmentAvailable, true);
+assert.equal(completedBoundaryConflict.outcome, 'do-not-add');
+assert.equal(
+  completedBoundaryConflict.reasonCodes[0],
   'sleeve-boundary-conflict'
 );
 assert.equal(
-  boundaryConflictBeforeDuplicate.decisionFactors
-    .sleeveBoundary.strategyFit,
+  completedBoundaryConflict.decisionFactors.sleeveBoundary.strategyFit,
   'conflict'
 );
 
@@ -267,8 +310,6 @@ for (const result of [
   replace,
   structuralRedundancy,
   intentionalCrossSleeveConflict,
-  roleConflictBeforeDuplicate,
-  boundaryConflictBeforeDuplicate,
   duplicateBeforeCrossSleeve,
   sameSleeveBeforeCrossSleeve
 ]) {
@@ -286,6 +327,18 @@ for (const result of [
   );
 }
 
+for (const result of [
+  incompleteDuplicate,
+  unavailableBeforeRoleConflict,
+  unavailableBeforeBoundaryConflict,
+  categoryOnly
+]) {
+  assert.equal(result.assessmentStatus, 'unavailable');
+  assert.equal(result.outcome, null);
+  assert.equal('allocationBefore' in result, false);
+  assert.equal('allocationAfter' in result, false);
+}
+
 assert.equal(
   JSON.stringify(CONSTITUENT_PORTFOLIOS),
   constituentSnapshot,
@@ -295,4 +348,3 @@ assert.equal(
 console.log(
   'Security portfolio-fit decision contract test passed: seven-step precedence, evidence, outcomes and allocations are preserved.'
 );
-

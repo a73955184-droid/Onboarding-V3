@@ -176,6 +176,21 @@ export function resolveSleeveSecurityFit({
   };
   const decisionFactors = unevaluatedDecisionFactors();
 
+  // Step 1: a completed exact permission is part of assessment
+  // availability. Pending or absent permission is unavailable, not a
+  // completed sleeve-fit rejection.
+  if (exactEligibilityStatus !== 'eligible') {
+    return deepFreeze({
+      assessmentAvailable: false,
+      outcome: null,
+      affectedSecurityId: null,
+      reasonCode: 'exact-eligibility-unavailable',
+      reasonCodes: ['exact-eligibility-unavailable'],
+      roleOverlaps: [],
+      decisionFactors
+    });
+  }
+
   // Step 2: exact sleeve-role alignment.
   const alignment = resolveSecuritySleeveAlignment(context);
   decisionFactors.sleeveRole = roleFactor(alignment);
@@ -204,20 +219,6 @@ export function resolveSleeveSecurityFit({
         'sleeve-boundary-conflict',
         ...boundary.conflicts.map(({ code }) => code)
       ],
-      decisionFactors
-    });
-  }
-
-  // An aligned candidate still needs a completed exact permission.
-  // Pending or absent permission is unavailable, not a rejection.
-  if (exactEligibilityStatus !== 'eligible') {
-    return deepFreeze({
-      assessmentAvailable: false,
-      outcome: null,
-      affectedSecurityId: null,
-      reasonCode: 'exact-eligibility-unavailable',
-      reasonCodes: ['exact-eligibility-unavailable'],
-      roleOverlaps: [],
       decisionFactors
     });
   }
