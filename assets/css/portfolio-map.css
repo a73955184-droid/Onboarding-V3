@@ -322,8 +322,23 @@
 
 .curation-allocation-list li {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.curation-holding-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.curation-remove-holding {
+  padding: 4px 8px;
+  color: var(--muted);
+  font-size: 12px;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .curation-alternatives {

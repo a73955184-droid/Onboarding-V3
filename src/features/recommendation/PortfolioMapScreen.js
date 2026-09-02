@@ -39,6 +39,7 @@ import {
   addCurationHolding,
   clearCurationCandidate,
   createPortfolioCurationSession,
+  removeCurationHolding,
   replaceCurationHolding,
   saveCurationAlternative,
   selectCurationCandidate,
@@ -290,7 +291,11 @@ export function renderPortfolioMap(root) {
     return PHASE_1_SECURITY_REFERENCE[securityId] ?? null;
   }
 
-  function renderAllocationHoldings(allocation, emptyMessage) {
+  function renderAllocationHoldings(
+    allocation,
+    emptyMessage,
+    { removable = false } = {}
+  ) {
     if (allocation.holdings.length === 0) {
       return `<p class="curation-empty">${escapeHtml(emptyMessage)}</p>`;
     }
@@ -303,7 +308,18 @@ export function renderPortfolioMap(root) {
           return `
             <li>
               <span>${escapeHtml(security?.ticker ?? holding.securityId)}</span>
-              <strong>${formatAllocationPercentage(holding.displayWeight)}</strong>
+              <span class="curation-holding-controls">
+                <strong>${formatAllocationPercentage(holding.displayWeight)}</strong>
+                ${removable ? `
+                  <button
+                    class="btn curation-remove-holding"
+                    type="button"
+                    data-curation-action="remove-existing-holding"
+                    data-security-id="${escapeHtml(holding.securityId)}"
+                    aria-label="Remove ${escapeHtml(security?.ticker ?? holding.securityId)} from this temporary hypothetical sleeve"
+                  >Remove</button>
+                ` : ''}
+              </span>
             </li>
           `;
         }).join('')}
@@ -319,12 +335,31 @@ export function renderPortfolioMap(root) {
       sleeveWeight: sleeve.weight,
       securityIds: holdings
     });
+    const candidateId =
+      curationState.activeCandidateIdBySleeve[sleeve.id];
+    const candidateIsHeld = candidateId
+      ? holdings.includes(candidateId)
+      : false;
 
     return `
       <section class="curation-hypothetical" aria-labelledby="curationHoldingsHeading">
         <h3 id="curationHoldingsHeading">Your hypothetical sleeve · ${formatPercentage(sleeve.weight)}</h3>
+        <p>Tell us what you already hold in this sleeve.</p>
         <p class="curation-note">Temporary planning only. These are not actual holdings, no brokerage account is connected and no trades are placed.</p>
-        ${renderAllocationHoldings(allocation, 'No holdings added yet.')}
+        <p class="curation-note">Select a security above, then add it to your temporary starting portfolio. This does not mean AaronBux assessed or recommended it.</p>
+        <div class="curation-actions">
+          <button
+            class="btn btn-secondary"
+            type="button"
+            data-curation-action="add-existing-holding"
+            ${!candidateId || candidateIsHeld ? 'disabled' : ''}
+          >${candidateIsHeld ? 'Already in temporary sleeve' : 'Add an existing holding'}</button>
+        </div>
+        ${renderAllocationHoldings(
+          allocation,
+          'No existing holdings added yet.',
+          { removable: true }
+        )}
         ${alternatives.length > 0 ? `
           <div class="curation-alternatives">
             <h4>Saved alternatives</h4>
@@ -442,8 +477,6 @@ export function renderPortfolioMap(root) {
       `;
     }
 
-    const isCurrentHolding =
-      curationState.holdingsBySleeve[sleeve.id].includes(candidate.securityId);
     const assessment =
       curationState.assessmentBySleeve[sleeve.id];
     const isAssessing = assessingSleeveId === sleeve.id;
@@ -488,9 +521,6 @@ export function renderPortfolioMap(root) {
         ${sourceLink}
         ${assessment ? '' : `
           <div class="curation-actions">
-            <button class="btn btn-secondary" type="button" data-curation-action="use-current" ${isCurrentHolding || isAssessing ? 'disabled' : ''}>
-              ${isCurrentHolding ? 'Current hypothetical holding' : 'Use as current holding'}
-            </button>
             <button class="btn btn-primary" type="button" data-curation-action="assess-fit" ${isAssessing ? 'disabled aria-disabled="true"' : ''}>${isAssessing ? 'Assessing&hellip;' : 'Assess fit'}</button>
           </div>
         `}
@@ -613,6 +643,21 @@ export function renderPortfolioMap(root) {
         <p class="curation-note">${escapeHtml(presentation.disclosure)}</p>
       </section>
     `;
+  }
+
+  function assessmentAllowsAction(sleeve, action) {
+    const assessment = curationState.assessmentBySleeve[sleeve.id];
+
+    if (!assessment) return false;
+
+    return presentSecurityAssessment({
+      assessment,
+      sleeveLabel: sleeve.label,
+      replacementPreviewActive:
+        replacementPreviewSleeveId === sleeve.id
+    }).actions.some(
+      (presentedAction) => presentedAction.action === action
+    );
   }
 
   function renderAllocationPanel(sleeve, system) {
@@ -743,8 +788,15 @@ export function renderPortfolioMap(root) {
         actionButton.dataset.securityId
       );
       replacementPreviewSleeveId = null;
-    } else if (action === 'use-current' && candidateId) {
+    } else if (action === 'add-existing-holding' && candidateId) {
       addCurationHolding(curationState, sleeve.id, candidateId);
+      replacementPreviewSleeveId = null;
+    } else if (action === 'remove-existing-holding') {
+      removeCurationHolding(
+        curationState,
+        sleeve.id,
+        actionButton.dataset.securityId
+      );
       replacementPreviewSleeveId = null;
     } else if (action === 'assess-fit' && candidateId) {
       assessingSleeveId = sleeve.id;
@@ -787,7 +839,9 @@ export function renderPortfolioMap(root) {
       }, 0);
       return;
     } else if (action === 'add-result' && candidateId) {
-      addCurationHolding(curationState, sleeve.id, candidateId);
+      if (assessmentAllowsAction(sleeve, 'add-result')) {
+        addCurationHolding(curationState, sleeve.id, candidateId);
+      }
       replacementPreviewSleeveId = null;
     } else if (action === 'preview-replacement') {
       replacementPreviewSleeveId = sleeve.id;
@@ -798,7 +852,7 @@ export function renderPortfolioMap(root) {
         curationState.assessmentBySleeve[sleeve.id];
 
       if (
-        assessment?.outcome === 'replace' &&
+        assessmentAllowsAction(sleeve, 'confirm-replacement') &&
         assessment.affectedSecurityId &&
         candidateId
       ) {

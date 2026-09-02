@@ -66,6 +66,15 @@ export function addCurationHolding(state, sleeveId, securityId) {
   clearAssessments(state);
 }
 
+export function removeCurationHolding(state, sleeveId, securityId) {
+  assertSleeve(state, sleeveId);
+  state.holdingsBySleeve[sleeveId] =
+    state.holdingsBySleeve[sleeveId].filter(
+      (holdingId) => holdingId !== securityId
+    );
+  clearAssessments(state);
+}
+
 export function replaceCurationHolding(
   state,
   sleeveId,
@@ -92,7 +101,10 @@ export function saveCurationAlternative(state, sleeveId, securityId) {
   assertSleeve(state, sleeveId);
   const alternatives = state.savedAlternativesBySleeve[sleeveId];
 
-  if (!alternatives.includes(securityId)) {
+  if (
+    !state.holdingsBySleeve[sleeveId].includes(securityId) &&
+    !alternatives.includes(securityId)
+  ) {
     alternatives.push(securityId);
   }
 }

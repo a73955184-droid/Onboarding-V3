@@ -65,6 +65,10 @@ assert.deepEqual(
   presentations.add.actions.map(({ action }) => action),
   ['add-result']
 );
+assert.equal(
+  presentations.add.actions[0].label,
+  'Add to hypothetical sleeve'
+);
 
 assert.deepEqual(
   presentations.replace.factors.map(({ label }) => label),
@@ -111,6 +115,10 @@ assert.equal(
   presentations.redundant.result.label,
   'REDUNDANT WITH ITOT'
 );
+assert.deepEqual(
+  presentations.redundant.actions.map(({ action }) => action),
+  ['save-alternative', 'return-browser']
+);
 assert.match(
   presentations.redundant.factors[1].explanation,
   /asset class.*geography.*market capitalization.*strategy type/
@@ -128,6 +136,10 @@ assert.deepEqual(
 assert.equal(
   presentations['do-not-add'].result.label,
   'DO NOT ADD TO THIS SLEEVE'
+);
+assert.deepEqual(
+  presentations['do-not-add'].actions.map(({ action }) => action),
+  ['return-browser']
 );
 assert.match(
   presentations['do-not-add'].factors[2].explanation,
@@ -166,6 +178,24 @@ assert.equal(unavailable.status, 'unavailable');
 assert.equal('result' in unavailable, false);
 assert.equal('factors' in unavailable, false);
 assert.match(unavailable.allocationMessage, /No allocation change/);
+assert.deepEqual(
+  unavailable.actions.map(({ action }) => action),
+  ['return-browser']
+);
+
+const unavailableWithStaleOutcome = presentSecurityAssessment({
+  assessment: {
+    assessmentStatus: 'unavailable',
+    outcome: 'add'
+  },
+  sleeveLabel: 'Selected'
+});
+assert.equal(
+  unavailableWithStaleOutcome.actions.some(
+    ({ action }) => action === 'add-result'
+  ),
+  false
+);
 
 console.log(
   'Security assessment presenter test passed: all outcomes expose ordered evidence, results and controlled actions.'
