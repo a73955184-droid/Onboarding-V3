@@ -13,8 +13,7 @@ const baseInput = {
 const scenarios = {
   add: {},
   replace: { stability: ['lqd'] },
-  redundant: { stability: ['bnd'] },
-  'do-not-add': { broadGrowthCore: ['lqd'] }
+  redundant: { stability: ['bnd'] }
 };
 const results = Object.fromEntries(
   Object.entries(scenarios).map(([expectedOutcome, holdingsBySleeve]) => [
@@ -33,8 +32,17 @@ assert.equal(
   results.redundant.allocationAfter.totalWeight,
   results.redundant.allocationBefore.totalWeight
 );
+const crossSleeveConflict = resolveSecurityPortfolioFit({
+  portfolioSystemId: 'TO-intentional',
+  variantId: 'intentional',
+  targetSleeveId: 'stabilityReserve',
+  candidateSecurityId: 'sgov',
+  holdingsBySleeve: { liquidity: ['bil'] }
+});
+
+assert.equal(crossSleeveConflict.outcome, 'do-not-add');
 assert.equal(
-  results['do-not-add'].reasonCodes[0],
+  crossSleeveConflict.reasonCodes[0],
   'cross-sleeve-role-conflict'
 );
 assert.equal(
@@ -45,5 +53,5 @@ assert.equal(
 );
 
 console.log(
-  'Sleeve security fit rules test passed: BND reaches all four outcomes from holdings context alone.'
+  'Sleeve security fit rules test passed: structural holdings context reaches all four outcomes.'
 );

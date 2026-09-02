@@ -25,6 +25,28 @@ const EXPLANATIONS = Object.freeze({
       'Exact sleeve eligibility has not been approved.'
   }),
 
+  'sleeve-role-conflict': Object.freeze({
+    sleeveEffect:
+      'The candidate does not perform a category role permitted by this sleeve.',
+    portfolioEffect:
+      'Adding it here would assign an unsupported responsibility to the sleeve.',
+    allocationEffect:
+      'The hypothetical allocation remains unchanged.',
+    primaryReason:
+      'The candidate conflicts with the selected sleeve role.'
+  }),
+
+  'sleeve-boundary-conflict': Object.freeze({
+    sleeveEffect:
+      'The candidate falls outside one or more structural boundaries for this sleeve.',
+    portfolioEffect:
+      'The candidate would weaken the system boundary assigned to this part of the portfolio.',
+    allocationEffect:
+      'The hypothetical allocation remains unchanged.',
+    primaryReason:
+      'The candidate does not satisfy the selected sleeve boundaries.'
+  }),
+
   'duplicate-security': Object.freeze({
     sleeveEffect:
       'The candidate repeats a security already present in the hypothetical portfolio.',
@@ -47,6 +69,17 @@ const EXPLANATIONS = Object.freeze({
       'The existing holding sufficiently performs the role.'
   }),
 
+  'existing-structural-role-sufficient': Object.freeze({
+    sleeveEffect:
+      'An existing hypothetical holding already performs the same permitted structural role.',
+    portfolioEffect:
+      'Adding the candidate would repeat that role without an established structural advantage.',
+    allocationEffect:
+      'The hypothetical allocation remains unchanged.',
+    primaryReason:
+      'The existing holding sufficiently performs the structural role.'
+  }),
+
   'lower-effort-role-replacement': Object.freeze({
     sleeveEffect:
       'The candidate can perform the same sleeve role with a more straightforward structural implementation.',
@@ -56,6 +89,17 @@ const EXPLANATIONS = Object.freeze({
       'The affected sleeve is reweighted after replacing the identified holding.',
     primaryReason:
       'The identified holding performs the same role with greater implementation complexity.'
+  }),
+
+  'structural-replacement-advantage': Object.freeze({
+    sleeveEffect:
+      'The candidate preserves the existing sleeve role with an explicit structural advantage.',
+    portfolioEffect:
+      'The identified substitution improves the role without adding another holding.',
+    allocationEffect:
+      'The affected sleeve is reweighted after replacing the identified holding.',
+    primaryReason:
+      'The candidate has a documented structural advantage over the identified holding.'
   }),
 
   'cross-sleeve-role-conflict': Object.freeze({
@@ -78,6 +122,17 @@ const EXPLANATIONS = Object.freeze({
       'The affected sleeve is reweighted to include the candidate.',
     primaryReason:
       'The candidate fills a missing approved portfolio role.'
+  }),
+
+  'fills-missing-permitted-role': Object.freeze({
+    sleeveEffect:
+      'The candidate supplies a permitted structural role not represented in the target sleeve.',
+    portfolioEffect:
+      'No existing hypothetical holding already owns that approved responsibility.',
+    allocationEffect:
+      'The affected sleeve is reweighted to include the candidate.',
+    primaryReason:
+      'The candidate fills a missing permitted structural role.'
   })
 });
 

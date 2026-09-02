@@ -268,8 +268,21 @@ export function resolveSecurityPortfolioFit({
     ({ eligibilityStatus }) =>
       eligibilityStatus === 'eligible'
   ) ?? null;
+  const eligibilityStatus =
+    exactEligibility?.eligibilityStatus ??
+    eligibilityRecords[0]?.eligibilityStatus ??
+    null;
 
-  if (!exactEligibility) {
+  const fit = resolveSleeveSecurityFit({
+    candidateSecurityId: normalizedCandidateId,
+    portfolioSystemId,
+    variantId,
+    targetSleeveId,
+    holdingsBySleeve: normalizedHoldings,
+    exactEligibilityStatus: eligibilityStatus
+  });
+
+  if (!fit.assessmentAvailable) {
     return unavailableResult({
       portfolioSystemId,
       variantId,
@@ -284,12 +297,6 @@ export function resolveSecurityPortfolioFit({
     });
   }
 
-  const fit = resolveSleeveSecurityFit({
-    candidateSecurityId: normalizedCandidateId,
-    candidateCategoryIds: targetCategoryIds,
-    targetSleeveId,
-    holdingsBySleeve: normalizedHoldings
-  });
   const beforeSecurityIds =
     normalizedHoldings[targetSleeveId];
   const afterSecurityIds = resolveAfterSecurityIds({
@@ -342,9 +349,11 @@ export function resolveSecurityPortfolioFit({
       categoryIds:
         Object.freeze([...targetSleeve.assetCategories])
     }),
-    reasonCodes: Object.freeze([fit.reasonCode]),
+    reasonCodes: Object.freeze([...fit.reasonCodes]),
+    decisionFactors: fit.decisionFactors,
     sleeveAssessment: Object.freeze({
-      eligibility: exactEligibility.eligibilityStatus,
+      eligibility:
+        eligibilityStatus ?? 'not-permitted-for-sleeve-role',
       mandateEffect,
       returnRoleEffect:
         fit.outcome === SECURITY_FIT_OUTCOMES.ADD
@@ -356,13 +365,19 @@ export function resolveSecurityPortfolioFit({
               : 'creates-role-conflict',
       structuralRiskEffect:
         fit.outcome === SECURITY_FIT_OUTCOMES.DO_NOT_ADD
-          ? 'creates-cross-sleeve-conflict'
+          ? fit.reasonCode === 'cross-sleeve-role-conflict'
+            ? 'creates-cross-sleeve-conflict'
+            : 'creates-sleeve-conflict'
           : 'no-new-conflict-established',
       effortEffect:
         fit.outcome === SECURITY_FIT_OUTCOMES.ADD
           ? 'increases'
-          : fit.outcome === SECURITY_FIT_OUTCOMES.REPLACE
-            ? 'decreases'
+        : fit.outcome === SECURITY_FIT_OUTCOMES.REPLACE
+            ? fit.decisionFactors.replacement.advantages.includes(
+                'lower-complexity'
+              )
+              ? 'decreases'
+              : 'unchanged'
             : 'unchanged',
       overlappingSecurityIds
     }),
