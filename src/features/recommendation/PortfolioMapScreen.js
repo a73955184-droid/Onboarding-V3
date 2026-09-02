@@ -32,6 +32,10 @@ import {
 } from '../../domain/portfolio-system/security-inspection-presenter.js';
 
 import {
+  presentSecurityAssessment
+} from '../../domain/portfolio-system/security-assessment-presenter.js';
+
+import {
   addCurationHolding,
   clearCurationCandidate,
   createPortfolioCurationSession,
@@ -503,6 +507,45 @@ export function renderPortfolioMap(root) {
     `;
   }
 
+  function renderAssessmentActions(actions) {
+    return `
+      <div class="curation-actions">
+        ${actions.map(({ action, label, style }) => `
+          <button class="btn btn-${escapeHtml(style)}" type="button" data-curation-action="${escapeHtml(action)}">${escapeHtml(label)}</button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderAssessmentFactors(factors) {
+    return `
+      <div class="curation-decision-factors">
+        ${factors.map((factor) => `
+          <div class="curation-decision-factor ${escapeHtml(factor.tone)}">
+            <span class="curation-factor-marker" aria-hidden="true">${escapeHtml(factor.marker)}</span>
+            <div>
+              <strong>${escapeHtml(factor.label)}</strong>
+              <p>${escapeHtml(factor.explanation)}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderReplacementPreview(preview) {
+    if (!preview) return '';
+
+    return `
+      <div class="curation-replacement-preview">
+        <h4>${escapeHtml(preview.heading)}</h4>
+        <p>Remove ${escapeHtml(preview.remove)}</p>
+        <p>Include ${escapeHtml(preview.include)}</p>
+        <p>Recalculate ${escapeHtml(preview.sleeveLabel)} sleeve</p>
+      </div>
+    `;
+  }
+
   function renderAssessmentPanel(sleeve) {
     const assessment = curationState.assessmentBySleeve[sleeve.id];
 
@@ -523,80 +566,51 @@ export function renderPortfolioMap(root) {
 
     if (!assessment) return '';
 
-    if (assessment.assessmentStatus === 'unavailable') {
+    const presentation = presentSecurityAssessment({
+      assessment,
+      sleeveLabel: sleeve.label,
+      replacementPreviewActive:
+        replacementPreviewSleeveId === sleeve.id
+    });
+
+    if (presentation.status === 'unavailable') {
       return `
         <section class="curation-assessment unavailable" data-curation-assessment tabindex="-1" aria-live="polite" aria-atomic="true">
-          <h3>Assessment unavailable</h3>
-          <p>AaronBux does not have enough verified information to complete this comparison. No portfolio-fit conclusion has been generated.</p>
-          <p>No allocation change has been calculated.</p>
-          <div class="curation-actions">
-            <button class="btn btn-secondary" type="button" data-curation-action="return-browser">Return to securities</button>
-          </div>
+          <h3>${escapeHtml(presentation.heading)}</h3>
+          <p>${escapeHtml(presentation.message)}</p>
+          <p>${escapeHtml(presentation.allocationMessage)}</p>
+          ${renderAssessmentActions(presentation.actions)}
         </section>
       `;
     }
 
-    const effortLabel = {
-      decreases: 'Lower',
-      unchanged: 'Unchanged',
-      increases: 'Higher'
-    }[assessment.sleeveAssessment.effortEffect];
-    const affectedSecurity = getSecurity(assessment.affectedSecurityId);
-    const overlapSecurity = getSecurity(
-      assessment.sleeveAssessment.overlappingSecurityIds[0]
-    );
-    const outcomePresentation = {
-      add: {
-        label: 'Add',
-        action: '<button class="btn btn-primary" type="button" data-curation-action="add-result">Add to hypothetical sleeve</button>'
-      },
-      replace: {
-        label: `Replace ${affectedSecurity?.ticker ?? 'holding'}`,
-        action: replacementPreviewSleeveId === sleeve.id
-          ? `
-              <div class="curation-replacement-preview">
-                <h4>Replacement preview</h4>
-                <p>Remove ${escapeHtml(affectedSecurity?.ticker ?? 'current holding')}</p>
-                <p>Add ${escapeHtml(assessment.candidate.ticker)}</p>
-                <p>Recalculate ${escapeHtml(sleeve.label)} sleeve</p>
-                <button class="btn btn-primary" type="button" data-curation-action="confirm-replacement">Confirm replacement</button>
-              </div>
-            `
-          : '<button class="btn btn-primary" type="button" data-curation-action="preview-replacement">Preview replacement</button>'
-      },
-      redundant: {
-        label: `Redundant with ${overlapSecurity?.ticker ?? 'current holding'}`,
-        action: '<button class="btn btn-secondary" type="button" data-curation-action="save-alternative">Keep as an alternative</button>'
-      },
-      'do-not-add': {
-        label: 'Do not add',
-        action: '<button class="btn btn-secondary" type="button" data-curation-action="return-browser">Return to eligible securities</button>'
-      }
-    }[assessment.outcome];
-
     return `
       <section class="curation-assessment" data-curation-assessment tabindex="-1" aria-live="polite" aria-atomic="true">
-        <h3>System-fit assessment</h3>
-        <div class="curation-assessment-grid">
-          <div><strong>Effect on this sleeve</strong><p>${escapeHtml(assessment.explanation.effectOnSleeve)}</p></div>
-          <div><strong>Effect on the full portfolio</strong><p>${escapeHtml(assessment.explanation.effectOnPortfolio)}</p></div>
-          <div><strong>Effort effect</strong><p>${escapeHtml(effortLabel)}</p></div>
+        <div class="curation-assessment-heading">
+          <h3>${escapeHtml(presentation.heading)}</h3>
+          <p>${escapeHtml(presentation.context)}</p>
+        </div>
+        ${renderAssessmentFactors(presentation.factors)}
+        <div class="curation-assessment-effort">
+          <strong>${escapeHtml(presentation.effort.label)}</strong>
+          <span>${escapeHtml(presentation.effort.value)}</span>
         </div>
         <div class="curation-allocation-effect">
           <h4>Allocation effect</h4>
           <div class="curation-allocation-comparison">
-            ${renderAssessmentAllocation('Before', assessment.allocationBefore)}
-            ${renderAssessmentAllocation('After', assessment.allocationAfter)}
+            ${renderAssessmentAllocation('Before', presentation.allocationBefore)}
+            ${renderAssessmentAllocation('After', presentation.allocationAfter)}
           </div>
         </div>
         <div class="curation-result">
           <strong>System-fit result</strong>
-          <div class="curation-result-label">${escapeHtml(outcomePresentation.label)}</div>
+          <div class="curation-result-label">${escapeHtml(presentation.result.label)}</div>
           <strong>Primary reason</strong>
-          <p>${escapeHtml(assessment.primaryExplanation)}</p>
-          ${outcomePresentation.action}
+          <p>${escapeHtml(presentation.result.primaryReason)}</p>
+          ${renderReplacementPreview(presentation.replacementPreview)}
+          ${renderAssessmentActions(presentation.actions)}
         </div>
-        <p class="curation-note">${escapeHtml(assessment.disclosure)}</p>
+        <p class="curation-note">${escapeHtml(presentation.disclosure)}</p>
       </section>
     `;
   }
@@ -777,6 +791,8 @@ export function renderPortfolioMap(root) {
       replacementPreviewSleeveId = null;
     } else if (action === 'preview-replacement') {
       replacementPreviewSleeveId = sleeve.id;
+    } else if (action === 'cancel-replacement') {
+      replacementPreviewSleeveId = null;
     } else if (action === 'confirm-replacement') {
       const assessment =
         curationState.assessmentBySleeve[sleeve.id];

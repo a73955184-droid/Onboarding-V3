@@ -157,14 +157,20 @@ function boundaryEvidence(candidateSecurityId, factor) {
     );
   }
   if (factor.incomeRoleFit !== 'not-applicable' && exposure?.incomeRole) {
-    evidence.push(`${words(exposure.incomeRole)} income role`);
+    evidence.push(
+      exposure.incomeRole === 'none'
+        ? 'no assigned income role'
+        : `${words(exposure.incomeRole)} income role`
+    );
   }
   if (
     factor.inflationRoleFit !== 'not-applicable' &&
     exposure?.inflationSensitivity
   ) {
     evidence.push(
-      `${words(exposure.inflationSensitivity)} inflation sensitivity`
+      exposure.inflationSensitivity === 'none'
+        ? 'no explicit inflation sensitivity'
+        : `${words(exposure.inflationSensitivity)} inflation sensitivity`
     );
   }
 

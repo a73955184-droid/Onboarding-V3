@@ -63,7 +63,6 @@ assert.match(source, /Assessing&amp;hellip;|Assessing&hellip;/);
 assert.match(source, /Assessing sleeve and portfolio fit&hellip;/);
 assert.match(source, /data-curation-assessment/);
 assert.match(source, /tabindex="-1"/);
-assert.match(source, /No allocation change has been calculated/);
 
 console.log(
   'Portfolio assessment interaction test passed: click handling shows pending feedback, stores the result, rerenders and reveals the assessment.'

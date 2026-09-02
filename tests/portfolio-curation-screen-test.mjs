@@ -15,6 +15,7 @@ assert.match(source, /resolveEligibleSecurities\(\{/);
 assert.match(source, /resolveSecurityPortfolioFit\(\{/);
 assert.match(source, /resolveEqualWeightAllocation\(\{/);
 assert.match(source, /presentSecurityInspection\(\{/);
+assert.match(source, /presentSecurityAssessment\(\{/);
 assert.match(source, /portfolioSystemId: phaseOnePortfolioSystemId/);
 assert.match(source, /variantId: portfolioSystem\.profileVariantId/);
 assert.match(source, /targetSleeveId: sleeve\.id/);
@@ -28,15 +29,16 @@ assert.match(source, /renderInspectionSection\(sections\.implementationCharacter
 assert.match(source, /renderInspectionSection\(sections\.sleeveAlignment\)/);
 assert.match(source, /renderInspectionSection\(sections\.assessmentChecks\)/);
 assert.match(source, /target="_blank" rel="noopener noreferrer"/);
-assert.match(source, /Assessment unavailable/);
-assert.match(source, /No portfolio-fit conclusion has been generated/);
-assert.match(source, /Add to hypothetical sleeve/);
-assert.match(source, /Preview replacement/);
-assert.match(source, /Keep as an alternative/);
-assert.match(source, /Return to eligible securities/);
+assert.match(source, /renderAssessmentFactors\(presentation\.factors\)/);
+assert.match(source, /presentation\.result\.label/);
+assert.match(source, /presentation\.result\.primaryReason/);
+assert.match(source, /renderAssessmentActions\(presentation\.actions\)/);
 assert.doesNotMatch(source, /security-category-universe/);
 assert.doesNotMatch(source, /missingFields\[/);
 assert.doesNotMatch(source, /reasonCodes\[/);
+assert.doesNotMatch(source, /const outcomePresentation/);
+assert.doesNotMatch(source, /assessment\.decisionFactors/);
+assert.doesNotMatch(source, /assessment\.explanation/);
 
 console.log(
   'Portfolio curation screen test passed: the asset tab delegates browsing, allocation and fit decisions to Phase 1 APIs.'
