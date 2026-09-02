@@ -28,6 +28,10 @@ import {
 } from '../../domain/portfolio-system/security-reference.js';
 
 import {
+  presentSecurityInspection
+} from '../../domain/portfolio-system/security-inspection-presenter.js';
+
+import {
   addCurationHolding,
   clearCurationCandidate,
   createPortfolioCurationSession,
@@ -360,6 +364,43 @@ export function renderPortfolioMap(root) {
     `;
   }
 
+  function renderInspectionFields(section) {
+    if (!section.fields?.length) return '';
+
+    return `
+      <dl class="curation-inspection-facts">
+        ${section.fields.map(({ label, value }) => `
+          <div>
+            <dt>${escapeHtml(label)}</dt>
+            <dd>${escapeHtml(value)}</dd>
+          </div>
+        `).join('')}
+      </dl>
+    `;
+  }
+
+  function renderInspectionItems(section) {
+    if (!section.items?.length) return '';
+
+    return `
+      <ul class="curation-inspection-list">
+        ${section.items.map(
+          (item) => `<li>${escapeHtml(item)}</li>`
+        ).join('')}
+      </ul>
+    `;
+  }
+
+  function renderInspectionSection(section) {
+    return `
+      <section class="curation-inspection-section">
+        <h4>${escapeHtml(section.label)}</h4>
+        ${renderInspectionFields(section)}
+        ${renderInspectionItems(section)}
+      </section>
+    `;
+  }
+
   function renderInspectionPanel(sleeve, category) {
     const candidateId =
       curationState.activeCandidateIdBySleeve[sleeve.id];
@@ -376,34 +417,48 @@ export function renderPortfolioMap(root) {
       `;
     }
 
-    const categoryLabel = getCategoryLabel(sleeve, category.categoryId);
     const isCurrentHolding =
       curationState.holdingsBySleeve[sleeve.id].includes(candidate.securityId);
     const assessment =
       curationState.assessmentBySleeve[sleeve.id];
-    const sourceLink = candidate.sourceUrl
+    const inspection = presentSecurityInspection({
+      portfolioSystemId: phaseOnePortfolioSystemId,
+      variantId: portfolioSystem.profileVariantId,
+      sleeveId: sleeve.id,
+      categoryId: category.categoryId,
+      securityId: candidate.securityId
+    });
+
+    if (!inspection) {
+      return `
+        <section class="curation-inspection curation-empty-panel">
+          <h3>Inspection unavailable</h3>
+          <p>The verified structural profile for this security is not available.</p>
+        </section>
+      `;
+    }
+
+    const sourceLink = inspection.security.sourceUrl
       ? `
           <div class="curation-inspection-field">
             <strong>Source</strong>
-            <a href="${escapeHtml(candidate.sourceUrl)}" target="_blank" rel="noopener noreferrer">View issuer source</a>
+            <a href="${escapeHtml(inspection.security.sourceUrl)}" target="_blank" rel="noopener noreferrer">View issuer source</a>
           </div>
         `
       : '';
+    const sections = inspection.sections;
 
     return `
       <section class="curation-inspection" aria-labelledby="curationCandidateHeading">
         <div class="curation-candidate-heading">
-          <strong>${escapeHtml(candidate.ticker)}</strong>
-          <h3 id="curationCandidateHeading">${escapeHtml(candidate.name)}</h3>
+          <strong>${escapeHtml(inspection.security.ticker)}</strong>
+          <h3 id="curationCandidateHeading">${escapeHtml(inspection.security.name)}</h3>
         </div>
-        <div class="curation-inspection-field">
-          <strong>Category</strong>
-          <span>${escapeHtml(categoryLabel)}</span>
-        </div>
-        <div class="curation-inspection-field">
-          <strong>Why it can belong</strong>
-          <span>This security is an approved ${escapeHtml(categoryLabel.toLowerCase())} candidate for this sleeve.</span>
-        </div>
+        ${renderInspectionSection(sections.role)}
+        ${renderInspectionSection(sections.structuralExposure)}
+        ${renderInspectionSection(sections.implementationCharacter)}
+        ${renderInspectionSection(sections.sleeveAlignment)}
+        ${renderInspectionSection(sections.assessmentChecks)}
         ${sourceLink}
         ${assessment ? '' : `
           <div class="curation-actions">

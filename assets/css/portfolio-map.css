@@ -264,6 +264,48 @@
   gap: 4px;
 }
 
+.curation-inspection-section {
+  display: grid;
+  gap: 7px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.curation-inspection-section h4 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.curation-inspection-facts {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.curation-inspection-facts > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.75fr) minmax(0, 1.25fr);
+  gap: 10px;
+}
+
+.curation-inspection-facts dt {
+  color: var(--muted);
+}
+
+.curation-inspection-facts dd {
+  margin: 0;
+}
+
+.curation-inspection-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
 .curation-actions {
   display: flex;
   flex-wrap: wrap;
