@@ -1,7 +1,11 @@
 import {
-  getMissingExposureProfileFields,
   getSecurityExposureProfile
 } from './security-exposure-profiles.js';
+
+import {
+  getMissingRequiredProfileFields,
+  resolveSecurityAssessmentFieldRequirements
+} from './security-assessment-field-requirements.js';
 
 import {
   PHASE_1_SECURITY_REFERENCE
@@ -17,26 +21,6 @@ const REQUIRED_CANONICAL_FIELDS = Object.freeze([
   'verifiedAt',
   'activeStatus'
 ]);
-
-const BASE_PROFILE_FIELDS = Object.freeze([
-  'assetClasses',
-  'geographies',
-  'incomeRole',
-  'inflationSensitivity',
-  'strategyType',
-  'complexity',
-  'evidenceSourceUrls'
-]);
-
-const COMPARISON_PROFILE_FIELDS = Object.freeze([
-  'marketCaps',
-  'styles',
-  'factors',
-  'sectors',
-  'durationBand',
-  'creditQualities'
-]);
-
 
 function canonicalMissingFields(securityId) {
   const security = PHASE_1_SECURITY_REFERENCE[securityId];
@@ -61,21 +45,6 @@ function canonicalMissingFields(securityId) {
 }
 
 
-function decisionRelevantProfileFields(securityIds) {
-  const profiles = securityIds.map(
-    getSecurityExposureProfile
-  ).filter(Boolean);
-
-  const comparisonFields = COMPARISON_PROFILE_FIELDS.filter(
-    (field) => profiles.some(
-      (profile) => profile[field] !== null
-    )
-  );
-
-  return [...BASE_PROFILE_FIELDS, ...comparisonFields];
-}
-
-
 function missingFieldsForSecurity(
   securityId,
   requiredProfileFields
@@ -83,10 +52,10 @@ function missingFieldsForSecurity(
   return Object.freeze([
     ...new Set([
       ...canonicalMissingFields(securityId),
-      ...getMissingExposureProfileFields(
-        securityId,
+      ...getMissingRequiredProfileFields({
+        exposureProfile: getSecurityExposureProfile(securityId),
         requiredProfileFields
-      )
+      })
     ])
   ]);
 }
@@ -94,16 +63,45 @@ function missingFieldsForSecurity(
 
 export function resolveSecurityAssessmentReadiness({
   candidateSecurityId,
-  holdingSecurityIds = []
-}) {
-  const securityIds = [
-    candidateSecurityId,
-    ...holdingSecurityIds
-  ];
+  holdingSecurityIds = [],
+  portfolioSystemId,
+  variantId,
+  sleeveId,
+  targetSleeveId
+} = {}) {
+  const normalizedCandidateId =
+    typeof candidateSecurityId === 'string'
+      ? candidateSecurityId.toLowerCase()
+      : candidateSecurityId;
+  const normalizedHoldingIds = holdingSecurityIds.map(
+    (securityId) =>
+      typeof securityId === 'string'
+        ? securityId.toLowerCase()
+        : securityId
+  );
+  const requirements =
+    resolveSecurityAssessmentFieldRequirements({
+      portfolioSystemId,
+      variantId,
+      sleeveId,
+      targetSleeveId
+    });
+
+  if (!requirements) {
+    return Object.freeze({
+      ready: false,
+      subject: 'sleeve',
+      missingFields: Object.freeze([Object.freeze({
+        securityId: null,
+        fields: Object.freeze(['sleeveDecisionProfile'])
+      })])
+    });
+  }
+
   const requiredProfileFields =
-    decisionRelevantProfileFields(securityIds);
+    requirements.requiredProfileFields;
   const candidateFields = missingFieldsForSecurity(
-    candidateSecurityId,
+    normalizedCandidateId,
     requiredProfileFields
   );
 
@@ -112,13 +110,13 @@ export function resolveSecurityAssessmentReadiness({
       ready: false,
       subject: 'candidate',
       missingFields: Object.freeze([Object.freeze({
-        securityId: candidateSecurityId,
+        securityId: normalizedCandidateId,
         fields: candidateFields
       })])
     });
   }
 
-  const missingHoldings = holdingSecurityIds.map(
+  const missingHoldings = normalizedHoldingIds.map(
     (securityId) => Object.freeze({
       securityId,
       fields: missingFieldsForSecurity(

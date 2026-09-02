@@ -226,7 +226,10 @@ export function resolveSecurityPortfolioFit({
   ).flat();
   const readiness = resolveSecurityAssessmentReadiness({
     candidateSecurityId: normalizedCandidateId,
-    holdingSecurityIds
+    holdingSecurityIds,
+    portfolioSystemId,
+    variantId,
+    targetSleeveId
   });
 
   if (!readiness.ready) {
