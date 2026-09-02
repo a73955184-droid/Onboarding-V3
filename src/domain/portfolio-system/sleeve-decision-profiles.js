@@ -78,6 +78,46 @@ export const SLEEVE_DECISION_PROFILE_VOCABULARY = deepFreeze({
     'high'
   ],
 
+  breadthClassifications: [
+    'broad',
+    'targeted',
+    'narrow',
+    'conditional'
+  ],
+
+  thesisMonitoringLevels: [
+    'low',
+    'moderate',
+    'high'
+  ],
+
+  incomeRoles: [
+    'none',
+    'supporting',
+    'primary'
+  ],
+
+  inflationSensitivities: [
+    'none',
+    'indirect',
+    'explicit'
+  ],
+
+  durationBands: [
+    'ultra-short',
+    'short',
+    'intermediate',
+    'broad',
+    'long'
+  ],
+
+  creditQualities: [
+    'government',
+    'investment-grade',
+    'mixed',
+    'below-investment-grade'
+  ],
+
   geographies: [
     'global',
     'ex-united-states',
@@ -479,6 +519,144 @@ export const SLEEVE_DECISION_PROFILES = deepFreeze({
       'high-monitoring'
     ],
     overlapDimensions: FIXED_INCOME_OVERLAP_DIMENSIONS
+  }
+});
+
+
+/**
+ * Boundary checks that supplement the core profile criteria. A null
+ * duration/credit list means that dimension is not applicable to the
+ * role unless the candidate is a fixed-income security.
+ */
+export const SLEEVE_BOUNDARY_COMPATIBILITY = deepFreeze({
+  'strategic-foundation': {
+    permittedBreadthClassifications: ['broad'],
+    permittedThesisMonitoringLevels: ['low'],
+    permittedIncomeRoles: ['none', 'supporting'],
+    permittedInflationSensitivities: ['none', 'indirect'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  'geographic-diversification': {
+    permittedBreadthClassifications: ['broad', 'targeted'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['none', 'supporting'],
+    permittedInflationSensitivities: ['none', 'indirect'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  'structural-equity-diversification': {
+    permittedBreadthClassifications: ['broad', 'targeted'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['none', 'supporting'],
+    permittedInflationSensitivities: ['none', 'indirect'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  stability: {
+    permittedBreadthClassifications: ['broad', 'targeted'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['supporting', 'primary'],
+    permittedInflationSensitivities: ['none', 'indirect'],
+    permittedDurationBands: [
+      'ultra-short', 'short', 'intermediate', 'broad', 'long'
+    ],
+    permittedCreditQualities: [
+      'government', 'investment-grade', 'mixed'
+    ]
+  },
+  income: {
+    permittedBreadthClassifications: ['broad', 'targeted'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['supporting', 'primary'],
+    permittedInflationSensitivities: ['none', 'indirect', 'explicit'],
+    permittedDurationBands: [
+      'ultra-short', 'short', 'intermediate', 'broad', 'long'
+    ],
+    permittedCreditQualities: [
+      'government', 'investment-grade', 'mixed'
+    ]
+  },
+  'inflation-protection': {
+    permittedBreadthClassifications: ['broad', 'targeted', 'narrow'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['none', 'supporting', 'primary'],
+    permittedInflationSensitivities: ['indirect', 'explicit'],
+    permittedDurationBands: [
+      'ultra-short', 'short', 'intermediate', 'broad', 'long'
+    ],
+    permittedCreditQualities: [
+      'government', 'investment-grade', 'mixed'
+    ]
+  },
+  'factor-improvement': {
+    permittedBreadthClassifications: ['targeted'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['none', 'supporting', 'primary'],
+    permittedInflationSensitivities: ['none', 'indirect'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  'real-assets': {
+    permittedBreadthClassifications: ['targeted', 'narrow'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['none', 'supporting', 'primary'],
+    permittedInflationSensitivities: ['indirect', 'explicit'],
+    permittedDurationBands: [
+      'ultra-short', 'short', 'intermediate', 'broad', 'long'
+    ],
+    permittedCreditQualities: [
+      'government', 'investment-grade', 'mixed'
+    ]
+  },
+  'alternative-strategy': {
+    permittedBreadthClassifications: ['targeted', 'narrow', 'conditional'],
+    permittedThesisMonitoringLevels: ['moderate', 'high'],
+    permittedIncomeRoles: ['none', 'supporting', 'primary'],
+    permittedInflationSensitivities: ['none', 'indirect', 'explicit'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  'growth-enhancement': {
+    permittedBreadthClassifications: ['broad', 'targeted', 'narrow'],
+    permittedThesisMonitoringLevels: ['low', 'moderate', 'high'],
+    permittedIncomeRoles: ['none', 'supporting'],
+    permittedInflationSensitivities: ['none', 'indirect', 'explicit'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  'tactical-allocation': {
+    permittedBreadthClassifications: ['targeted', 'narrow', 'conditional'],
+    permittedThesisMonitoringLevels: ['moderate', 'high'],
+    permittedIncomeRoles: ['none', 'supporting', 'primary'],
+    permittedInflationSensitivities: ['none', 'indirect', 'explicit'],
+    permittedDurationBands: null,
+    permittedCreditQualities: null
+  },
+  'opportunity-capacity': {
+    permittedBreadthClassifications: [
+      'broad', 'targeted', 'narrow', 'conditional'
+    ],
+    permittedThesisMonitoringLevels: ['low', 'moderate', 'high'],
+    permittedIncomeRoles: ['none', 'supporting', 'primary'],
+    permittedInflationSensitivities: ['none', 'indirect', 'explicit'],
+    permittedDurationBands: [
+      'ultra-short', 'short', 'intermediate', 'broad', 'long'
+    ],
+    permittedCreditQualities: [
+      'government', 'investment-grade', 'mixed',
+      'below-investment-grade'
+    ]
+  },
+  liquidity: {
+    permittedBreadthClassifications: ['broad', 'targeted'],
+    permittedThesisMonitoringLevels: ['low', 'moderate'],
+    permittedIncomeRoles: ['supporting', 'primary'],
+    permittedInflationSensitivities: ['none'],
+    permittedDurationBands: ['ultra-short', 'short'],
+    permittedCreditQualities: [
+      'government', 'investment-grade', 'mixed'
+    ]
   }
 });
 

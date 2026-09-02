@@ -21,6 +21,7 @@ import {
 } from '../src/domain/portfolio-system/sleeve-security-eligibility.js';
 
 import {
+  SLEEVE_BOUNDARY_COMPATIBILITY,
   SLEEVE_DECISION_PROFILES,
   SLEEVE_DECISION_PROFILE_ASSIGNMENTS,
   SLEEVE_DECISION_PROFILE_VOCABULARY
@@ -99,6 +100,12 @@ assert.deepEqual(
   ),
   new Set(Object.keys(SLEEVE_DECISION_PROFILES)),
   'Every reusable profile must be assigned to at least one sleeve'
+);
+
+assert.deepEqual(
+  new Set(Object.keys(SLEEVE_BOUNDARY_COMPATIBILITY)),
+  new Set(Object.keys(SLEEVE_DECISION_PROFILES)),
+  'Every reusable profile must define boundary compatibility criteria'
 );
 
 
@@ -283,6 +290,45 @@ for (const [profileId, profile] of Object.entries(
   }
 
   assert.ok(Object.isFrozen(profile));
+
+  const boundary = SLEEVE_BOUNDARY_COMPATIBILITY[profileId];
+
+  assertApprovedValues(
+    boundary.permittedBreadthClassifications,
+    SLEEVE_DECISION_PROFILE_VOCABULARY.breadthClassifications,
+    profileId + '.permittedBreadthClassifications'
+  );
+  assertApprovedValues(
+    boundary.permittedThesisMonitoringLevels,
+    SLEEVE_DECISION_PROFILE_VOCABULARY.thesisMonitoringLevels,
+    profileId + '.permittedThesisMonitoringLevels'
+  );
+  assertApprovedValues(
+    boundary.permittedIncomeRoles,
+    SLEEVE_DECISION_PROFILE_VOCABULARY.incomeRoles,
+    profileId + '.permittedIncomeRoles'
+  );
+  assertApprovedValues(
+    boundary.permittedInflationSensitivities,
+    SLEEVE_DECISION_PROFILE_VOCABULARY.inflationSensitivities,
+    profileId + '.permittedInflationSensitivities'
+  );
+
+  if (boundary.permittedDurationBands !== null) {
+    assertApprovedValues(
+      boundary.permittedDurationBands,
+      SLEEVE_DECISION_PROFILE_VOCABULARY.durationBands,
+      profileId + '.permittedDurationBands'
+    );
+  }
+
+  if (boundary.permittedCreditQualities !== null) {
+    assertApprovedValues(
+      boundary.permittedCreditQualities,
+      SLEEVE_DECISION_PROFILE_VOCABULARY.creditQualities,
+      profileId + '.permittedCreditQualities'
+    );
+  }
 }
 
 

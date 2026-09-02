@@ -3,6 +3,7 @@ import {
 } from './constituent-portfolios.js';
 
 import {
+  SLEEVE_BOUNDARY_COMPATIBILITY,
   SLEEVE_DECISION_PROFILES,
   SLEEVE_DECISION_PROFILE_ASSIGNMENTS
 } from './sleeve-decision-profiles.js';
@@ -53,6 +54,10 @@ function freezeResolvedProfile({
   sleeve,
   profile
 }) {
+  const boundary = SLEEVE_BOUNDARY_COMPATIBILITY[
+    profile.profileId
+  ];
+
   return Object.freeze({
     portfolioSystemId: assignment.portfolioSystemId,
     archetypeId: portfolio.archetypeId,
@@ -71,7 +76,17 @@ function freezeResolvedProfile({
     supportedGeographies: profile.supportedGeographies,
     prohibitedCharacteristics:
       profile.prohibitedCharacteristics,
-    overlapDimensions: profile.overlapDimensions
+    overlapDimensions: profile.overlapDimensions,
+    permittedBreadthClassifications:
+      boundary.permittedBreadthClassifications,
+    permittedThesisMonitoringLevels:
+      boundary.permittedThesisMonitoringLevels,
+    permittedIncomeRoles: boundary.permittedIncomeRoles,
+    permittedInflationSensitivities:
+      boundary.permittedInflationSensitivities,
+    permittedDurationBands: boundary.permittedDurationBands,
+    permittedCreditQualities:
+      boundary.permittedCreditQualities
   });
 }
 
@@ -107,8 +122,11 @@ export function resolveSleeveDecisionProfile({
   const profile = SLEEVE_DECISION_PROFILES[
     assignment.profileId
   ];
+  const boundary = SLEEVE_BOUNDARY_COMPATIBILITY[
+    assignment.profileId
+  ];
 
-  if (!portfolio || !sleeve || !profile) {
+  if (!portfolio || !sleeve || !profile || !boundary) {
     return null;
   }
 
@@ -119,4 +137,3 @@ export function resolveSleeveDecisionProfile({
     profile
   });
 }
-
