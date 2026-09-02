@@ -55,6 +55,7 @@ export function resolveSecurityAssessmentFieldRequirements({
 
 function isUnknown(value) {
   return value === undefined ||
+    value === '' ||
     value === 'unknown' ||
     (
       Array.isArray(value) &&
@@ -65,8 +66,10 @@ function isUnknown(value) {
 
 /**
  * Pure field-level validator used by readiness and its fixtures.
- * `null` remains a valid not-applicable value except for duration and
- * credit on a security identified as fixed income.
+ * `null` remains a valid not-applicable duration or profile value.
+ * Applicable but unresolved values must use `unknown` (or be absent) so
+ * readiness can block them. Fixed-income credit validation retains its
+ * existing completeness rule.
  */
 export function getMissingRequiredProfileFields({
   exposureProfile,
@@ -97,14 +100,6 @@ export function getMissingRequiredProfileFields({
 
       if (
         isFixedIncome &&
-        field === 'durationBand' &&
-        (value === null || value === '')
-      ) {
-        return true;
-      }
-
-      if (
-        isFixedIncome &&
         field === 'creditQualities' &&
         (
           value === null ||
@@ -119,4 +114,3 @@ export function getMissingRequiredProfileFields({
     })
   );
 }
-
