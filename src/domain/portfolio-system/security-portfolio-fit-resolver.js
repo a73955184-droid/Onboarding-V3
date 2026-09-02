@@ -315,7 +315,18 @@ export function resolveSecurityPortfolioFit({
   });
   const explanation = resolveSecurityFitExplanation({
     outcome: fit.outcome,
-    reasonCode: fit.reasonCode
+    reasonCode: fit.reasonCode,
+    decisionFactors: fit.decisionFactors,
+    candidateSecurityId: normalizedCandidateId,
+    affectedSecurityId: fit.affectedSecurityId,
+    portfolioSystemId,
+    variantId,
+    targetSleeveId,
+    sleeveLabelsById: Object.fromEntries(
+      portfolio.sleeves.map(
+        ({ id, label }) => [id, label]
+      )
+    )
   });
   const overlappingSecurityIds = Object.freeze(
     [...new Set(
