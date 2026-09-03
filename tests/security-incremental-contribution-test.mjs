@@ -287,14 +287,73 @@ assert.deepEqual(
   differentRealAssets.distinctDimensions.assetClasses,
   {
     candidateOnly: ['equity', 'real-asset'],
-    holdingOnly: ['commodity']
+    holdingOnly: []
   }
 );
+assert.equal(differentRealAssets.sharedRole.present, false);
+assert.equal(differentRealAssets.distinctRole.present, true);
 assert.deepEqual(
   differentRealAssets.incrementalSectorExposure,
   ['real-estate']
 );
-assert.equal(differentRealAssets.incrementalInflationRole, null);
+assert.equal(differentRealAssets.incrementalInflationRole, 'indirect');
+assert.equal(differentRealAssets.complexityChange.direction, 'introduced');
+assert.equal(
+  differentRealAssets.incrementalBreadth.status,
+  'introduced'
+);
+assert.deepEqual(differentRealAssets.holdingContext, {
+  targetSleeveHoldingIds: [],
+  crossSleeveHoldings: [{
+    sleeveId: 'otherSleeve',
+    securityId: 'gld'
+  }]
+});
+assert.deepEqual(differentRealAssets.comparedHoldingIds, ['gld']);
+assert.equal(
+  differentRealAssets.crossSleeveEvidence.portfolioAlreadyHasExposure,
+  true
+);
+assert.equal(
+  differentRealAssets.crossSleeveEvidence.sharedRole.present,
+  true
+);
+assert.deepEqual(
+  differentRealAssets.crossSleeveEvidence.distinctDimensions.assetClasses,
+  {
+    candidateOnly: ['equity', 'real-asset'],
+    holdingOnly: ['commodity']
+  }
+);
+assert.deepEqual(
+  differentRealAssets.crossSleeveEvidence.comparisons,
+  [{
+    sleeveId: 'otherSleeve',
+    securityId: 'gld',
+    sharedDimensions: {
+      inflationSensitivity: ['indirect']
+    },
+    distinctDimensions: {
+      assetClasses: {
+        candidateOnly: ['equity', 'real-asset'],
+        holdingOnly: ['commodity']
+      },
+      geographies: {
+        candidateOnly: ['united-states'],
+        holdingOnly: ['global']
+      },
+      sectors: {
+        candidateOnly: ['real-estate'],
+        holdingOnly: []
+      },
+      strategyType: {
+        candidateOnly: ['sector-equity'],
+        holdingOnly: ['real-asset']
+      }
+    },
+    sameCategoryRole: true
+  }]
+);
 
 
 const sectorSleeve = targetSleeve({
@@ -461,6 +520,17 @@ assert.throws(
     }]
   }),
   /references a different candidate/
+);
+assert.throws(
+  () => resolveSecurityIncrementalContribution({
+    candidate: facts('vti'),
+    targetSleeve: broadUsSleeve,
+    crossSleeveHoldings: [{
+      sleeveId: broadUsSleeve.sleeveId,
+      security: facts('itot')
+    }]
+  }),
+  /crossSleeveHoldings must not contain the target sleeve/
 );
 
 

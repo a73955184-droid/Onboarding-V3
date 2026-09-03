@@ -131,9 +131,92 @@ function normalizeOverlapEvidence(structuralOverlapEvidence) {
     return {
       holdingSecurityId:
         entry.holdingSecurityId ?? overlap.holdingSecurityId,
+      holdingSleeveId: entry.holdingSleeveId ?? null,
       overlap
     };
   });
+}
+
+
+function partitionOverlapEvidence({
+  overlaps,
+  targetSleeveId,
+  targetHoldings,
+  crossHoldings
+}) {
+  const targetHoldingIds = new Set(
+    targetHoldings.map(({ security }) => security.securityId)
+  );
+  const crossCoordinates = crossHoldings.map(({ sleeveId, security }) => ({
+    sleeveId,
+    securityId: security.securityId
+  }));
+  const target = [];
+  const cross = [];
+
+  for (const evidence of overlaps) {
+    const targetMatch = targetHoldingIds.has(
+      evidence.holdingSecurityId
+    );
+    const crossMatches = crossCoordinates.filter(
+      ({ sleeveId, securityId }) =>
+        securityId === evidence.holdingSecurityId &&
+        (
+          evidence.holdingSleeveId === null ||
+          sleeveId === evidence.holdingSleeveId
+        )
+    );
+
+    if (evidence.holdingSleeveId === targetSleeveId && targetMatch) {
+      target.push({
+        ...evidence,
+        holdingSleeveId: targetSleeveId
+      });
+      continue;
+    }
+
+    if (evidence.holdingSleeveId !== null) {
+      if (crossMatches.length !== 1) {
+        throw new TypeError(
+          'structuralOverlapEvidence references a holding outside the supplied portfolio context'
+        );
+      }
+
+      cross.push({
+        ...evidence,
+        holdingSleeveId: crossMatches[0].sleeveId
+      });
+      continue;
+    }
+
+    if (targetMatch && crossMatches.length > 0) {
+      throw new TypeError(
+        'structuralOverlapEvidence must identify the sleeve for a holding present in multiple scopes'
+      );
+    }
+
+    if (targetMatch) {
+      target.push({
+        ...evidence,
+        holdingSleeveId: targetSleeveId
+      });
+      continue;
+    }
+
+    if (crossMatches.length === 1) {
+      cross.push({
+        ...evidence,
+        holdingSleeveId: crossMatches[0].sleeveId
+      });
+      continue;
+    }
+
+    throw new TypeError(
+      'structuralOverlapEvidence references a holding outside the supplied portfolio context'
+    );
+  }
+
+  return { target, cross };
 }
 
 
@@ -390,8 +473,10 @@ function complexityChange(candidate, holdings) {
 
 /**
  * Describes structural changes from including a candidate. The result is
- * evidence only: it intentionally contains no outcome, action, score, or UI
- * language.
+ * evidence only. Top-level contribution fields are relative to holdings in
+ * the target sleeve; portfolio holdings elsewhere are retained under
+ * crossSleeveEvidence. The result intentionally contains no outcome, action,
+ * score, or UI language.
  */
 export function resolveSecurityIncrementalContribution({
   candidate,
@@ -402,6 +487,9 @@ export function resolveSecurityIncrementalContribution({
 } = {}) {
   normalizeSecurityFacts(candidate, 'candidate');
   assertPlainObject(targetSleeve, 'targetSleeve');
+  if (typeof targetSleeve.sleeveId !== 'string') {
+    throw new TypeError('targetSleeve.sleeveId must be a string');
+  }
   assertArray(
     targetSleeve.permittedCategoryIds,
     'targetSleeve.permittedCategoryIds'
@@ -424,24 +512,26 @@ export function resolveSecurityIncrementalContribution({
   const normalizedCrossHoldings = normalizeCrossSleeveHoldings(
     crossSleeveHoldings
   );
-  const holdings = [
-    ...normalizedTargetHoldings,
-    ...normalizedCrossHoldings
-  ];
+
+  if (normalizedCrossHoldings.some(
+    ({ sleeveId }) => sleeveId === targetSleeve.sleeveId
+  )) {
+    throw new TypeError(
+      'crossSleeveHoldings must not contain the target sleeve'
+    );
+  }
+
   const overlaps = normalizeOverlapEvidence(
     structuralOverlapEvidence
   );
-  const holdingIds = new Set(
-    holdings.map(({ security }) => security.securityId)
-  );
+  const partitionedOverlaps = partitionOverlapEvidence({
+    overlaps,
+    targetSleeveId: targetSleeve.sleeveId,
+    targetHoldings: normalizedTargetHoldings,
+    crossHoldings: normalizedCrossHoldings
+  });
 
   for (const { holdingSecurityId, overlap } of overlaps) {
-    if (!holdingIds.has(holdingSecurityId)) {
-      throw new TypeError(
-        'structuralOverlapEvidence references a holding outside the supplied portfolio context'
-      );
-    }
-
     if (
       overlap.candidateSecurityId &&
       overlap.candidateSecurityId !== candidate.securityId
@@ -479,15 +569,27 @@ export function resolveSecurityIncrementalContribution({
     distinctDimensions
   } = aggregateDimensions({
     candidate,
-    holdings,
+    holdings: normalizedTargetHoldings,
     dimensions,
-    overlapEvidence: overlaps
+    overlapEvidence: partitionedOverlaps.target
   });
   const roles = roleEvidence({
     candidate,
     targetSleeve,
-    holdings,
-    overlaps
+    holdings: normalizedTargetHoldings,
+    overlaps: partitionedOverlaps.target
+  });
+  const crossDimensions = aggregateDimensions({
+    candidate,
+    holdings: normalizedCrossHoldings,
+    dimensions,
+    overlapEvidence: partitionedOverlaps.cross
+  });
+  const crossRoles = roleEvidence({
+    candidate,
+    targetSleeve,
+    holdings: normalizedCrossHoldings,
+    overlaps: partitionedOverlaps.cross
   });
 
   return deepFreeze({
@@ -495,14 +597,29 @@ export function resolveSecurityIncrementalContribution({
     candidateSecurityId: candidate.securityId,
     targetSleeveId: targetSleeve.sleeveId ?? null,
     targetSleeveProfileId: targetSleeve.profileId ?? null,
-    comparedHoldingIds: unique(
-      holdings.map(({ security }) => security.securityId)
-    ),
+    comparedHoldingIds: unique([
+      ...normalizedTargetHoldings,
+      ...normalizedCrossHoldings
+    ].map(({ security }) => security.securityId)),
+    holdingContext: {
+      targetSleeveHoldingIds: normalizedTargetHoldings.map(
+        ({ security }) => security.securityId
+      ),
+      crossSleeveHoldings: normalizedCrossHoldings.map(
+        ({ sleeveId, security }) => ({
+          sleeveId,
+          securityId: security.securityId
+        })
+      )
+    },
     sharedDimensions,
     distinctDimensions,
     sharedRole: roles.sharedRole,
     distinctRole: roles.distinctRole,
-    incrementalBreadth: incrementalBreadth(candidate, holdings),
+    incrementalBreadth: incrementalBreadth(
+      candidate,
+      normalizedTargetHoldings
+    ),
     incrementalCapExposure: capExposure(
       sharedDimensions,
       distinctDimensions
@@ -521,16 +638,39 @@ export function resolveSecurityIncrementalContribution({
     ),
     incrementalIncomeRole: incrementalScalarRole({
       candidate,
-      holdings,
+      holdings: normalizedTargetHoldings,
       field: 'incomeRole',
       absentValue: 'none'
     }),
     incrementalInflationRole: incrementalScalarRole({
       candidate,
-      holdings,
+      holdings: normalizedTargetHoldings,
       field: 'inflationSensitivity',
       absentValue: 'none'
     }),
-    complexityChange: complexityChange(candidate, holdings)
+    complexityChange: complexityChange(
+      candidate,
+      normalizedTargetHoldings
+    ),
+    crossSleeveEvidence: {
+      portfolioAlreadyHasExposure:
+        crossRoles.sharedRole.present ||
+        Object.keys(crossDimensions.sharedDimensions).length > 0,
+      sharedDimensions: crossDimensions.sharedDimensions,
+      distinctDimensions: crossDimensions.distinctDimensions,
+      sharedRole: crossRoles.sharedRole,
+      distinctRole: crossRoles.distinctRole,
+      comparisons: partitionedOverlaps.cross.map(({
+        holdingSleeveId,
+        holdingSecurityId,
+        overlap
+      }) => ({
+        sleeveId: holdingSleeveId,
+        securityId: holdingSecurityId,
+        sharedDimensions: overlap.sharedDimensions,
+        distinctDimensions: overlap.distinctDimensions,
+        sameCategoryRole: overlap.sameCategoryRole
+      }))
+    }
   });
 }
