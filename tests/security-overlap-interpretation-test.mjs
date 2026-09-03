@@ -147,6 +147,60 @@ assert.equal(
   'adds-another-overlapping-holding'
 );
 
+const mediumNoContribution = resolveSecurityOverlapInterpretation({
+  incrementalContributionEvidence: vtiItot.evidence,
+  targetSleeveOverlapEvidence: vtiItot.overlapEvidence.map((entry) => ({
+    ...entry,
+    overlap: {
+      ...entry.overlap,
+      overlapLevel: 'medium'
+    }
+  }))
+});
+
+assert.equal(
+  mediumNoContribution.interpretation,
+  'near-interchangeable'
+);
+assert.equal(mediumNoContribution.overlapLevel, 'medium');
+assert.equal(mediumNoContribution.incrementalContribution, 'none');
+
+const lowCoverageEvidence = {
+  ...vtiItot.evidence,
+  sharedDimensions: {
+    assetClasses: ['equity']
+  },
+  distinctDimensions: {},
+  sharedRole: {
+    present: false,
+    categoryIds: [],
+    holdingSecurityIds: []
+  },
+  distinctRole: {
+    present: false,
+    categoryIds: []
+  }
+};
+const lowNoContribution = resolveSecurityOverlapInterpretation({
+  incrementalContributionEvidence: lowCoverageEvidence,
+  targetSleeveOverlapEvidence: vtiItot.overlapEvidence.map((entry) => ({
+    ...entry,
+    overlap: {
+      ...entry.overlap,
+      overlapLevel: 'low',
+      sameCategoryRole: false,
+      matchedCategoryIds: [],
+      sharedDimensions: {
+        assetClasses: ['equity']
+      }
+    }
+  }))
+});
+
+assert.equal(lowNoContribution.interpretation, 'distinct');
+assert.equal(lowNoContribution.overlapLevel, 'low');
+assert.equal(lowNoContribution.incrementalContribution, 'none');
+
 
 // The Phase 1 VOO profile does not yet carry this cap-scope distinction.
 // This is resolved evidence injected at the Phase 3 analyzer boundary.
@@ -202,6 +256,28 @@ assert.deepEqual(overlappingButAdditive.concentrationEffect, {
 assert.deepEqual(
   overlappingButAdditive.structuralEvidence.contributionSignals,
   ['increased-cap-emphasis']
+);
+
+const mediumModerateContribution =
+  resolveSecurityOverlapInterpretation({
+    incrementalContributionEvidence: vooVti.evidence,
+    targetSleeveOverlapEvidence: vooVti.overlapEvidence.map((entry) => ({
+      ...entry,
+      overlap: {
+        ...entry.overlap,
+        overlapLevel: 'medium'
+      }
+    }))
+  });
+
+assert.equal(
+  mediumModerateContribution.interpretation,
+  'overlapping-but-additive'
+);
+assert.equal(mediumModerateContribution.overlapLevel, 'medium');
+assert.equal(
+  mediumModerateContribution.incrementalContribution,
+  'moderate'
 );
 
 
@@ -301,6 +377,21 @@ assert.equal(
 );
 assert.equal('outcome' in overlappingButAdditive, false);
 assert.equal('preferredAction' in overlappingButAdditive, false);
+
+for (const interpretation of [
+  nearInterchangeable,
+  mediumNoContribution,
+  lowNoContribution,
+  overlappingButAdditive,
+  mediumModerateContribution,
+  distinct,
+  crossSleeveContextOnly,
+  crossSleeveConflicting
+]) {
+  if (interpretation.interpretation === 'overlapping-but-additive') {
+    assert.notEqual(interpretation.incrementalContribution, 'none');
+  }
+}
 
 assert.throws(
   () => resolveSecurityOverlapInterpretation({

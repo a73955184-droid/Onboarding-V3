@@ -371,13 +371,17 @@ function interpretationFor({
     targetOverlapLevel !== 'none' ||
     evidence.sharedRole.present ||
     Object.keys(evidence.sharedDimensions).length > 0;
+  const targetHasMeaningfulCoverage =
+    ['medium', 'high'].includes(targetOverlapLevel) ||
+    evidence.sharedRole.present;
 
   if (
-    targetOverlapLevel === 'high' &&
     incrementalContribution ===
       SECURITY_INCREMENTAL_CONTRIBUTION_STRENGTHS.NONE
   ) {
-    return SECURITY_OVERLAP_INTERPRETATIONS.NEAR_INTERCHANGEABLE;
+    return targetHasMeaningfulCoverage
+      ? SECURITY_OVERLAP_INTERPRETATIONS.NEAR_INTERCHANGEABLE
+      : SECURITY_OVERLAP_INTERPRETATIONS.DISTINCT;
   }
 
   if (targetHasCoverage) {
