@@ -241,7 +241,7 @@ function capConcentrationChanges(evidence) {
 }
 
 
-function overlapCost(interpretation) {
+function overlapCost(interpretation, evidence) {
   if (![
     'near-interchangeable',
     'overlapping-but-additive'
@@ -262,7 +262,7 @@ function overlapCost(interpretation) {
   return item({
     code: 'adds-overlapping-holding',
     dimension: 'implementation',
-    values: [],
+    values: evidence.sharedRole.holdingSecurityIds,
     direction: 'increase',
     explanation:
       `Adds another ${qualifiedOverlap} holding to this sleeve.`
@@ -452,7 +452,10 @@ export function resolveSecurityTradeoffs({
     )
   ]);
   const costs = uniqueItems([
-    overlapCost(overlapInterpretation),
+    overlapCost(
+      overlapInterpretation,
+      incrementalContributionEvidence
+    ),
     crossSleeveCost(overlapInterpretation),
     ...concentrationChanges.filter(
       ({ direction }) => direction === 'decrease-relative'

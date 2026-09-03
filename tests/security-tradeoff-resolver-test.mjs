@@ -131,6 +131,7 @@ assert.equal(
   vooWithVti.costs[0].explanation,
   'Adds another highly overlapping holding to this sleeve.'
 );
+assert.deepEqual(vooWithVti.costs[0].values, ['vti']);
 assert.equal(
   vooWithVti.costs[1].explanation,
   'Reduces the relative contribution of mid-sized and small companies within the sleeve.'
