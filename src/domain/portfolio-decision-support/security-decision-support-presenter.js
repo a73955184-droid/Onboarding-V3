@@ -310,17 +310,29 @@ function tradeoffItems(decisionSupport) {
 }
 
 
-function replacementTarget(decisionSupport) {
-  return decisionSupport.structuralEvidence.replacement.find(
+function replacementTargets(decisionSupport) {
+  return unique(decisionSupport.structuralEvidence.replacement.filter(
     ({ replacementJustified }) => replacementJustified
-  )?.holdingSecurityId ?? null;
+  ).map(({ holdingSecurityId }) => holdingSecurityId));
 }
 
 
-function actionPresentation(action, decisionSupport) {
+function actionPresentation(action, decisionSupport, targets) {
   const ticker = decisionSupport.candidate?.ticker ?? 'the candidate';
-  const targetId = replacementTarget(decisionSupport);
-  const target = targetId ? securityLabel(targetId) : 'the existing holding';
+  const target = targets.length === 1
+    ? securityLabel(targets[0])
+    : null;
+  const replacePresentation = target
+    ? {
+        label: `Use ${ticker} instead of ${target}`,
+        description:
+          `Substitute ${ticker} for ${target} within this sleeve.`
+      }
+    : {
+        label: `Replace an existing holding with ${ticker}`,
+        description:
+          `Choose which supported existing holding ${ticker} would replace.`
+      };
   const presentations = {
     'keep-current': {
       label: 'Keep this sleeve as it is',
@@ -331,11 +343,7 @@ function actionPresentation(action, decisionSupport) {
       description:
         `Include ${ticker} alongside the sleeve’s current holdings.`
     },
-    replace: {
-      label: `Use ${ticker} instead of ${target}`,
-      description:
-        `Substitute ${ticker} for ${target} within this sleeve.`
-    },
+    replace: replacePresentation,
     'save-alternative': {
       label: 'Save as an alternative',
       description:
@@ -446,13 +454,29 @@ export function presentSecurityDecisionSupport({
     throw new TypeError('decisionSupport has an unknown assessment status');
   }
 
+  const targets = replacementTargets(decisionSupport);
+
+  if (
+    decisionSupport.availableActions.includes('replace') &&
+    targets.length === 0
+  ) {
+    throw new TypeError(
+      'Replace presentation requires justified replacement evidence'
+    );
+  }
+
   const preferredAction = actionPresentation(
     decisionSupport.preferredAction,
-    decisionSupport
+    decisionSupport,
+    targets
   );
   const otherActions = decisionSupport.availableActions
     .filter((action) => action !== decisionSupport.preferredAction)
-    .map((action) => actionPresentation(action, decisionSupport));
+    .map((action) => actionPresentation(
+      action,
+      decisionSupport,
+      targets
+    ));
 
   return deepFreeze({
     status: 'complete',
@@ -512,7 +536,7 @@ export function presentSecurityDecisionSupport({
       }
     ],
     actions: decisionSupport.availableActions.map(
-      (action) => actionPresentation(action, decisionSupport)
+      (action) => actionPresentation(action, decisionSupport, targets)
     )
   });
 }

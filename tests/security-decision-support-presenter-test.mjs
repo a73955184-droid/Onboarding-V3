@@ -143,14 +143,15 @@ assert.deepEqual(
 );
 
 
+const replacementAssessment = assess({
+  portfolioSystemId: 'ES-essential',
+  variantId: 'essential',
+  targetSleeveId: 'stability',
+  candidateSecurityId: 'bnd',
+  holdingsBySleeve: { stability: ['lqd'] }
+});
 const replacement = presentSecurityDecisionSupport({
-  decisionSupport: assess({
-    portfolioSystemId: 'ES-essential',
-    variantId: 'essential',
-    targetSleeveId: 'stability',
-    candidateSecurityId: 'bnd',
-    holdingsBySleeve: { stability: ['lqd'] }
-  })
+  decisionSupport: replacementAssessment
 });
 
 assert.equal(
@@ -160,6 +161,43 @@ assert.equal(
 assert.equal(
   section(replacement, 'best-default').action.label,
   'Use BND instead of LQD'
+);
+
+
+const multipleReplacementTargets = structuredClone(
+  replacementAssessment
+);
+multipleReplacementTargets.structuralEvidence.replacement.push({
+  ...structuredClone(
+    replacementAssessment.structuralEvidence.replacement[0]
+  ),
+  holdingSecurityId: 'agg',
+  replacementJustified: true
+});
+const ambiguousReplacement = presentSecurityDecisionSupport({
+  decisionSupport: multipleReplacementTargets
+});
+
+assert.equal(
+  section(ambiguousReplacement, 'best-default').action.label,
+  'Replace an existing holding with BND'
+);
+assert.doesNotMatch(
+  section(ambiguousReplacement, 'best-default').action.label,
+  /LQD|AGG/
+);
+
+
+const missingReplacementTarget = structuredClone(
+  replacementAssessment
+);
+missingReplacementTarget.structuralEvidence.replacement = [];
+
+assert.throws(
+  () => presentSecurityDecisionSupport({
+    decisionSupport: missingReplacementTarget
+  }),
+  /requires justified replacement evidence/
 );
 
 
