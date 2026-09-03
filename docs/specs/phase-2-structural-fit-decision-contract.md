@@ -1,5 +1,7 @@
 # Phase 2 structural-fit decision contract
 
+> **Supersession notice:** This contract is superseded for Portfolio Map final user-facing decision support by `phase-3-portfolio-decision-support-contract.md`. It remains authoritative for eligibility, readiness, sleeve alignment, sleeve boundaries, structural-overlap evidence, replacement evidence, compatibility, and regression history. Phase 2 is retained rather than rewritten or deleted.
+
 Status: frozen product contract  
 Scope: specification only; no engine, data, UI, or test behavior is changed by this document  
 Repository audit date: 2026-09-01
