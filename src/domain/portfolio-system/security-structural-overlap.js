@@ -1,5 +1,7 @@
 import {
-  getSecurityStructuralFacts
+  getSecurityStructuralFacts,
+  resolveSecuritySleeveAlignment,
+  resolveSecuritySleeveBoundaryAlignment
 } from './security-sleeve-alignment.js';
 
 import {
@@ -309,3 +311,53 @@ export function resolveCrossSleeveStructuralOverlaps({
   });
 }
 
+
+/**
+ * Identifies cross-sleeve responsibility conflicts using each holding's own
+ * sleeve alignment and boundary evidence. Exposure elsewhere is contextual;
+ * it becomes a conflict only when that other sleeve intentionally owns the
+ * same permitted category role.
+ */
+export function resolveCrossSleeveRoleConflicts(input = {}) {
+  const crossSleeve = resolveCrossSleeveStructuralOverlaps(input);
+
+  if (!crossSleeve.comparisonAvailable) {
+    return Object.freeze({
+      ...crossSleeve,
+      conflicts: Object.freeze([])
+    });
+  }
+
+  const conflicts = crossSleeve.comparisons.filter(
+    ({ holdingSleeveId, holdingSecurityId, overlap }) => {
+      if (!overlap.comparisonAvailable || !overlap.sameCategoryRole) {
+        return false;
+      }
+
+      const holdingContext = {
+        candidateSecurityId: holdingSecurityId,
+        portfolioSystemId: input.portfolioSystemId,
+        variantId: input.variantId,
+        sleeveId: holdingSleeveId
+      };
+      const holdingAlignment = resolveSecuritySleeveAlignment(
+        holdingContext
+      );
+      const holdingBoundary = resolveSecuritySleeveBoundaryAlignment(
+        holdingContext
+      );
+
+      return holdingAlignment.aligned &&
+        holdingBoundary.aligned &&
+        overlap.matchedCategoryIds.some(
+          (categoryId) =>
+            holdingAlignment.matchedCategoryIds.includes(categoryId)
+        );
+    }
+  );
+
+  return Object.freeze({
+    ...crossSleeve,
+    conflicts: Object.freeze([...conflicts])
+  });
+}

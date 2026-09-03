@@ -12,7 +12,7 @@ import {
 } from './security-sleeve-alignment.js';
 
 import {
-  resolveCrossSleeveStructuralOverlaps,
+  resolveCrossSleeveRoleConflicts,
   resolveSecurityStructuralOverlap
 } from './security-structural-overlap.js';
 
@@ -366,41 +366,14 @@ export function resolveSleeveSecurityFit({
   decisionFactors.overlap = overlapFactor(targetComparisons);
 
   // Step 6: responsibility already assigned to another sleeve.
-  const crossSleeve = resolveCrossSleeveStructuralOverlaps({
+  const crossSleeve = resolveCrossSleeveRoleConflicts({
     candidateSecurityId,
     portfolioSystemId,
     variantId,
     targetSleeveId,
     holdingsBySleeve
   });
-  const crossRoleConflicts = crossSleeve.comparisons.filter(
-    ({ holdingSleeveId, holdingSecurityId, overlap }) => {
-      if (!overlap.comparisonAvailable || !overlap.sameCategoryRole) {
-        return false;
-      }
-
-      const holdingAlignment = resolveSecuritySleeveAlignment({
-        candidateSecurityId: holdingSecurityId,
-        portfolioSystemId,
-        variantId,
-        sleeveId: holdingSleeveId
-      });
-      const holdingBoundary =
-        resolveSecuritySleeveBoundaryAlignment({
-          candidateSecurityId: holdingSecurityId,
-          portfolioSystemId,
-          variantId,
-          sleeveId: holdingSleeveId
-        });
-
-      return holdingAlignment.aligned &&
-        holdingBoundary.aligned &&
-        overlap.matchedCategoryIds.some(
-          (categoryId) =>
-            holdingAlignment.matchedCategoryIds.includes(categoryId)
-        );
-    }
-  );
+  const crossRoleConflicts = crossSleeve.conflicts;
 
   if (crossRoleConflicts.length > 0) {
     const overlappingSecurityIds = [

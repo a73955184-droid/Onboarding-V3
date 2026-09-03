@@ -766,9 +766,7 @@ const SECURITY_METADATA_RECORDS = [
         "united-states"
       ],
       "marketCaps": [
-        "large-cap",
-        "mid-cap",
-        "small-cap"
+        "large-cap"
       ],
       "styles": [],
       "factors": [],
