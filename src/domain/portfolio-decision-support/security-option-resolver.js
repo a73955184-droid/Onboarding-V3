@@ -108,15 +108,75 @@ function hasAdditiveBenefit(tradeoffs) {
 }
 
 
-function replacementHoldingIds(tradeoffs, candidateSecurityId) {
-  return [...new Set(tradeoffs.costs.filter(
-    ({ code }) => code === 'adds-overlapping-holding'
-  ).flatMap(({ values }) =>
-    Array.isArray(values) ? values : []
-  ).filter((securityId) =>
-    typeof securityId === 'string' &&
-    securityId.toLowerCase() !== candidateSecurityId
-  ))];
+function resolveSupportedReplacementTargets({
+  replacementEvidence,
+  candidateSecurityId,
+  targetSleeveHoldingIds
+}) {
+  const normalizedTargetHoldingIds = targetSleeveHoldingIds.map(
+    (securityId) => {
+      if (typeof securityId !== 'string') {
+        throw new TypeError(
+          'targetSleeveHoldingIds entries must be strings'
+        );
+      }
+
+      return securityId.toLowerCase();
+    }
+  );
+  const supportedTargets = [];
+
+  for (const [index, evidence] of replacementEvidence.entries()) {
+    assertPlainObject(evidence, `replacementEvidence[${index}]`);
+
+    if (
+      typeof evidence.comparisonAvailable !== 'boolean' ||
+      typeof evidence.replacementJustified !== 'boolean' ||
+      typeof evidence.candidateSecurityId !== 'string' ||
+      typeof evidence.holdingSecurityId !== 'string'
+    ) {
+      throw new TypeError(
+        'replacementEvidence entries must expose comparison availability, justification, candidate, and holding IDs'
+      );
+    }
+
+    const evidenceCandidateId =
+      evidence.candidateSecurityId.toLowerCase();
+    const holdingSecurityId =
+      evidence.holdingSecurityId.toLowerCase();
+
+    if (evidenceCandidateId !== candidateSecurityId) {
+      throw new TypeError(
+        'replacementEvidence must describe the assessed candidate'
+      );
+    }
+
+    if (evidence.replacementJustified && !evidence.comparisonAvailable) {
+      throw new TypeError(
+        'Unavailable replacement comparisons cannot justify replacement'
+      );
+    }
+
+    if (!evidence.replacementJustified) {
+      continue;
+    }
+
+    if (holdingSecurityId === candidateSecurityId) {
+      throw new TypeError(
+        'Replacement evidence cannot name the candidate as its target'
+      );
+    }
+
+    if (!normalizedTargetHoldingIds.includes(holdingSecurityId)) {
+      throw new TypeError(
+        'Replacement target must be present in the target sleeve'
+      );
+    }
+
+    supportedTargets.push(holdingSecurityId);
+  }
+
+  return [...new Set(supportedTargets)];
 }
 
 
@@ -128,7 +188,9 @@ export function resolveSecurityOptions({
   candidateSecurityId = null,
   readiness,
   sleeveBoundary,
-  tradeoffs
+  tradeoffs,
+  targetSleeveHoldingIds = [],
+  replacementEvidence = []
 } = {}) {
   if (
     candidateSecurityId !== null &&
@@ -140,10 +202,28 @@ export function resolveSecurityOptions({
   validateReadiness(readiness);
   const boundaryAligned = boundaryIsAligned(sleeveBoundary);
   validateTradeoffs(tradeoffs);
+
+  if (!Array.isArray(replacementEvidence)) {
+    throw new TypeError('replacementEvidence must be an array');
+  }
+
+  if (!Array.isArray(targetSleeveHoldingIds)) {
+    throw new TypeError('targetSleeveHoldingIds must be an array');
+  }
+
   const normalizedCandidateSecurityId =
     typeof candidateSecurityId === 'string'
       ? candidateSecurityId.toLowerCase()
       : null;
+
+  if (
+    replacementEvidence.length > 0 &&
+    normalizedCandidateSecurityId === null
+  ) {
+    throw new TypeError(
+      'candidateSecurityId is required with replacementEvidence'
+    );
+  }
 
   if (!readiness.ready) {
     return Object.freeze({
@@ -171,10 +251,11 @@ export function resolveSecurityOptions({
   }
 
   if (
-    replacementHoldingIds(
-      tradeoffs,
-      normalizedCandidateSecurityId
-    ).length > 0
+    resolveSupportedReplacementTargets({
+      replacementEvidence,
+      candidateSecurityId: normalizedCandidateSecurityId,
+      targetSleeveHoldingIds
+    }).length > 0
   ) {
     availableActions.push(DECISION_SUPPORT_ACTIONS.REPLACE);
   }

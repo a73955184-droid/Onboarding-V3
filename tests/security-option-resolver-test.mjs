@@ -32,6 +32,23 @@ function tradeoffs({ benefits = [], costs = [] } = {}) {
 }
 
 
+function replacementEvidence(candidateSecurityId, holdingSecurityId, {
+  comparisonAvailable = true,
+  replacementJustified = true
+} = {}) {
+  return {
+    comparisonAvailable,
+    replacementJustified,
+    candidateSecurityId,
+    holdingSecurityId,
+    advantages: replacementJustified
+      ? ['explicit-structural-advantage']
+      : [],
+    disadvantages: []
+  };
+}
+
+
 const READY = { ready: true, subject: null, missingFields: [] };
 const NOT_READY = {
   ready: false,
@@ -45,13 +62,29 @@ const CONFLICT = {
 };
 
 
-const vtiHeldItotAssessed = resolveSecurityOptions({
+const overlapWithoutReplacementEvidence = resolveSecurityOptions({
   candidateSecurityId: 'itot',
   readiness: READY,
   sleeveBoundary: ALIGNED,
   tradeoffs: tradeoffs({
     costs: [item('adds-overlapping-holding', ['vti'])]
   })
+});
+
+assert.deepEqual(overlapWithoutReplacementEvidence.availableActions, [
+  'keep-current',
+  'save-alternative'
+]);
+
+const vtiHeldItotAssessed = resolveSecurityOptions({
+  candidateSecurityId: 'itot',
+  readiness: READY,
+  sleeveBoundary: ALIGNED,
+  tradeoffs: tradeoffs({
+    costs: [item('adds-overlapping-holding', ['vti'])]
+  }),
+  targetSleeveHoldingIds: ['vti'],
+  replacementEvidence: [replacementEvidence('itot', 'vti')]
 });
 
 assert.deepEqual(vtiHeldItotAssessed.availableActions, [
@@ -68,7 +101,9 @@ const vtiHeldVooAssessed = resolveSecurityOptions({
   tradeoffs: tradeoffs({
     benefits: [item('increases-market-cap-emphasis', ['large-cap'])],
     costs: [item('adds-overlapping-holding', ['vti'])]
-  })
+  }),
+  targetSleeveHoldingIds: ['vti'],
+  replacementEvidence: [replacementEvidence('voo', 'vti')]
 });
 
 assert.deepEqual(vtiHeldVooAssessed.availableActions, [
@@ -144,7 +179,11 @@ const lowerComplexityAlternative = resolveSecurityOptions({
   tradeoffs: tradeoffs({
     benefits: [item('lower-complexity', ['low', 'moderate'])],
     costs: [item('adds-overlapping-holding', ['existing'])]
-  })
+  }),
+  targetSleeveHoldingIds: ['existing'],
+  replacementEvidence: [
+    replacementEvidence('candidate', 'existing')
+  ]
 });
 
 assert.deepEqual(lowerComplexityAlternative.availableActions, [
@@ -172,6 +211,7 @@ assert.deepEqual(crossSleeveConflict.availableActions, [
 
 for (const result of [
   vtiHeldItotAssessed,
+  overlapWithoutReplacementEvidence,
   vtiHeldVooAssessed,
   boundaryConflict,
   unavailable,
@@ -202,6 +242,52 @@ assert.throws(
   }),
   /aligned and status values must agree/
 );
+
+assert.throws(
+  () => resolveSecurityOptions({
+    candidateSecurityId: 'vti',
+    readiness: READY,
+    sleeveBoundary: ALIGNED,
+    tradeoffs: tradeoffs({
+      costs: [item('adds-overlapping-holding', ['vti'])]
+    }),
+    targetSleeveHoldingIds: ['vti'],
+    replacementEvidence: [replacementEvidence('vti', 'vti')]
+  }),
+  /cannot name the candidate as its target/
+);
+
+assert.throws(
+  () => resolveSecurityOptions({
+    candidateSecurityId: 'itot',
+    readiness: READY,
+    sleeveBoundary: ALIGNED,
+    tradeoffs: tradeoffs({
+      costs: [item('adds-overlapping-holding', ['vti'])]
+    }),
+    targetSleeveHoldingIds: ['voo'],
+    replacementEvidence: [replacementEvidence('itot', 'vti')]
+  }),
+  /must be present in the target sleeve/
+);
+
+const unsupportedReplacement = resolveSecurityOptions({
+  candidateSecurityId: 'itot',
+  readiness: READY,
+  sleeveBoundary: ALIGNED,
+  tradeoffs: tradeoffs({
+    costs: [item('adds-overlapping-holding', ['vti'])]
+  }),
+  targetSleeveHoldingIds: ['vti'],
+  replacementEvidence: [replacementEvidence('itot', 'vti', {
+    replacementJustified: false
+  })]
+});
+
+assert.deepEqual(unsupportedReplacement.availableActions, [
+  'keep-current',
+  'save-alternative'
+]);
 
 console.log(
   'Security option resolver test passed: readiness, boundaries and structural tradeoffs constrain valid actions without selecting a preference.'
