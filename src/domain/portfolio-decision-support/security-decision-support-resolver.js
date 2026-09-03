@@ -126,7 +126,7 @@ function candidateSnapshot(candidateSecurityId) {
 
   return {
     securityId: candidateSecurityId,
-    ticker: candidate.symbol,
+    ticker: candidate.ticker ?? candidate.symbol,
     name: candidate.name,
     issuer: candidate.issuer,
     securityType: candidate.securityType
