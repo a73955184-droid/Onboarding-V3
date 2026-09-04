@@ -64,6 +64,10 @@ assert.doesNotMatch(
 );
 assert.match(
   portfolioMapSource,
+  /security-decision-support-resolver/
+);
+assert.doesNotMatch(
+  portfolioMapSource,
   /security-portfolio-fit-resolver/
 );
 assert.match(
@@ -72,5 +76,5 @@ assert.match(
 );
 
 console.log(
-  'Security fit compliance test passed: language is bounded and the UI delegates decisions to Phase 1 resolvers.'
+  'Security fit compliance test passed: language is bounded and Portfolio Map delegates decision support to Phase 3.'
 );

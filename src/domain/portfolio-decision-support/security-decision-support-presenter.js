@@ -357,7 +357,16 @@ function actionPresentation(action, decisionSupport, targets) {
 
   return {
     action,
-    ...presentations[action]
+    ...presentations[action],
+    style: action === decisionSupport.preferredAction
+      ? 'primary'
+      : 'secondary',
+    ...(action === 'replace'
+      ? {
+          targetSecurityId: targets.length === 1 ? targets[0] : null,
+          requiresTargetSelection: targets.length > 1
+        }
+      : {})
   };
 }
 

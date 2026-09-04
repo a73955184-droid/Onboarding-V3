@@ -16,8 +16,8 @@ import {
 } from '../../domain/portfolio-system/sleeve-security-eligibility-resolver.js';
 
 import {
-  resolveSecurityPortfolioFit
-} from '../../domain/portfolio-system/security-portfolio-fit-resolver.js';
+  resolveSecurityDecisionSupport
+} from '../../domain/portfolio-decision-support/security-decision-support-resolver.js';
 
 import {
   resolveEqualWeightAllocation
@@ -32,8 +32,8 @@ import {
 } from '../../domain/portfolio-system/security-inspection-presenter.js';
 
 import {
-  presentSecurityAssessment
-} from '../../domain/portfolio-system/security-assessment-presenter.js';
+  presentSecurityDecisionSupport
+} from '../../domain/portfolio-decision-support/security-decision-support-presenter.js';
 
 import {
   addCurationHolding,
@@ -243,7 +243,6 @@ export function renderPortfolioMap(root) {
   const searchBySleeve = Object.fromEntries(
     portfolioSystem.sleeves.map(({ id }) => [id, ''])
   );
-  let replacementPreviewSleeveId = null;
   let assessingSleeveId = null;
 
   CURATION_SESSIONS.set(curationSessionKey, curationState);
@@ -528,51 +527,75 @@ export function renderPortfolioMap(root) {
     `;
   }
 
-  function renderAssessmentAllocation(title, allocation) {
-    return `
-      <div class="curation-assessment-allocation">
-        <strong>${escapeHtml(title)}</strong>
-        ${renderAllocationHoldings(allocation, 'No holdings')}
-      </div>
-    `;
-  }
+  function renderDecisionSupportActions(actions) {
+    if (!actions?.length) return '';
 
-  function renderAssessmentActions(actions) {
     return `
-      <div class="curation-actions">
-        ${actions.map(({ action, label, style }) => `
-          <button class="btn btn-${escapeHtml(style)}" type="button" data-curation-action="${escapeHtml(action)}">${escapeHtml(label)}</button>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  function renderAssessmentFactors(factors) {
-    return `
-      <div class="curation-decision-factors">
-        ${factors.map((factor) => `
-          <div class="curation-decision-factor ${escapeHtml(factor.tone)}">
-            <span class="curation-factor-marker" aria-hidden="true">${escapeHtml(factor.marker)}</span>
-            <div>
-              <strong>${escapeHtml(factor.label)}</strong>
-              <p>${escapeHtml(factor.explanation)}</p>
-            </div>
+      <div class="curation-actions curation-decision-actions">
+        ${actions.map((presentedAction) => `
+          <div class="curation-decision-action">
+            <button
+              class="btn btn-${escapeHtml(presentedAction.style ?? 'secondary')}"
+              type="button"
+              data-curation-action="${escapeHtml(presentedAction.action)}"
+              ${presentedAction.targetSecurityId
+                ? `data-target-security-id="${escapeHtml(presentedAction.targetSecurityId)}"`
+                : ''}
+              ${presentedAction.requiresTargetSelection
+                ? 'disabled aria-disabled="true"'
+                : ''}
+            >${escapeHtml(presentedAction.label)}</button>
+            <p>${escapeHtml(presentedAction.description)}</p>
           </div>
         `).join('')}
       </div>
     `;
   }
 
-  function renderReplacementPreview(preview) {
-    if (!preview) return '';
+  function renderDecisionSupportFields(fields) {
+    if (!fields?.length) return '';
 
     return `
-      <div class="curation-replacement-preview">
-        <h4>${escapeHtml(preview.heading)}</h4>
-        <p>Remove ${escapeHtml(preview.remove)}</p>
-        <p>Include ${escapeHtml(preview.include)}</p>
-        <p>Recalculate ${escapeHtml(preview.sleeveLabel)} sleeve</p>
-      </div>
+      <dl class="curation-decision-details">
+        ${fields.map(({ label, value }) => `
+          <div>
+            <dt>${escapeHtml(label)}</dt>
+            <dd>${escapeHtml(value)}</dd>
+          </div>
+        `).join('')}
+      </dl>
+    `;
+  }
+
+  function renderDecisionSupportSection(section) {
+    const content = `
+      ${section.items?.length ? `
+        <ul class="curation-decision-list">
+          ${section.items.map(
+            (item) => `<li>${escapeHtml(item)}</li>`
+          ).join('')}
+        </ul>
+      ` : ''}
+      ${renderDecisionSupportFields(section.fields)}
+      ${section.action
+        ? renderDecisionSupportActions([section.action])
+        : renderDecisionSupportActions(section.actions)}
+    `;
+
+    if (section.optional) {
+      return `
+        <details class="curation-decision-section optional">
+          <summary>${escapeHtml(section.label)}</summary>
+          ${content}
+        </details>
+      `;
+    }
+
+    return `
+      <section class="curation-decision-section" data-decision-section="${escapeHtml(section.id)}">
+        <h4>${escapeHtml(section.label)}</h4>
+        ${content}
+      </section>
     `;
   }
 
@@ -588,19 +611,16 @@ export function renderPortfolioMap(root) {
           aria-live="polite"
           aria-busy="true"
         >
-          <h3>System-fit assessment</h3>
-          <p>Assessing sleeve and portfolio fit&hellip;</p>
+          <h3>Portfolio decision support</h3>
+          <p>Comparing this investment with the current portfolio&hellip;</p>
         </section>
       `;
     }
 
     if (!assessment) return '';
 
-    const presentation = presentSecurityAssessment({
-      assessment,
-      sleeveLabel: sleeve.label,
-      replacementPreviewActive:
-        replacementPreviewSleeveId === sleeve.id
+    const presentation = presentSecurityDecisionSupport({
+      decisionSupport: assessment
     });
 
     if (presentation.status === 'unavailable') {
@@ -608,8 +628,7 @@ export function renderPortfolioMap(root) {
         <section class="curation-assessment unavailable" data-curation-assessment tabindex="-1" aria-live="polite" aria-atomic="true">
           <h3>${escapeHtml(presentation.heading)}</h3>
           <p>${escapeHtml(presentation.message)}</p>
-          <p>${escapeHtml(presentation.allocationMessage)}</p>
-          ${renderAssessmentActions(presentation.actions)}
+          ${renderDecisionSupportActions(presentation.actions)}
         </section>
       `;
     }
@@ -620,44 +639,26 @@ export function renderPortfolioMap(root) {
           <h3>${escapeHtml(presentation.heading)}</h3>
           <p>${escapeHtml(presentation.context)}</p>
         </div>
-        ${renderAssessmentFactors(presentation.factors)}
-        <div class="curation-assessment-effort">
-          <strong>${escapeHtml(presentation.effort.label)}</strong>
-          <span>${escapeHtml(presentation.effort.value)}</span>
+        <p class="curation-note">${escapeHtml(presentation.message)}</p>
+        <div class="curation-decision-sections">
+          ${presentation.sections.map(
+            renderDecisionSupportSection
+          ).join('')}
         </div>
-        <div class="curation-allocation-effect">
-          <h4>Allocation effect</h4>
-          <div class="curation-allocation-comparison">
-            ${renderAssessmentAllocation('Before', presentation.allocationBefore)}
-            ${renderAssessmentAllocation('After', presentation.allocationAfter)}
-          </div>
-        </div>
-        <div class="curation-result">
-          <strong>System-fit result</strong>
-          <div class="curation-result-label">${escapeHtml(presentation.result.label)}</div>
-          <strong>Primary reason</strong>
-          <p>${escapeHtml(presentation.result.primaryReason)}</p>
-          ${renderReplacementPreview(presentation.replacementPreview)}
-          ${renderAssessmentActions(presentation.actions)}
-        </div>
-        <p class="curation-note">${escapeHtml(presentation.disclosure)}</p>
       </section>
     `;
   }
 
-  function assessmentAllowsAction(sleeve, action) {
+  function getPresentedAction(sleeve, action) {
     const assessment = curationState.assessmentBySleeve[sleeve.id];
 
-    if (!assessment) return false;
+    if (!assessment) return null;
 
-    return presentSecurityAssessment({
-      assessment,
-      sleeveLabel: sleeve.label,
-      replacementPreviewActive:
-        replacementPreviewSleeveId === sleeve.id
-    }).actions.some(
+    return presentSecurityDecisionSupport({
+      decisionSupport: assessment
+    }).actions.find(
       (presentedAction) => presentedAction.action === action
-    );
+    ) ?? null;
   }
 
   function renderAllocationPanel(sleeve, system) {
@@ -780,27 +781,22 @@ export function renderPortfolioMap(root) {
         sleeve.id,
         actionButton.dataset.categoryId
       );
-      replacementPreviewSleeveId = null;
     } else if (action === 'select-candidate') {
       selectCurationCandidate(
         curationState,
         sleeve.id,
         actionButton.dataset.securityId
       );
-      replacementPreviewSleeveId = null;
     } else if (action === 'add-existing-holding' && candidateId) {
       addCurationHolding(curationState, sleeve.id, candidateId);
-      replacementPreviewSleeveId = null;
     } else if (action === 'remove-existing-holding') {
       removeCurationHolding(
         curationState,
         sleeve.id,
         actionButton.dataset.securityId
       );
-      replacementPreviewSleeveId = null;
     } else if (action === 'assess-fit' && candidateId) {
       assessingSleeveId = sleeve.id;
-      replacementPreviewSleeveId = null;
       updateAllocationPanel(sleeve);
       revealCurationAssessment(allocationPanel);
 
@@ -808,7 +804,7 @@ export function renderPortfolioMap(root) {
         let assessment;
 
         try {
-          assessment = resolveSecurityPortfolioFit({
+          assessment = resolveSecurityDecisionSupport({
             portfolioSystemId: phaseOnePortfolioSystemId,
             variantId: portfolioSystem.profileVariantId,
             targetSleeveId: sleeve.id,
@@ -816,12 +812,9 @@ export function renderPortfolioMap(root) {
             holdingsBySleeve: curationState.holdingsBySleeve
           });
         } catch (error) {
-          console.error('Security fit assessment failed', error);
+          console.error('Security decision-support assessment failed', error);
           assessment = Object.freeze({
-            assessmentStatus: 'unavailable',
-            outcome: null,
-            reasonCode: 'assessment-runtime-error',
-            missingFields: Object.freeze([])
+            assessmentStatus: 'unavailable'
           });
         }
 
@@ -838,39 +831,30 @@ export function renderPortfolioMap(root) {
         }
       }, 0);
       return;
-    } else if (action === 'add-result' && candidateId) {
-      if (assessmentAllowsAction(sleeve, 'add-result')) {
+    } else if (action === 'add' && candidateId) {
+      if (getPresentedAction(sleeve, 'add')) {
         addCurationHolding(curationState, sleeve.id, candidateId);
       }
-      replacementPreviewSleeveId = null;
-    } else if (action === 'preview-replacement') {
-      replacementPreviewSleeveId = sleeve.id;
-    } else if (action === 'cancel-replacement') {
-      replacementPreviewSleeveId = null;
-    } else if (action === 'confirm-replacement') {
-      const assessment =
-        curationState.assessmentBySleeve[sleeve.id];
+    } else if (action === 'replace' && candidateId) {
+      const presentedAction = getPresentedAction(sleeve, 'replace');
 
-      if (
-        assessmentAllowsAction(sleeve, 'confirm-replacement') &&
-        assessment.affectedSecurityId &&
-        candidateId
-      ) {
+      if (presentedAction?.targetSecurityId) {
         replaceCurationHolding(
           curationState,
           sleeve.id,
-          assessment.affectedSecurityId,
+          presentedAction.targetSecurityId,
           candidateId
         );
       }
-      replacementPreviewSleeveId = null;
     } else if (action === 'save-alternative' && candidateId) {
-      saveCurationAlternative(curationState, sleeve.id, candidateId);
-      clearCurationCandidate(curationState, sleeve.id);
-      replacementPreviewSleeveId = null;
-    } else if (action === 'return-browser') {
-      clearCurationCandidate(curationState, sleeve.id);
-      replacementPreviewSleeveId = null;
+      if (getPresentedAction(sleeve, 'save-alternative')) {
+        saveCurationAlternative(curationState, sleeve.id, candidateId);
+        clearCurationCandidate(curationState, sleeve.id);
+      }
+    } else if (action === 'keep-current' || action === 'return') {
+      if (getPresentedAction(sleeve, action)) {
+        clearCurationCandidate(curationState, sleeve.id);
+      }
     }
 
     updateAllocationPanel(sleeve);

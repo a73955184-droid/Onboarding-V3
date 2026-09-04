@@ -73,6 +73,7 @@ assert.equal(
   section(voo, 'best-default').action.action,
   'keep-current'
 );
+assert.equal(section(voo, 'best-default').action.style, 'primary');
 assert.deepEqual(
   section(voo, 'other-valid-choices').actions.map(({ action }) => action),
   ['add', 'save-alternative']
@@ -80,6 +81,10 @@ assert.deepEqual(
 assert.equal(
   section(voo, 'other-valid-choices').actions[0].label,
   'Include VOO'
+);
+assert.equal(
+  section(voo, 'other-valid-choices').actions[0].style,
+  'secondary'
 );
 assert.equal(
   section(voo, 'assessment-details').optional,
@@ -162,6 +167,14 @@ assert.equal(
   section(replacement, 'best-default').action.label,
   'Use BND instead of LQD'
 );
+assert.equal(
+  section(replacement, 'best-default').action.targetSecurityId,
+  'lqd'
+);
+assert.equal(
+  section(replacement, 'best-default').action.requiresTargetSelection,
+  false
+);
 
 
 const multipleReplacementTargets = structuredClone(
@@ -185,6 +198,15 @@ assert.equal(
 assert.doesNotMatch(
   section(ambiguousReplacement, 'best-default').action.label,
   /LQD|AGG/
+);
+assert.equal(
+  section(ambiguousReplacement, 'best-default').action.targetSecurityId,
+  null
+);
+assert.equal(
+  section(ambiguousReplacement, 'best-default').action
+    .requiresTargetSelection,
+  true
 );
 
 

@@ -43,7 +43,7 @@ const branchStart = source.indexOf(
   "action === 'assess-fit' && candidateId"
 );
 const branchEnd = source.indexOf(
-  "action === 'add-result' && candidateId",
+  "action === 'add' && candidateId",
   branchStart
 );
 const assessmentBranch = source.slice(branchStart, branchEnd);
@@ -56,16 +56,20 @@ assert.match(
   /revealCurationAssessment\(allocationPanel\)/
 );
 assert.match(assessmentBranch, /globalThis\.setTimeout/);
-assert.match(assessmentBranch, /resolveSecurityPortfolioFit\(\{/);
+assert.match(assessmentBranch, /resolveSecurityDecisionSupport\(\{/);
 assert.match(assessmentBranch, /setCurationAssessment\(/);
 assert.match(assessmentBranch, /assessmentStatus: 'unavailable'/);
+assert.doesNotMatch(assessmentBranch, /resolveSecurityPortfolioFit/);
 assert.doesNotMatch(assessmentBranch, /addCurationHolding\(/);
 assert.doesNotMatch(assessmentBranch, /removeCurationHolding\(/);
 assert.doesNotMatch(assessmentBranch, /replaceCurationHolding\(/);
 assert.match(source, /action === 'add-existing-holding' && candidateId/);
 assert.match(source, /action === 'remove-existing-holding'/);
 assert.match(source, /Assessing&amp;hellip;|Assessing&hellip;/);
-assert.match(source, /Assessing sleeve and portfolio fit&hellip;/);
+assert.match(
+  source,
+  /Comparing this investment with the current portfolio&hellip;/
+);
 assert.match(source, /data-curation-assessment/);
 assert.match(source, /tabindex="-1"/);
 
