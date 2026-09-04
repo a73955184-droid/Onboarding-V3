@@ -185,7 +185,7 @@ It must not:
 - use returns, volatility, drawdown, or correlation unless a later contract explicitly authorizes them;
 - introduce brokerage, persistence, or trade-execution behavior.
 
-Portfolio Map should ultimately call one Phase 3 top-level decision-support API. The Phase 2 top-level fit resolver remains available for compatibility, lower-level classification, and regression coverage, but should not be the endpoint for new Portfolio Map decision-support work.
+Portfolio Map calls one Phase 3 top-level decision-support API. The Phase 2 top-level fit resolver remains available for compatibility, lower-level classification, and regression coverage, but is not the endpoint for new Portfolio Map decision-support work.
 
 ## 8. Migration invariants
 
@@ -212,3 +212,19 @@ This changeset does not:
 - alter any Phase 2 outcome;
 - change metadata, eligibility, readiness, structural comparisons, allocation, or UI behavior.
 
+## 10. Final legacy-resolver decision
+
+Following the catalogue-wide Phase 3 behavior audit, `security-portfolio-fit-resolver.js` is retained as the **legacy compatibility / structural classification API**. It is not reduced or removed.
+
+The audit demonstrated that Phase 3 materially changes the interpretation of Phase 2 results while continuing to depend on the validated Phase 2 structural primitives. Retaining the old top-level resolver preserves the four-outcome reference contract and its regression value without allowing it to own Portfolio Map semantics.
+
+The binding ownership boundary is:
+
+- Phase 2 owns its legacy four-outcome classification API and structural regression history.
+- Phase 2 primitives remain authoritative for eligibility, readiness, sleeve alignment, sleeve boundaries, overlap evidence, and replacement evidence.
+- Phase 3 owns Portfolio Map tradeoffs, contribution interpretation, available actions, preferred defaults, and user-facing presentation.
+- Portfolio Map must not import the Phase 2 top-level resolver.
+
+Theme, alternative-strategy, and factor-methodology metadata enrichment is separate follow-on capability work. It must not be used as a reason to collapse, rewrite, or silently broaden either resolver during migration cleanup.
+
+The complete decision and any prerequisites for reconsidering removal are recorded in `phase-3-legacy-fit-resolver-decision.md`.

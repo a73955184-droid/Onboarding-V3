@@ -45,6 +45,9 @@ const screenSource = read(
 const curationSource = read(
   '../src/features/recommendation/portfolio-curation-session.js'
 );
+const legacyDecision = read(
+  '../docs/specs/phase-3-legacy-fit-resolver-decision.md'
+);
 const phase3Directory = new URL(
   '../src/domain/portfolio-decision-support/',
   import.meta.url
@@ -100,6 +103,20 @@ assert.equal(
   true
 );
 assert.match(phase2Source, /@deprecated[\s\S]*Portfolio Map/);
+assert.match(
+  phase2Source,
+  /legacy compatibility \/ structural classification API/
+);
+assert.match(legacyDecision, /Status: \*\*Accepted\*\*/);
+assert.match(
+  legacyDecision,
+  /Retain `security-portfolio-fit-resolver\.js`/
+);
+assert.match(
+  legacyDecision,
+  /Do not reduce or remove it in the Phase 3 migration/
+);
+assert.match(legacyDecision, /## Reconsideration criteria/);
 
 
 // Portfolio Map owns only Phase 3 presentation and action dispatch.

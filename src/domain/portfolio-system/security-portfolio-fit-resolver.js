@@ -155,11 +155,11 @@ function resolveAfterSecurityIds({
  * Phase 2 structural-fit classifier.
  *
  * @deprecated As the primary Portfolio Map user-facing assessment contract.
- * Retained for compatibility, lower-level classification, and structural-fit
- * regression. New Portfolio Map decision-support flows belong in the sibling
- * `portfolio-decision-support` capability.
+ * Retained as the legacy compatibility / structural classification API and
+ * for structural-fit regression. New Portfolio Map decision-support flows
+ * belong in the sibling `portfolio-decision-support` capability.
  *
- * See `docs/specs/phase-3-portfolio-decision-support-contract.md`.
+ * See `docs/specs/phase-3-legacy-fit-resolver-decision.md`.
  */
 export function resolveSecurityPortfolioFit({
   portfolioSystemId,
