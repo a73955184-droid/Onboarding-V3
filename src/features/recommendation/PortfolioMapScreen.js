@@ -570,6 +570,9 @@ export function renderPortfolioMap(root) {
 
   function renderDecisionSupportSection(section) {
     const content = `
+      ${section.reasonLabel
+        ? `<strong class="curation-decision-reason-label">${escapeHtml(section.reasonLabel)}</strong>`
+        : ''}
       ${section.items?.length ? `
         <ul class="curation-decision-list">
           ${section.items.map(
@@ -593,7 +596,7 @@ export function renderPortfolioMap(root) {
     }
 
     return `
-      <section class="curation-decision-section" data-decision-section="${escapeHtml(section.id)}">
+      <section class="curation-decision-section ${section.emphasis ? `curation-decision-section-${escapeHtml(section.emphasis)}` : ''}" data-decision-section="${escapeHtml(section.id)}">
         <h4>${escapeHtml(section.label)}</h4>
         ${content}
       </section>

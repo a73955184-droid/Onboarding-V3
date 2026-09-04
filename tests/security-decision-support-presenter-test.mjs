@@ -35,6 +35,7 @@ const voo = presentSecurityDecisionSupport({
 });
 
 assert.equal(voo.status, 'complete');
+assert.equal(voo.heading, 'How this changes your sleeve');
 assert.equal(voo.context, 'VOO for US Core');
 assert.deepEqual(
   voo.sections.map(({ label }) => label),
@@ -44,8 +45,8 @@ assert.deepEqual(
     'Where they overlap',
     'How your mix would change',
     'Tradeoffs',
-    'Best default for this sleeve',
-    'Other valid choices',
+    'Best default',
+    'Other valid options',
     'See assessment details'
   ]
 );
@@ -74,6 +75,9 @@ assert.equal(
   section(voo, 'best-default').action.action,
   'keep-current'
 );
+assert.equal(section(voo, 'best-default').action.label, 'Keep VTI');
+assert.equal(section(voo, 'best-default').emphasis, 'preferred');
+assert.equal(section(voo, 'best-default').reasonLabel, 'Why');
 assert.equal(section(voo, 'best-default').action.style, 'primary');
 assert.deepEqual(
   section(voo, 'other-valid-choices').actions.map(({ action }) => action),
@@ -81,7 +85,11 @@ assert.deepEqual(
 );
 assert.equal(
   section(voo, 'other-valid-choices').actions[0].label,
-  'Include VOO'
+  'Add VOO'
+);
+assert.equal(
+  section(voo, 'other-valid-choices').actions[1].label,
+  'Keep VOO as an alternative'
 );
 assert.equal(
   section(voo, 'other-valid-choices').actions[0].style,
@@ -249,6 +257,19 @@ assert.equal(
 assert.equal(
   section(crossSleeveConflict, 'best-default').action.action,
   'return'
+);
+assert.equal(
+  section(crossSleeveConflict, 'best-default').action.label,
+  'Do not add SGOV to this sleeve'
+);
+assert.deepEqual(
+  section(crossSleeveConflict, 'other-valid-choices').actions.map(
+    ({ action, label }) => ({ action, label })
+  ),
+  [{
+    action: 'save-alternative',
+    label: 'Keep SGOV as an alternative'
+  }]
 );
 
 

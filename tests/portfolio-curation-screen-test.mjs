@@ -16,6 +16,8 @@ assert.match(source, /resolveSecurityDecisionSupport\(\{/);
 assert.match(source, /resolveEqualWeightAllocation\(\{/);
 assert.match(source, /presentSecurityInspection\(\{/);
 assert.match(source, /presentSecurityDecisionSupport\(\{/);
+assert.match(source, /curation-decision-section-/);
+assert.match(source, /section\.reasonLabel/);
 assert.match(source, /portfolioSystemId: phaseOnePortfolioSystemId/);
 assert.match(source, /variantId: portfolioSystem\.profileVariantId/);
 assert.match(source, /targetSleeveId: sleeve\.id/);
@@ -71,6 +73,8 @@ const inspectionSource = source.slice(
 assert.match(inspectionSource, /Assess fit/);
 assert.doesNotMatch(inspectionSource, /add-existing-holding/);
 assert.doesNotMatch(inspectionSource, /Add to hypothetical sleeve/);
+assert.match(source, /action === 'add-existing-holding' && candidateId/);
+assert.match(source, /action === 'remove-existing-holding'/);
 assert.match(source, /getPresentedAction\(sleeve, 'add'\)/);
 assert.match(
   source,

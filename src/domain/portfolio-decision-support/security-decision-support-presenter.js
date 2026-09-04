@@ -153,6 +153,15 @@ function holdingIds(decisionSupport, scope) {
 }
 
 
+function targetSleeveHoldingIds(decisionSupport) {
+  return unique(
+    decisionSupport.structuralEvidence.overlap.targetSleeveComparisons.map(
+      ({ holdingSecurityId }) => holdingSecurityId
+    )
+  );
+}
+
+
 function exposureItems(entries, relationship) {
   return entries.map(({ dimension, values }) => {
     const presentedValues = joinWords(values);
@@ -319,6 +328,13 @@ function replacementTargets(decisionSupport) {
 
 function actionPresentation(action, decisionSupport, targets) {
   const ticker = decisionSupport.candidate?.ticker ?? 'the candidate';
+  const targetHoldingIds = targetSleeveHoldingIds(decisionSupport);
+  const currentHoldingLabel = targetHoldingIds.length === 1
+    ? `Keep ${securityLabel(targetHoldingIds[0])}`
+    : targetHoldingIds.length > 1
+      ? 'Keep the current sleeve holdings'
+      : 'Keep this sleeve as it is';
+  const hasConflict = decisionSupport.contribution.level === 'conflicting';
   const target = targets.length === 1
     ? securityLabel(targets[0])
     : null;
@@ -335,23 +351,27 @@ function actionPresentation(action, decisionSupport, targets) {
       };
   const presentations = {
     'keep-current': {
-      label: 'Keep this sleeve as it is',
+      label: currentHoldingLabel,
       description: 'Make no change to the sleeve’s current holdings.'
     },
     add: {
-      label: `Include ${ticker}`,
+      label: `Add ${ticker}`,
       description:
         `Include ${ticker} alongside the sleeve’s current holdings.`
     },
     replace: replacePresentation,
     'save-alternative': {
-      label: 'Save as an alternative',
+      label: `Keep ${ticker} as an alternative`,
       description:
         `Keep ${ticker} available for later consideration without changing the sleeve.`
     },
     return: {
-      label: 'Return without making a change',
-      description: 'Leave this sleeve unchanged and review other choices.'
+      label: hasConflict
+        ? `Do not add ${ticker} to this sleeve`
+        : 'Return without making a change',
+      description: hasConflict
+        ? 'Leave this sleeve unchanged because the candidate conflicts with its intended role.'
+        : 'Leave this sleeve unchanged and review other choices.'
     }
   };
 
@@ -491,7 +511,7 @@ export function presentSecurityDecisionSupport({
 
   return deepFreeze({
     status: 'complete',
-    heading: 'Portfolio decision support',
+    heading: 'How this changes your sleeve',
     context:
       `${decisionSupport.candidate.ticker} for ${
         decisionSupport.sleeveContext.sleeveLabel
@@ -526,13 +546,15 @@ export function presentSecurityDecisionSupport({
       },
       {
         id: 'best-default',
-        label: 'Best default for this sleeve',
+        label: 'Best default',
+        emphasis: 'preferred',
+        reasonLabel: 'Why',
         items: [decisionSupport.rationale.summary],
         action: preferredAction
       },
       {
         id: 'other-valid-choices',
-        label: 'Other valid choices',
+        label: 'Other valid options',
         items: otherActions.length > 0
           ? ['These choices remain available if their tradeoffs match your intent.']
           : ['No other action is available for this assessment.'],
