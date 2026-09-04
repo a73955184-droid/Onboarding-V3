@@ -5,6 +5,7 @@ import {
   SECURITY_DECISION_SUPPORT_RESULT_KEYS
 } from '../src/domain/portfolio-decision-support/security-decision-support-contract.js';
 import {
+  createUnavailableSecurityDecisionSupport,
   resolveSecurityDecisionSupport
 } from '../src/domain/portfolio-decision-support/security-decision-support-resolver.js';
 import {
@@ -156,6 +157,18 @@ assert.equal(
   null
 );
 
+const runtimeFailure = createUnavailableSecurityDecisionSupport();
+
+assert.equal(runtimeFailure.assessmentStatus, 'unavailable');
+assert.deepEqual(
+  runtimeFailure.rationale.reasonCodes,
+  ['assessment-runtime-error']
+);
+assert.deepEqual(
+  Object.keys(runtimeFailure),
+  SECURITY_DECISION_SUPPORT_RESULT_KEYS
+);
+
 
 for (const result of [
   vtiItot,
@@ -165,7 +178,8 @@ for (const result of [
   boundaryConflict,
   crossSleeveConflict,
   unknown,
-  unresolvedEligibility
+  unresolvedEligibility,
+  runtimeFailure
 ]) {
   assert.deepEqual(Object.keys(result), SECURITY_DECISION_SUPPORT_RESULT_KEYS);
   assert.equal(Object.isFrozen(result), true);

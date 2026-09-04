@@ -16,6 +16,7 @@ import {
 } from '../../domain/portfolio-system/sleeve-security-eligibility-resolver.js';
 
 import {
+  createUnavailableSecurityDecisionSupport,
   resolveSecurityDecisionSupport
 } from '../../domain/portfolio-decision-support/security-decision-support-resolver.js';
 
@@ -813,8 +814,8 @@ export function renderPortfolioMap(root) {
           });
         } catch (error) {
           console.error('Security decision-support assessment failed', error);
-          assessment = Object.freeze({
-            assessmentStatus: 'unavailable'
+          assessment = createUnavailableSecurityDecisionSupport({
+            reasonCode: 'assessment-runtime-error'
           });
         }
 

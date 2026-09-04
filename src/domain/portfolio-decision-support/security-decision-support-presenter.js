@@ -425,7 +425,9 @@ function unavailablePresentation(decisionSupport) {
     'exact-eligibility-unavailable':
       'This investment’s eligibility for the selected sleeve is unresolved.',
     'unresolved-sleeve':
-      'The selected portfolio sleeve could not be resolved.'
+      'The selected portfolio sleeve could not be resolved.',
+    'assessment-runtime-error':
+      'Something interrupted this comparison. Return to the available choices and try again.'
   }[reasonCode] ??
     'There is not enough verified information to complete this comparison.';
 

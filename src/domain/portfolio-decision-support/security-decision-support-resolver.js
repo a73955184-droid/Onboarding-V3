@@ -200,6 +200,22 @@ function unavailableResult({
 }
 
 
+/**
+ * Converts an unexpected assessment failure into the same validated Phase 3
+ * contract used by ordinary unavailable assessments. UI callers provide only
+ * the failure classification; they do not construct domain result fields.
+ */
+export function createUnavailableSecurityDecisionSupport({
+  reasonCode = 'assessment-runtime-error'
+} = {}) {
+  if (typeof reasonCode !== 'string' || reasonCode.length === 0) {
+    throw new TypeError('reasonCode must be a non-empty string');
+  }
+
+  return unavailableResult({ reasonCode });
+}
+
+
 function exactEligibility({
   candidateSecurityId,
   portfolioSystemId,

@@ -4,6 +4,7 @@ import {
   presentSecurityDecisionSupport
 } from '../src/domain/portfolio-decision-support/security-decision-support-presenter.js';
 import {
+  createUnavailableSecurityDecisionSupport,
   resolveSecurityDecisionSupport
 } from '../src/domain/portfolio-decision-support/security-decision-support-resolver.js';
 
@@ -270,6 +271,18 @@ assert.deepEqual(unavailable, {
     description: 'Review another investment or sleeve.'
   }]
 });
+
+const runtimeFailure = createUnavailableSecurityDecisionSupport();
+const runtimeFailurePresentation = presentSecurityDecisionSupport({
+  decisionSupport: runtimeFailure
+});
+
+assert.equal(runtimeFailure.assessmentStatus, 'unavailable');
+assert.equal(runtimeFailurePresentation.status, 'unavailable');
+assert.equal(
+  runtimeFailurePresentation.message,
+  'Something interrupted this comparison. Return to the available choices and try again.'
+);
 
 
 assert.throws(

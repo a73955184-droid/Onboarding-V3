@@ -58,7 +58,15 @@ assert.match(
 assert.match(assessmentBranch, /globalThis\.setTimeout/);
 assert.match(assessmentBranch, /resolveSecurityDecisionSupport\(\{/);
 assert.match(assessmentBranch, /setCurationAssessment\(/);
-assert.match(assessmentBranch, /assessmentStatus: 'unavailable'/);
+assert.match(
+  assessmentBranch,
+  /createUnavailableSecurityDecisionSupport\(\{/
+);
+assert.match(assessmentBranch, /reasonCode: 'assessment-runtime-error'/);
+assert.doesNotMatch(
+  assessmentBranch,
+  /Object\.freeze\(\{\s*assessmentStatus/
+);
 assert.doesNotMatch(assessmentBranch, /resolveSecurityPortfolioFit/);
 assert.doesNotMatch(assessmentBranch, /addCurationHolding\(/);
 assert.doesNotMatch(assessmentBranch, /removeCurationHolding\(/);
