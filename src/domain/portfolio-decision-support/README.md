@@ -25,4 +25,4 @@ The preferred action is the best default for the selected portfolio system, slee
 
 Do not recreate metadata, category, eligibility, readiness, or structural-comparison logic here. Consume the existing `portfolio-system` APIs and keep the dependency direction one-way.
 
-`security-decision-support-resolver.js` is the Phase 3 composition API. Portfolio Map remains on the Phase 2 endpoint until a later UI migration task. See `docs/specs/phase-3-portfolio-decision-support-contract.md` for the frozen semantics and migration boundaries.
+`security-decision-support-resolver.js` is the Phase 3 composition API used by Portfolio Map. The Phase 2 resolver remains available for compatibility and structural regression, but it no longer owns the screen's user-facing semantics. See `docs/specs/phase-3-portfolio-decision-support-contract.md` for the frozen semantics and migration boundaries.
