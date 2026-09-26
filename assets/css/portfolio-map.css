@@ -566,3 +566,49 @@
     transition: none;
   }
 }
+
+/* AaronBux ecosystem theme: forest green and ivory. */
+:root {
+  color-scheme: dark;
+  --bg: #09231c; --surface: #102e25; --surface-2: #173f32;
+  --text: #f3f0e5; --muted: #c0cbbf;
+  --accent: #d4dfc9; --accent-2: #dce8dd;
+  --border: #496052; --shadow: 0 16px 40px rgb(0 0 0 / 15%);
+}
+body { background: var(--bg); color: var(--text); }
+h1, h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; text-wrap: balance; }
+h1, h2, h3 { color: var(--text); }
+.card { background: linear-gradient(180deg, #102e25, #09231c); }
+.intro-simple { text-align: center; }
+.intro-simple h1, .intro-note, .result-hero h1, .question-panel h2 { margin-inline: auto; }
+.result-hero h1, .question-panel h2, .question-note { text-align: center; }
+.topbar, .bottom-nav { background: rgb(9 35 28 / 96%); }
+.option-card { background: #102e25; border-color: #496052; }
+.option-card:hover, .option-card.selected { background: #173f32; border-color: #d4dfc9; }
+.option-card.selected { box-shadow: 0 0 0 1px #829d8c; }
+.option-card-title { color: #f3f0e5; }
+.btn { min-height: 48px; border-radius: 999px; }
+.btn-primary { background: #173f32; color: #f3f0e5; border: 1px solid #829d8c; }
+.btn-primary:hover { background: #235441; }
+.btn-secondary { color: #dce8dd; border-color: #829d8c; }
+.progress-fill { background: #d4dfc9; box-shadow: none; }
+.progress-track { background: #496052; }
+.pill, .system-box { background: #173f32; border-color: #829d8c; color: #dce8dd; }
+.trace-card strong, .recommendation-page .summary-item strong,
+.investor-jobs-page .job-evidence-item strong, .recommendation-explainability-card h3 { color: #f3f0e5; }
+.recommendation-signal-label { color: #d4dfc9; }
+.recommendation-page .result-hero { background: linear-gradient(145deg, #173f32, #09231c); border-color: #829d8c; }
+.workflow-card.missing { background: #173f32; border-color: #829d8c; }
+.workflow-card.missing strong { color: #d4dfc9; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid #d4dfc9; outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .main { padding-inline: 20px; }
+  .panel, .result-hero { padding: 24px 20px; }
+  .bottom-inner { flex-wrap: wrap; gap: 12px; }
+  .bottom-inner .btn { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
